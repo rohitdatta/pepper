@@ -1,0 +1,11 @@
+Flask==0.10.1
+Flask-SQLAlchemy==2.0
+SQLAlchemy==1.0.8
+Flask-Migrate
+gunicorn==19.3.0
+Jinja2==2.8
+Werkzeug==0.10.4
+python-dotenv
+psycopg2
+Flask-Script
+Flask-Login
