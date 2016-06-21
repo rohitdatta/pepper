@@ -10,4 +10,4 @@ def internal_error(e):
     return render_template('static_pages/500.html'), 500
 
 def page_not_found(e):
-    return render_template('error.html', title='Oops, page not found'), 404
+    return render_template('static_pages/500.html', title='Oops, page not found'), 404
