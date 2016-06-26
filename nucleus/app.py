@@ -4,6 +4,7 @@ import json
 from flask import g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
+from flask_sslify import SSLify
 
 import settings
 
@@ -14,12 +15,12 @@ from users.models import User
 
 
 def create_app():
-    app = flask.Flask(__name__)
-    app.config.from_object(settings)
+	app = flask.Flask(__name__)
+	app.config.from_object(settings)
 
-    DB.init_app(app)
-    routes.configure_routes(app)
+	DB.init_app(app)
+	routes.configure_routes(app)
 
-    app.jinja_env.filters['json'] = json.dumps
-
-    return app
+	app.jinja_env.filters['json'] = json.dumps
+	SSLify(app)
+	return app

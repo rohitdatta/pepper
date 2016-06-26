@@ -10,7 +10,7 @@ class User(DB.Model):
 	lname = DB.Column(DB.String(128))
 	status = DB.Column(DB.String(255))
 	created = DB.Column(DB.DateTime)
-	graduation = DB.Column(DB.String(255))
+	class_standing = DB.Column(DB.String(255))
 	major = DB.Column(DB.String(255))
 	shirt_size = DB.Column(DB.String(255))
 	dietary_restrictions = DB.Column(DB.String(255))
@@ -19,3 +19,4 @@ class User(DB.Model):
 	phone_number = DB.Column(DB.String(255))
 	school = DB.Column(DB.String(255))
 	special_needs = DB.Column(DB.Text)
+	roles = DB.relationship('Role', secondary='user_roles', backref=DB.backref('users', lazy='dynamic'))

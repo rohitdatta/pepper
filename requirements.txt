@@ -9,3 +9,4 @@ python-dotenv
 psycopg2
 Flask-Script
 Flask-Login
+flask_sslify
