@@ -28,6 +28,7 @@ def callback():
 			user = User(user_info)
 			DB.session.add(user)
 			DB.session.commit()
+			login_user(user, remember=True)
 		except IntegrityError:
 			# a unique value already exists this should never happen
 			DB.session.rollback()

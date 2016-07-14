@@ -1,5 +1,6 @@
 
 from nucleus.app import DB
+from datetime import datetime
 
 class User(DB.Model):
 	__tablename__ = 'users'
@@ -17,7 +18,7 @@ class User(DB.Model):
 	birthday = DB.Column(DB.Date)
 	gender = DB.Column(DB.String(255))
 	phone_number = DB.Column(DB.String(255))
-	school = DB.Column(DB.String(255))
+	school = DB.Column(DB.String(255)) # TODO: get this to be a school obj
 	special_needs = DB.Column(DB.Text)
 	checked_in = DB.Column(DB.Boolean)
 	# roles = DB.relationship('Role', secondary='user_roles', backref=DB.backref('users', lazy='dynamic'))
@@ -25,8 +26,18 @@ class User(DB.Model):
 
 	def __init__(self, dict):
 		self.email = dict['data']['email']
-		self.phone_number = '123456'
-		self.class_standing = 'hello'
+		self.fname = dict['data']['first_name']
+		self.lname = dict['data']['last_name']
+		self.status = 'NEW'
+		self.created = datetime.utcnow()
+		self.major = dict['data']['major']
+		self.shirt_size = dict['data']['shirt_size']
+		self.dietary_restrictions = dict['data']['dietary_restrictions']
+		self.birthday = dict['data']['date_of_birth']
+		self.gender = dict['data']['gender']
+		self.phone_number = dict['data']['phone_number']
+		self.special_needs = dict['data']['special_needs']
+		self.checked_in = False
 
 	@property
 	def is_authenticated(self):
