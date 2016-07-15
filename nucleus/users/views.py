@@ -11,8 +11,8 @@ import sendgrid
 from sendgrid.helpers.mail import *
 
 def landing():
-	# if current_user.is_authenticated:
-	# 	return redirect(url_for('dashboard'))
+	if current_user.is_authenticated:
+		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
 def dashboard():
@@ -60,7 +60,7 @@ def confirm_registration():
 		response = sg.client.mail.send.post(request_body=mail.get())
 		print response.status_code
 		flash('Congratulations! You have successfully applied for {HACKATHON_NAME}! You should receive a confirmation email shortly'.format(**settings.__dict__), 'success')
-		return 'Sent!'
+		return redirect(url_for('dashboard'))
 
 @login_required
 def logout():
