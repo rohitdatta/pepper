@@ -11,3 +11,4 @@ Flask-Script
 Flask-Login
 flask_sslify
 requests
+sendgrid

@@ -1,3 +1,9 @@
+Logged in
 Here's the data we have on you:
-Name: {{ user.name }}
+ID: {{ user.id }}
+Name: {{ user.fname }} {{ user.lname }}
 Email: {{ user.email }}
+<a href="/logout">Logout</a>
+<form action="/confirm" method="POST">
+    <button type="submit">Submit</button>
+</form>

@@ -12,3 +12,5 @@ SERVICE_NAME = os.getenv('SERVICE_NAME') or 'Nucelus'
 SECRET_KEY = os.getenv('SECRET_KEY')
 NONCE_SECRET = os.getenv('NONCE_SECRET')
 HASHIDS_SALT = os.getenv('HASHIDS_SALT')
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
+HACKATHON_NAME = os.getenv('HACKATHON_NAME')
