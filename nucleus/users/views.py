@@ -17,6 +17,8 @@ def landing():
 def dashboard():
 	if current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
+	elif current_user.status == 'CONFIRMED':
+		return render_template('users/confirmed.html')
 	return render_template('users/dashboard.html', user=current_user)
 
 def login():
@@ -74,23 +76,24 @@ def logout():
 
 @login_required
 def accept():
+	if current_user.status != 'ACCEPTED':  # they aren't authorized to view this page
+		message = {
+			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
+				settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
+				settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
+				settings.HACKATHON_NAME)
+		}
+		flash(message[current_user.status], 'error')
+		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		return 'Accept your invite here'
+		return render_template('users/accept.html')
 	else:
-		if current_user.status != 'ACCEPTED': #they aren't authorized to view this page
-			message = {
-				'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(settings.HACKATHON_NAME),
-				'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(settings.HACKATHON_NAME),
-				'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(settings.HACKATHON_NAME)
-			}
-			flash(message[current_user.status], 'error')
-			return redirect(url_for('dashboard'))
+		if request.form['acceptance'] == 'accept':
+			current_user.status = 'CONFIRMED'
+			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
 		else:
-			if request.form['acceptance'] == 'accept':
-				current_user.status = 'CONFIRMED'
-				flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
-			else:
-				current_user.status = 'REJECTED'
-			DB.session.add(current_user)
-			DB.session.commit()
-
+			current_user.status = 'REJECTED'
+		DB.session.add(current_user)
+		DB.session.commit()
