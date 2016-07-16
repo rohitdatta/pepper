@@ -7,3 +7,5 @@ def configure_routes(app):
 	app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
 	app.add_url_rule('/confirm', 'confirm-registration', view_func=users.views.confirm_registration, methods=['GET', 'POST'])
 	app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
+	app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
+	app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
