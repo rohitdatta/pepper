@@ -1,4 +1,3 @@
-from flask import redirect, url_for
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask import request, render_template, redirect, url_for, flash
 import requests
@@ -8,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from nucleus import settings
 import sendgrid
 from sendgrid.helpers.mail import *
+import urllib2
 
 def landing():
 	if current_user.is_authenticated:
@@ -20,10 +20,10 @@ def dashboard():
 	return render_template('users/dashboard.html', user=current_user)
 
 def login():
-	return redirect('https://my.mlh.io/oauth/authorize?client_id=61d0d7bf56ab02f4a0dcdddc26816c27164748890de08ddd809877ba3f229b15&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fcallback&response_type=code')
+	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}%2Fcallback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
 
 def callback():
-	url = 'https://my.mlh.io/oauth/token?client_id=61d0d7bf56ab02f4a0dcdddc26816c27164748890de08ddd809877ba3f229b15&client_secret=67a6dcad88e1a881934518f5abc6beba46fc6910756b7f1c2a85f7dafd0bf5a7&code='+ request.args.get('code')+ '&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fcallback&grant_type=authorization_code'
+	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}%2Fcallback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL))
 	resp = requests.post(url)
 	# print resp.headers
 	access_token = resp.json()['access_token']
@@ -57,14 +57,14 @@ def confirm_registration():
 		DB.session.commit()
 		# send a confirmation email. TODO: this is kinda verbose and long
 		sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
-		from_email = Email('hello@hacktx.com')
-		subject = 'Thank you for applying to HackTX'
+		from_email = Email(settings.GENERAL_INFO_EMAIL)
+		subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
 		to_email = Email(current_user.email)
-		content = Content('text/plain', 'Thanks for applying to HackTX')
+		content = Content('text/plain', 'Thanks for applying to {0}'.format(settings.HACKATHON_NAME))
 		mail = Mail(from_email, subject, to_email, content)
 		response = sg.client.mail.send.post(request_body=mail.get())
 		print response.status_code
-		flash('Congratulations! You have successfully applied for {HACKATHON_NAME}! You should receive a confirmation email shortly'.format(**settings.__dict__), 'success')
+		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
 		return redirect(url_for('dashboard'))
 
 @login_required
@@ -79,16 +79,16 @@ def accept():
 	else:
 		if current_user.status != 'ACCEPTED': #they aren't authorized to view this page
 			message = {
-				'PENDING': "You haven't been accepted to HackTX! Please wait for your invitation before visiting this page!",
-				'CONFIRMED': "You've already accepted your invitation to HackTX! We look forward to seeing you here!",
-				'REJECTED': "You've already rejected your HackTX invitation. Unfortunately, for space considerations you cannot change your response."
+				'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(settings.HACKATHON_NAME),
+				'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(settings.HACKATHON_NAME),
+				'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(settings.HACKATHON_NAME)
 			}
 			flash(message[current_user.status], 'error')
 			return redirect(url_for('dashboard'))
 		else:
 			if request.form['acceptance'] == 'accept':
 				current_user.status = 'CONFIRMED'
-				flash('You have successfully confirmed your invitation to HackTX')
+				flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
 			else:
 				current_user.status = 'REJECTED'
 			DB.session.add(current_user)
