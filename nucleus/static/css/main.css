@@ -1,0 +1,114 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700italic,900,900italic,400italic,700,300italic,300,100,100italic);
+* {
+  font-family: Lato, sans-serif; }
+
+body {
+  background: #002db3;
+  color: white !important; }
+  body ::-webkit-input-placeholder {
+    /* WebKit browsers */
+    font-family: Lato, sans-serif;
+    color: white;
+    font-weight: 300; }
+  body :-moz-placeholder {
+    /* Mozilla Firefox 4 to 18 */
+    font-family: Lato, sans-serif;
+    color: white;
+    opacity: 1;
+    font-weight: 300; }
+  body ::-moz-placeholder {
+    /* Mozilla Firefox 19+ */
+    font-family: Lato, sans-serif;
+    color: white;
+    opacity: 1;
+    font-weight: 300; }
+  body :-ms-input-placeholder {
+    /* Internet Explorer 10+ */
+    font-family: Lato, sans-serif;
+    color: white;
+    font-weight: 300; }
+  body a {
+    color: white;
+    font-weight: 600;
+    text-decoration: none; }
+    body a:hover {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none; }
+
+@media (min-width: 992px) {
+  .col-md-6.left-inline-input {
+    padding-right: 5px; }
+
+  .col-md-6.right-inline-input {
+    padding-left: 5px; } }
+button {
+  appearance: none;
+  outline: 0;
+  background-color: white;
+  border: 0;
+  padding: 10px 15px;
+  color: #0063a6;
+  border-radius: 3px;
+  width: 250px;
+  cursor: pointer;
+  font-size: 18px;
+  transition-duration: 0.25s;
+  margin: 0 auto 10px auto;
+  display: block; }
+  button:hover {
+    background-color: #f5f7f9; }
+
+form input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0.2);
+  width: 250px;
+  border-radius: 3px;
+  padding: 10px 15px;
+  margin: 0 auto 10px auto;
+  display: block;
+  text-align: center;
+  font-size: 18px;
+  color: #FFF;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  font-weight: 300;
+  transition-duration: 0.25s;
+  font-weight: 300; }
+  form input.no-expand:focus {
+    width: 250px; }
+  form input::selection {
+    color: white;
+    background: rgba(0, 99, 166, 0.75);
+    /* WebKit/Blink Browsers */ }
+  form input ::-moz-selection {
+    background: #000;
+    /* Gecko Browsers */ }
+  @media (min-width: 992px) {
+    form input.double-width {
+      width: 525px; }
+      form input.double-width:focus {
+        width: 525px; } }
+  @media (max-width: 992px) {
+    form input.double-width {
+      width: 250px; }
+      form input.double-width:focus {
+        width: 250px; } }
+  form input:hover {
+    background-color: rgba(255, 255, 255, 0.4); }
+  form input:focus {
+    background-color: white;
+    width: 300px;
+    color: #002db3; }
+
+#footer-login {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px; }
+  #footer-login .container p {
+    margin: 20px 0; }
