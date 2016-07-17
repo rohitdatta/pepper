@@ -12,3 +12,5 @@ Flask-Login
 flask_sslify
 requests
 sendgrid
+redis
+flask-redis==0.0.6

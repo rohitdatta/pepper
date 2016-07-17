@@ -5,10 +5,12 @@ from flask import g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask_sslify import SSLify
+from flask_redis import Redis
 
 import settings
 
 DB = SQLAlchemy()
+redis_store = Redis()
 
 import routes
 from users.models import User
@@ -31,6 +33,7 @@ def create_app():
 	app.config.from_object(settings)
 
 	DB.init_app(app)
+	redis_store.init_app(app)
 	routes.configure_routes(app)
 	configure_login(app)
 
