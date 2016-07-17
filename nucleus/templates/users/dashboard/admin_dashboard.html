@@ -1,0 +1,9 @@
+{% extends 'layouts/base.html' %}
+{% block body %}
+    HELLO ADMIN!
+    <ul>
+    {% for user in users %}
+        <li>{{ user.created }}</li>
+    {% endfor %}
+    </ul>
+{% endblock body %}

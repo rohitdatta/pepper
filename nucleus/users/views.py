@@ -18,13 +18,18 @@ def dashboard():
 	if current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
 	elif current_user.status == 'CONFIRMED':
-		return render_template('users/confirmed.html')
+		return render_template('users/dashboard/confirmed.html')
 	elif current_user.status == 'REJECTED':
-		return render_template('users/rejected.html', user=current_user)
-	return render_template('users/dashboard.html', user=current_user)
+		return render_template('users/dashboard/rejected.html', user=current_user)
+	elif current_user.status == 'WAITLISTED':
+		return render_template('users/dashboard/waitlisted.html', user=current_user)
+	elif current_user.status == 'ADMIN':
+		users = User.query.order_by(User.created.asc())
+		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
+	return render_template('users/dashboard/pending.html', user=current_user)
 
 def login():
-	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}%2Fcallback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
 
 def callback():
 	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL, ''))
@@ -99,3 +104,4 @@ def accept():
 			current_user.status = 'REJECTED'
 		DB.session.add(current_user)
 		DB.session.commit()
+		return redirect(url_for('dashboard'))
