@@ -25,7 +25,8 @@ def login():
 	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}%2Fcallback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
 
 def callback():
-	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}%2Fcallback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL))
+	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL, ''))
+	print url
 	resp = requests.post(url)
 	# print resp.headers
 	access_token = resp.json()['access_token']
@@ -47,7 +48,6 @@ def callback():
 		login_user(user, remember=True)
 		return redirect(url_for('dashboard'))
 	return redirect(url_for('confirm-registration'))
-	# return 'Access token for current user: ' + access_token
 
 @login_required
 def confirm_registration():
@@ -76,7 +76,7 @@ def logout():
 
 @login_required
 def accept():
-	if current_user.status != 'ACCEPTED':  # they aren't authorized to view this page
+	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
 			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
 				settings.HACKATHON_NAME),
