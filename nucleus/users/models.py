@@ -44,12 +44,12 @@ class User(DB.Model):
 			self.checked_in = False
 		elif dict['type'] == 'corporate': # creating a corporate user
 			email = dict['email'].lower().strip()
-			email_validation = validate_email(email)
-			if not email_validation['is_valid']:
-				if email_validation['did_you_mean']:
-					raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
-				else:
-					raise ValueError('%s is an invalid address' % email)
+			# email_validation = validate_email(email) #TODO: Email validation
+			# if not email_validation['is_valid']:
+			# 	if email_validation['did_you_mean']:
+			# 		raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
+			# 	else:
+			# 		raise ValueError('%s is an invalid address' % email)
 
 			self.email = email
 			self.password = hash_pwd(dict['password'])

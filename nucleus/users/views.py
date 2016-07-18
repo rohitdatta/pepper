@@ -111,7 +111,7 @@ def accept():
 @login_required
 def create_corp_user(): #TODO: require this to be an admin function
 	if request.method == 'GET':
-		return 'Create a corporate user'
+		return render_template('users/admin/create_corp.html')
 	else:
 		# Build a user based on the request form
 		user_data = {}
@@ -119,11 +119,12 @@ def create_corp_user(): #TODO: require this to be an admin function
 		user_data['lname'] = request.form['lname']
 		user_data['email'] = request.form['email']
 		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
-		user = User(request.form) #TODO: add the recruiter role here
+		user_data['type'] = 'corporate'
+		user = User(user_data) #TODO: add the recruiter role here
 		DB.session.add(user)
 		DB.session.commit()
-		# send a confirmation email. TODO: this is kinda verbose and long
 
+		# send invite to the recruiter #TODO: make this a reset password link
 		data = {
 			"content": [
 				{
@@ -154,3 +155,4 @@ def create_corp_user(): #TODO: require this to be an admin function
 		response = sg.client.mail.send.post(request_body=data)
 		print response.status_code
 		flash('You successfully create a new recruiter account.', 'success')
+		return render_template('users/admin/create_corp.html')
