@@ -1,4 +1,4 @@
-import static_pages, announcements, users
+import announcements, users, corporate
 
 def configure_routes(app):
 	app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
@@ -15,3 +15,6 @@ def configure_routes(app):
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
+
+	# Corporate Portal
+	app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])

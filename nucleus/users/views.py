@@ -2,12 +2,13 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, render_template, redirect, url_for, flash
 import requests
 from models import User
-from nucleus.app import DB
+from nucleus.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from nucleus import settings
 import sendgrid
 from sendgrid.helpers.mail import *
 import urllib2
+import string, random
 
 def landing():
 	if current_user.is_authenticated:
@@ -42,6 +43,7 @@ def callback():
 	if user is None: # create the user
 		try:
 			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
+			user_info['type'] = 'MLH'
 			user = User(user_info)
 			DB.session.add(user)
 			DB.session.commit()
@@ -105,3 +107,50 @@ def accept():
 		DB.session.add(current_user)
 		DB.session.commit()
 		return redirect(url_for('dashboard'))
+
+@login_required
+def create_corp_user(): #TODO: require this to be an admin function
+	if request.method == 'GET':
+		return 'Create a corporate user'
+	else:
+		# Build a user based on the request form
+		user_data = {}
+		user_data['fname'] = request.form['fname']
+		user_data['lname'] = request.form['lname']
+		user_data['email'] = request.form['email']
+		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
+		user = User(request.form) #TODO: add the recruiter role here
+		DB.session.add(user)
+		DB.session.commit()
+		# send a confirmation email. TODO: this is kinda verbose and long
+
+		data = {
+			"content": [
+				{
+					"type": "text/plain",
+					"value": "Welcome to HackTX! Here's your login info: Password: {0}".format(user_data['password'])
+				}
+			],
+			"from": {
+				"email": "partnerships@freetailhackers.com",
+				"name": "Freetail Hackers"
+			},
+			"personalizations": [
+				{
+					"to": [
+						{
+							"email": user.email,
+							"name": '{0} {1}'.format(user.fname, user.lname)
+						}
+					]
+				}
+			],
+			"reply_to": {
+				"email": "partnerships@freetailhackers.com",
+				"name": "HackTX Team"
+			},
+			"subject": "Your invitation to join HackTX",
+		}
+		response = sg.client.mail.send.post(request_body=data)
+		print response.status_code
+		flash('You successfully create a new recruiter account.', 'success')

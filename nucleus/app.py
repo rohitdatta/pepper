@@ -6,11 +6,12 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask_sslify import SSLify
 from flask_redis import Redis
-
+import sendgrid
 import settings
 
 DB = SQLAlchemy()
 redis_store = Redis()
+sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 
 import routes
 from users.models import User
@@ -27,6 +28,7 @@ def configure_login(app):
 	@app.before_request
 	def before_request():
 		g.user = current_user
+
 
 def create_app():
 	app = flask.Flask(__name__)
