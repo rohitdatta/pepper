@@ -10,19 +10,33 @@ def validate_email(email):
 		params={"address": email})
 
 
-def required_roles(*roles):
-	def wrapper(f):
-		@wraps(f)
-		def wrapped(*args, **kwargs):
-			if get_current_user_role() not in roles:
-				flash('Authentication error, please check your details and try again', 'error')
-				return redirect(url_for('index'))
-			return f(*args, **kwargs)
+def roles_required(*role_names):
+	def wrapper(func):
+		@wraps(func)
+		def decorated_view(*args, **kwargs):
+			# User must be logged
+			if not (g.user.is_authenticated):
+				# Redirect to the unauthenticated page
+				return redirect(url_for('corp-login'))
 
-		return wrapped
+			# User must have the required roles
+			if not g.user.has_roles(*role_names):
+				# Redirect to the unauthorized page
+				return 'Not authorized to view this page'
 
+			# Call the actual view
+			return func(*args, **kwargs)
+		return decorated_view
 	return wrapper
 
 
 def get_current_user_role():
 	return g.user.roles
+
+def corp_login_required(f):
+	@wraps(f)
+	def decorated_view(*args, **kwargs):
+		if not g.user.is_authenticated:
+			return redirect(url_for('corp-login'))
+		return f(*args, **kwargs)
+	return decorated_view

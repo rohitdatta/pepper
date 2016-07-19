@@ -2,8 +2,8 @@ from flask import request, render_template, flash, redirect, url_for, g
 from flask.ext.login import login_user, current_user, login_required
 from nucleus.users import User
 from helpers import check_password
-from flask_user import roles_required
-
+# from flask_user import roles_required
+from nucleus.utils import corp_login_required, roles_required
 
 def login():
 	if request.method == 'GET':
@@ -22,7 +22,7 @@ def login():
 		flash('Logged in successfully!', 'success')
 		return redirect('corp-dash')
 
-@login_required
+@corp_login_required
 @roles_required('corp')
 def corporate_dash():
 	return 'corp dash'

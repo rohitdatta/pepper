@@ -13,10 +13,10 @@ from flask_user import roles_required
 
 def landing():
 	if current_user.is_authenticated:
-
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
+@login_required
 def dashboard():
 	if current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
