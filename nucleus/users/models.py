@@ -3,8 +3,9 @@ from nucleus.app import DB
 from datetime import datetime
 from nucleus.utils import *
 from helpers import hash_pwd
+from flask_user import UserMixin
 
-class User(DB.Model):
+class User(DB.Model, UserMixin):
 	__tablename__ = 'users'
 
 	id = DB.Column(DB.Integer, primary_key=True)
@@ -23,9 +24,10 @@ class User(DB.Model):
 	school = DB.Column(DB.String(255)) # TODO: get this to be a school obj
 	special_needs = DB.Column(DB.Text)
 	checked_in = DB.Column(DB.Boolean)
-	# roles = DB.relationship('Role', secondary='user_roles', backref=DB.backref('users', lazy='dynamic'))
+	roles = DB.relationship('Role', secondary='user_roles', backref=DB.backref('users', lazy='dynamic'))
 	access_token = DB.Column(DB.String(255))
 	password = DB.Column(DB.String(100))
+	type = DB.Column(DB.String(100))
 
 	def __init__(self, dict):
 		if dict['type'] == 'MLH': # if creating a MyMLH user
@@ -42,6 +44,7 @@ class User(DB.Model):
 			self.phone_number = dict['data']['phone_number']
 			self.special_needs = dict['data']['special_needs']
 			self.checked_in = False
+			self.type = 'MLH'
 		elif dict['type'] == 'corporate': # creating a corporate user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation
@@ -55,6 +58,7 @@ class User(DB.Model):
 			self.password = hash_pwd(dict['password'])
 			self.fname = dict['fname']
 			self.lname = dict['lname']
+			self.type = 'corporate'
 
 	@property
 	def is_authenticated(self):
@@ -70,3 +74,14 @@ class User(DB.Model):
 
 	def get_id(self):
 		return unicode(self.id)
+
+class Role(DB.Model):
+	__tablename__ = 'role'
+	id = DB.Column(DB.Integer(), primary_key=True)
+	name = DB.Column(DB.String(), unique=True)
+
+class UserRoles(DB.Model):
+	__tablename__ = 'user_roles'
+	id = DB.Column(DB.Integer(), primary_key=True)
+	user_id = DB.Column(DB.Integer(), DB.ForeignKey('users.id', ondelete='CASCADE'))
+	role_id = DB.Column(DB.Integer(), DB.ForeignKey('role.id', ondelete='CASCADE'))

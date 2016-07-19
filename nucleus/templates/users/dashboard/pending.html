@@ -1,5 +1,8 @@
 {% extends 'layouts/base.html' %}
 {% block body %}
     Thanks for applying to {{ config.HACKATHON_NAME }} {{ user.fname }}! Our team is currently processing applications, and we'll send you an email once we have more info.
+    {% for role in user.roles %}
+    {{ role.name }}
+    {% endfor %}
 <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}

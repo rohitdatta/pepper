@@ -1,7 +1,7 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask import request, render_template, redirect, url_for, flash
 import requests
-from models import User
+from models import User, Role
 from nucleus.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from nucleus import settings
@@ -9,9 +9,11 @@ import sendgrid
 from sendgrid.helpers.mail import *
 import urllib2
 import string, random
+from flask_user import roles_required
 
 def landing():
 	if current_user.is_authenticated:
+
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
@@ -121,6 +123,7 @@ def create_corp_user(): #TODO: require this to be an admin function
 		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
 		user_data['type'] = 'corporate'
 		user = User(user_data) #TODO: add the recruiter role here
+		user.roles.append(Role(name='corp'))
 		DB.session.add(user)
 		DB.session.commit()
 
