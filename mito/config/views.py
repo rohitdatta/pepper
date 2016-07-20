@@ -1,4 +1,4 @@
-from nucleus.app import redis_store
+from mito.app import redis_store
 
 
 def toggle_application_period():

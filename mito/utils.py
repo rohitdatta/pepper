@@ -14,17 +14,10 @@ def roles_required(*role_names):
 	def wrapper(func):
 		@wraps(func)
 		def decorated_view(*args, **kwargs):
-			# User must be logged
-			if not (g.user.is_authenticated):
-				# Redirect to the unauthenticated page
+			if not g.user.is_authenticated:
 				return redirect(url_for('corp-login'))
-
-			# User must have the required roles
 			if not g.user.has_roles(*role_names):
-				# Redirect to the unauthorized page
 				return 'Not authorized to view this page'
-
-			# Call the actual view
 			return func(*args, **kwargs)
 		return decorated_view
 	return wrapper

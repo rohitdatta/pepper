@@ -2,9 +2,9 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, render_template, redirect, url_for, flash
 import requests
 from models import User, Role
-from nucleus.app import DB, sg
+from mito.app import DB, sg
 from sqlalchemy.exc import IntegrityError
-from nucleus import settings
+from mito import settings
 import sendgrid
 from sendgrid.helpers.mail import *
 import urllib2

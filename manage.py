@@ -6,7 +6,7 @@ dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-from nucleus import create_app, app
+from mito import create_app, app
 
 crm_app = create_app()
 manager = Manager(crm_app)

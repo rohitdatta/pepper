@@ -1,5 +1,5 @@
 
-from nucleus.app import DB
+from mito.app import DB
 
 class Announcement(DB.Model):
 	__tablename__ = 'announcements'

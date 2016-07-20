@@ -1,7 +1,7 @@
 
-from nucleus.app import DB
+from mito.app import DB
 from datetime import datetime
-from nucleus.utils import *
+from mito.utils import *
 from helpers import hash_pwd
 from flask_user import UserMixin
 

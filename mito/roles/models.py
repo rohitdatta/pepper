@@ -1,4 +1,4 @@
-from nucleus.app import DB
+from mito.app import DB
 
 class Role(DB.Model):
 	id = DB.Column(DB.Integer, primary_key=True)
