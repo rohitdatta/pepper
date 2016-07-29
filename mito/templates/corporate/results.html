@@ -1,0 +1,18 @@
+Univ
+{% if universities %}
+    {% for university in universities %}
+		<p>{{ university }}</p>
+	{% endfor %}
+{% endif %}
+Major
+{% if majors %}
+    {% for major in majors %}
+		<p>{{ major }}</p>
+	{% endfor %}
+{% endif %}
+Class Stand
+{% if class_standings %}
+    {% for class_standing in class_standings %}
+		<p>{{ class_standing }}</p>
+	{% endfor %}
+{% endif %}
