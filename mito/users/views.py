@@ -42,15 +42,18 @@ def callback():
 	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL, ''))
 	print url
 	resp = requests.post(url)
-	# print resp.headers
 	access_token = resp.json()['access_token']
-	print 'ACCESS TOKEN:' + access_token
-	user = User.query.filter_by(email=access_token).first()
+	user = User.query.filter_by(access_token=access_token).first()
 	if user is None: # create the user
 		try:
 			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
 			user_info['type'] = 'MLH'
-			user = User(user_info)
+			user_info['access_token'] = access_token
+			user = User.query.filter_by(email=user_info['data']['email']).first()
+			if user is None:
+				user = User(user_info)
+			else:
+				user.access_token = access_token
 			DB.session.add(user)
 			DB.session.commit()
 			login_user(user, remember=True)
