@@ -1,7 +1,6 @@
 
 from mito.app import DB
 from datetime import datetime
-from mito.utils import *
 from helpers import hash_pwd
 from flask_user import UserMixin
 
@@ -28,6 +27,7 @@ class User(DB.Model, UserMixin):
 	access_token = DB.Column(DB.String(255))
 	password = DB.Column(DB.String(100))
 	type = DB.Column(DB.String(100))
+	# race = DB.Column(DB.String(255))
 
 	def __init__(self, dict):
 		if dict['type'] == 'MLH': # if creating a MyMLH user

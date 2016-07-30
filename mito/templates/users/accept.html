@@ -1,4 +1,8 @@
-{% extends 'layouts/base.html' %}
+{#{% extends 'layouts/base.html' %}#}
 {% block body %}
-Accept your invite here HTML version
+	Acceptance Form
+	<form method="POST" action="{{ url_for('accept-invite') }}" enctype=multipart/form-data>
+		<input type=file name="resume">
+	<button type="submit">Submit</button>
+	</form>
 {% endblock %}

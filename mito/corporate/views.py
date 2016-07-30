@@ -3,7 +3,9 @@ from flask.ext.login import login_user, current_user, login_required
 from mito.users import User
 from helpers import check_password
 from mito.utils import corp_login_required, roles_required
-from sqlalchemy import or_
+import boto3
+
+s3 = boto3.resource('s3')
 
 def login():
 	if request.method == 'GET':

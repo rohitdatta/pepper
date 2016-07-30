@@ -10,7 +10,11 @@ from sendgrid.helpers.mail import *
 import urllib2
 import string, random
 from flask_user import roles_required
+import boto3
 
+# Initialise the S3 client
+s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
+					aws_secret_access_key=settings.AWS_SECRET_KEY)
 def landing():
 	if current_user.is_authenticated:
 		return redirect(url_for('dashboard'))
@@ -85,6 +89,9 @@ def logout():
 	logout_user()
 	return redirect(url_for('landing'))
 
+def is_pdf(filename):
+	return '.' in filename and (filename.rsplit('.', 1)[1] == 'pdf' or filename.rsplit('.', 1)[1] == 'PDF')
+
 @login_required
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
@@ -101,25 +108,32 @@ def accept():
 	if request.method == 'GET':
 		return render_template('users/accept.html')
 	else:
-		if request.form['acceptance'] == 'accept':
-			current_user.status = 'CONFIRMED'
-			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
-		else:
-			current_user.status = 'REJECTED'
+		# if request.form['acceptance'] == 'accept':
+		if 'resume' in request.files:
+			resume = request.files['resume']
+			if is_pdf(resume.filename):  # if pdf upload to AWS
+				s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname, current_user.fname)).put(Body=resume)
+			else:
+				flash('Resume must be in PDF format')
+				return redirect(url_for('accept-invite'))
+		current_user.status = 'CONFIRMED'
+		flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
+		# else:
+		# 	current_user.status = 'REJECTED'
 		DB.session.add(current_user)
 		DB.session.commit()
 		return redirect(url_for('dashboard'))
 
 @login_required
+@roles_required('admin')
 def create_corp_user(): #TODO: require this to be an admin function
 	if request.method == 'GET':
 		return render_template('users/admin/create_corp.html')
 	else:
 		# Build a user based on the request form
-		user_data = {}
-		user_data['fname'] = request.form['fname']
-		user_data['lname'] = request.form['lname']
-		user_data['email'] = request.form['email']
+		user_data = {'fname': request.form['fname'],
+					 'lname': request.form['lname'],
+					 'email': request.form['email']}
 		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
 		user_data['type'] = 'corporate'
 		user = User(user_data) #TODO: add the recruiter role here
