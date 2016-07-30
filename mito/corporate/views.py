@@ -1,11 +1,11 @@
-from flask import request, render_template, flash, redirect, url_for, g
+from flask import request, render_template, flash, redirect, url_for, g, make_response
 from flask.ext.login import login_user, current_user, login_required
 from mito.users import User
 from helpers import check_password
-from mito.utils import corp_login_required, roles_required
+from mito.utils import corp_login_required, roles_required, s3
 import boto3
+from mito import settings
 
-s3 = boto3.resource('s3')
 
 def login():
 	if request.method == 'GET':
@@ -53,3 +53,15 @@ def corporate_search():
 		all_users = users.all()
 	users = users.all()
 	return render_template('corporate/results.html', universities=universities, class_standings=class_standings, majors=majors)
+
+# @corp_login_required
+# @roles_required(['corp', 'admin'])
+def view_resume():
+	hashid = request.args.get('id')
+	# user = User.get_with_hashid(hashid)
+	# hashid = User.query.filter_by(fname='Rohit').first().hashid
+	foo = s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}-{1}-{2}.pdf'.format(39, 'Datta', 'Rohit')).get()
+	User.get_with_hashid(hashid)
+	response = make_response(foo['Body'].read())
+	response.headers['Content-Type'] = 'application/pdf'
+	return response

@@ -2,6 +2,12 @@ import requests
 import settings
 from functools import wraps
 from flask import g, flash, redirect, url_for
+from hashids import Hashids
+import boto3
+
+resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
+s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
+					aws_secret_access_key=settings.AWS_SECRET_KEY)
 
 def validate_email(email):
 	return requests.get(

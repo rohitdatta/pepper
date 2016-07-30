@@ -3,6 +3,8 @@ from mito.app import DB
 from datetime import datetime
 from helpers import hash_pwd
 from flask_user import UserMixin
+from mito.utils import resume_hash
+
 
 class User(DB.Model, UserMixin):
 	__tablename__ = 'users'
@@ -75,6 +77,24 @@ class User(DB.Model, UserMixin):
 
 	def get_id(self):
 		return unicode(self.id)
+
+	@property
+	def hashid(self):
+		try:
+			return self._hashid
+		except AttributeError:
+			if not self.id:
+				raise Exception("this form doesn't have an id yet, commit it first.")
+			self._hashid = resume_hash.encode(self.id)
+		return self._hashid
+
+	@classmethod
+	def get_with_hashid(cls, hashid):
+		try:
+			id = resume_hash.decode(hashid)[0]
+			return cls.query.get(id)
+		except IndexError:
+			return None
 
 class Role(DB.Model):
 	__tablename__ = 'role'

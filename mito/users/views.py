@@ -10,11 +10,8 @@ from sendgrid.helpers.mail import *
 import urllib2
 import string, random
 from flask_user import roles_required
-import boto3
+from mito.utils import s3
 
-# Initialise the S3 client
-s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
-					aws_secret_access_key=settings.AWS_SECRET_KEY)
 def landing():
 	if current_user.is_authenticated:
 		return redirect(url_for('dashboard'))

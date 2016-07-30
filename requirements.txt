@@ -16,3 +16,4 @@ redis
 flask-redis==0.0.6
 flask-user
 boto3
+hashids
