@@ -15,6 +15,7 @@ def configure_routes(app):
 
 	# Admin Pages
 	app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.views.create_corp_user, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/internal', 'internal-login', view_func=users.views.internal_login, methods=['GET', 'POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])

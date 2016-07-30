@@ -17,23 +17,13 @@ def landing():
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
-@login_required
-def dashboard():
-	if current_user.status == 'ACCEPTED':
-		return redirect(url_for('accept-invite'))
-	elif current_user.status == 'CONFIRMED':
-		return render_template('users/dashboard/confirmed.html')
-	elif current_user.status == 'REJECTED':
-		return render_template('users/dashboard/rejected.html', user=current_user)
-	elif current_user.status == 'WAITLISTED':
-		return render_template('users/dashboard/waitlisted.html', user=current_user)
-	elif current_user.status == 'ADMIN':
-		users = User.query.order_by(User.created.asc())
-		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
-	return render_template('users/dashboard/pending.html', user=current_user)
-
 def login():
 	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('landing'))
 
 def callback():
 	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL, ''))
@@ -49,6 +39,7 @@ def callback():
 			user = User.query.filter_by(email=user_info['data']['email']).first()
 			if user is None:
 				user = User(user_info)
+				user.roles.append(Role(name='attendee'))
 			else:
 				user.access_token = access_token
 			DB.session.add(user)
@@ -65,6 +56,7 @@ def callback():
 	return redirect(url_for('confirm-registration'))
 
 @login_required
+@roles_required('attendee')
 def confirm_registration():
 	if request.method == 'GET':
 		return render_template('users/confirm.html', user=current_user)
@@ -85,14 +77,27 @@ def confirm_registration():
 		return redirect(url_for('dashboard'))
 
 @login_required
-def logout():
-	logout_user()
-	return redirect(url_for('landing'))
+def dashboard():
+	if current_user.type == 'corporate':
+		return redirect(url_for('corp-dash'))
+	if current_user.status == 'ACCEPTED':
+		return redirect(url_for('accept-invite'))
+	elif current_user.status == 'CONFIRMED':
+		return render_template('users/dashboard/confirmed.html')
+	elif current_user.status == 'REJECTED':
+		return render_template('users/dashboard/rejected.html', user=current_user)
+	elif current_user.status == 'WAITLISTED':
+		return render_template('users/dashboard/waitlisted.html', user=current_user)
+	elif current_user.status == 'ADMIN':
+		users = User.query.order_by(User.created.asc())
+		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
+	return render_template('users/dashboard/pending.html', user=current_user)
 
 def is_pdf(filename):
 	return '.' in filename and (filename.rsplit('.', 1)[1] == 'pdf' or filename.rsplit('.', 1)[1] == 'PDF')
 
 @login_required
+@roles_required('attendee')
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
@@ -126,7 +131,7 @@ def accept():
 
 @login_required
 @roles_required('admin')
-def create_corp_user(): #TODO: require this to be an admin function
+def create_corp_user(): # TODO: require this to be an admin function
 	if request.method == 'GET':
 		return render_template('users/admin/create_corp.html')
 	else:
@@ -136,12 +141,12 @@ def create_corp_user(): #TODO: require this to be an admin function
 					 'email': request.form['email']}
 		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
 		user_data['type'] = 'corporate'
-		user = User(user_data) #TODO: add the recruiter role here
+		user = User(user_data) # TODO: add the recruiter role here
 		user.roles.append(Role(name='corp'))
 		DB.session.add(user)
 		DB.session.commit()
 
-		# send invite to the recruiter #TODO: make this a reset password link
+		# send invite to the recruiter # TODO: make this a reset password link
 		data = {
 			"content": [
 				{
@@ -173,3 +178,15 @@ def create_corp_user(): #TODO: require this to be an admin function
 		print response.status_code
 		flash('You successfully create a new recruiter account.', 'success')
 		return render_template('users/admin/create_corp.html')
+
+def internal_login():
+	if settings.DEBUG:
+		if request.method == 'GET':
+			return render_template('users/admin/internal_login.html')
+		else:
+			id = request.form['id']
+			user = User.query.filter_by(id=id).first()
+			login_user(user, remember=True)
+			return redirect(url_for('landing'))
+	else:
+		return 'Disabled internal debug mode'

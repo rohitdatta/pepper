@@ -52,7 +52,7 @@ def corporate_search():
 		users = users.filter(User.class_standing.in_(class_standings))
 		all_users = users.all()
 	users = users.all()
-	return render_template('corporate/results.html', universities=universities, class_standings=class_standings, majors=majors)
+	return render_template('corporate/results.html', users=users, universities=universities, class_standings=class_standings, majors=majors)
 
 # @corp_login_required
 # @roles_required(['corp', 'admin'])
