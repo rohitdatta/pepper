@@ -1,9 +1,70 @@
-Logged in
-Here's the data we have on you:
-ID: {{ user.id }}
-Name: {{ user.fname }} {{ user.lname }}
-Email: {{ user.email }}
-<a href="/logout">Logout</a>
+{#{% extends 'layouts/base.html' %}#}
+{#{% block body %}#}
+	This page is used for confirming attendance to HackTX after MyMLH sign in.
+
+<table>
+	<tr>
+		<td>Name: </td>
+		<td>{{ user.fname }} {{ user.lname }}</
+	</tr>
+	<tr>
+		<td>Email:</td>
+		<td>{{ user.email }}</td>
+	</tr>
+	<tr>
+		<td>Class Standing:</td>
+		<td>{{ user.class_standing }}</td>
+	</tr>
+	<tr>
+		<td>Major:</td>
+		<td>{{ user.major }}</td>
+	</tr>
+	<tr>
+		<td>Shirt Size:</td>
+		<td>{{ user.shirt_size }}</td>
+	</tr>
+	<tr>
+		<td>Dietary Restrictions:</td>
+		<td>{{ user.dietary_restrictions }}</td>
+	</tr>
+	<tr>
+		<td>Birthday:</td>
+		<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
+	</tr>
+	<tr>
+		<td>Gender</td>
+		<td>{{ user.gender }}</td>
+	</tr>
+	<tr>
+		<td>Phone Number</td>
+		<td>{{ user.phone_number }}</td>
+	</tr>
+	<tr>
+		<td>School</td>
+		<td>{{ user.school }}</td>
+	</tr>
+	<tr>
+		<td>Special Needs</td>
+		<td>{{ user.special_needs }}</td>
+	</tr>
+</table>
+<h3>Additional Information</h3>
+<p>At {{ config.HACKATHON_NAME }}, we work hard to celebrate diversity, and part of that involves taking a critical look at ourselves to see how we've been doing. We would love to understand the demographic breakdown, so we can make further improvements in the future. Please select <i>I choose not to disclose</i> if you do not wish to provide this information. It will not be considered in the application process or thereafter.</p>
+
 <form action="/confirm" method="POST">
+	<input type="checkbox" name="race" value="AMERICAN_INDIAN_ALASKAN">American Indian / Alaskan Native
+	<input type="checkbox" name="race" value="ASIAN">Asian
+	<input type="checkbox" name="race" value="BLACK_AFRICAN_AMERICAN">Black and African American
+	<input type="checkbox" name="race" value="HISPANIC_LATINO">Hispanic or Latino
+	<input type="checkbox" name="race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER">Native Hawaiian or Other Pacific Islander
+	<input type="checkbox" name="race" value="EUROPEAN_WHITE">White (Not of Hispanic Origin)
+	<input type="checkbox" name="race" value="NO_DISCLOSURE">I choose not to disclose
+
+	<p>Is this your first hackathon?</p>
+	<input type="radio" name="first-time" value="YES"> Yes<br>
+	<input type="radio" name="first-time" value="NO"> No<br>
+	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose
+
     <button type="submit">Submit</button>
 </form>
+{#{% endblock %}#}

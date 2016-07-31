@@ -56,11 +56,17 @@ def callback():
 	return redirect(url_for('confirm-registration'))
 
 @login_required
-@roles_required('attendee')
 def confirm_registration():
 	if request.method == 'GET':
 		return render_template('users/confirm.html', user=current_user)
 	else:
+		race_list = request.form.getlist('race')
+		first_timer = request.form.get('first-time')
+		if None in (race_list, first_timer):
+			flash('You must fill out the required fields')
+			return render_template('users/confirm.html', user=current_user)
+		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
+		current_user.first_hackathon = first_timer
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
@@ -80,7 +86,9 @@ def confirm_registration():
 def dashboard():
 	if current_user.type == 'corporate':
 		return redirect(url_for('corp-dash'))
-	if current_user.status == 'ACCEPTED':
+	if current_user.status == 'NEW':
+		return redirect(url_for('confirm-registration'))
+	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
 	elif current_user.status == 'CONFIRMED':
 		return render_template('users/dashboard/confirmed.html')
@@ -97,16 +105,13 @@ def is_pdf(filename):
 	return '.' in filename and (filename.rsplit('.', 1)[1] == 'pdf' or filename.rsplit('.', 1)[1] == 'PDF')
 
 @login_required
-@roles_required('attendee')
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
-			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
-				settings.HACKATHON_NAME),
-			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
-				settings.HACKATHON_NAME),
-			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
-				settings.HACKATHON_NAME)
+			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(settings.HACKATHON_NAME),
+			None: "Corporate users cannot view this page."
 		}
 		flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
@@ -130,7 +135,7 @@ def accept():
 		return redirect(url_for('dashboard'))
 
 @login_required
-@roles_required('admin')
+# @roles_required('admin')
 def create_corp_user(): # TODO: require this to be an admin function
 	if request.method == 'GET':
 		return render_template('users/admin/create_corp.html')

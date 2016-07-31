@@ -30,6 +30,7 @@ class User(DB.Model, UserMixin):
 	password = DB.Column(DB.String(100))
 	type = DB.Column(DB.String(100))
 	race = DB.Column(DB.String(255))
+	first_hackathon = DB.Column(DB.String(100))
 	resume_uploaded = DB.Column(DB.Boolean)
 
 	def __init__(self, dict):
