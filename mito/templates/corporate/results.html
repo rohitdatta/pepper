@@ -2,9 +2,9 @@ Univ
 
 <h1>Users</h1>
 {% for user in users %}
-
-{{ user.fname }} {{ user.lname }} <a href="{{ url_for('resume-view') }}?id={{ user.hashid }}">View Resume</a>
-
+<p>
+{{ user.fname }} {{ user.lname }} {% if user.resume_uploaded %}<a href="{{ url_for('resume-view') }}?id={{ user.hashid }}">View Resume</a>{% endif %}
+</p>
 {% endfor %}
 {% if universities %}
     {% for university in universities %}

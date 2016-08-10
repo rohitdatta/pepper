@@ -9,7 +9,6 @@ import sendgrid
 from sendgrid.helpers.mail import *
 import urllib2
 import string, random
-from flask_user import roles_required
 from mito.utils import s3
 
 def landing():
@@ -123,6 +122,7 @@ def accept():
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS
 				s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname, current_user.fname)).put(Body=resume)
+				current_user.resume_uploaded = True
 			else:
 				flash('Resume must be in PDF format')
 				return redirect(url_for('accept-invite'))
@@ -186,6 +186,8 @@ def create_corp_user(): # TODO: require this to be an admin function
 
 def internal_login():
 	if settings.DEBUG:
+		if current_user.is_authenticated:
+			logout_user()
 		if request.method == 'GET':
 			return render_template('users/admin/internal_login.html')
 		else:

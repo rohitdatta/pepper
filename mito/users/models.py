@@ -50,6 +50,7 @@ class User(DB.Model, UserMixin):
 			self.checked_in = False
 			self.type = 'MLH'
 			self.access_token = dict['access_token']
+			self.resume_uploaded = False
 		elif dict['type'] == 'corporate': # creating a corporate user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation

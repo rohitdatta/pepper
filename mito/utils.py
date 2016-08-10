@@ -37,7 +37,8 @@ def corp_login_required(f):
 	def decorated_view(*args, **kwargs):
 		if not g.user.is_authenticated:
 			return redirect(url_for('corp-login'))
-		if ['admin', 'corporate'] not in get_current_user_roles():
+		roles = [role.name for role in get_current_user_roles()]
+		if 'corp' not in roles:
 			return 'unauthorized'
 		return f(*args, **kwargs)
 	return decorated_view

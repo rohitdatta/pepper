@@ -3,12 +3,13 @@ from flask.ext.login import login_user, current_user, login_required
 from mito.users import User
 from helpers import check_password
 from mito.utils import corp_login_required, roles_required, s3
-import boto3
 from mito import settings
 
 
 def login():
 	if request.method == 'GET':
+		if current_user.is_authenticated:
+			return redirect(url_for('corp-dash'))
 		return render_template('corporate/login.html')
 	else:
 		email = request.form['email']
@@ -27,11 +28,14 @@ def login():
 @corp_login_required
 @roles_required(['corp', 'admin'])
 def corporate_dash():
-	return render_template('corporate/dashboard.html')
+	return render_template('corporate/dashboard.html', user=current_user)
 
 @corp_login_required
 @roles_required(['corp', 'admin'])
 def corporate_search():
+	if all(['u' not in request.args, 'c' not in request.args, 'm' not in request.args]):
+		return render_template('corporate/search.html')
+
 	universities = request.args.get('u')
 	if universities:
 		universities = [university.strip() for university in universities.split(',')]
