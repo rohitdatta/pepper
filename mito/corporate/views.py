@@ -4,6 +4,9 @@ from mito.users import User
 from helpers import check_password
 from mito.utils import corp_login_required, roles_required, s3
 from mito import settings
+from sqlalchemy import distinct
+from mito.app import DB
+
 
 
 def login():
@@ -33,30 +36,36 @@ def corporate_dash():
 @corp_login_required
 @roles_required(['corp', 'admin'])
 def corporate_search():
-	if all(['u' not in request.args, 'c' not in request.args, 'm' not in request.args]):
-		return render_template('corporate/search.html')
-
-	universities = request.args.get('u')
-	if universities:
-		universities = [university.strip() for university in universities.split(',')]
-	class_standings = request.args.get('c')
-	if class_standings:
-		class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
-	majors = request.args.get('m')
-	if majors:
-		majors = [major.strip() for major in majors.split(',')]
-	users = User.query
-	if universities:
-		users = users.filter(User.school.in_(universities))
-		all_users = users.all()
-	if majors:
-		users = users.filter(User.major.in_(majors))
-		all_users = users.all()
-	if class_standings:
-		users = users.filter(User.class_standing.in_(class_standings))
-		all_users = users.all()
-	users = users.all()
-	return render_template('corporate/results.html', users=users, universities=universities, class_standings=class_standings, majors=majors)
+	if request.method == 'GET':
+		schools = DB.session.query(distinct(User.school)).all()
+		majors = DB.session.query(distinct(User.major)).all()
+		class_standings = DB.session.query(distinct(User.class_standing)).all()
+		schools, majors, class_standings = [filter(lambda x: x[0] is not None, filter_list) for filter_list in [schools, majors, class_standings]]
+		schools, majors, class_standings = [map(lambda x: x[0], filter_list) for filter_list in [schools, majors, class_standings]]
+		# [school for school in schools if school != None]
+		return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
+	else:
+		universities = request.form.get('universities')
+		if universities:
+			universities = [university.strip() for university in universities.split(',')]
+		class_standings = request.form.get('class_standings')
+		if class_standings:
+			class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
+		majors = request.form.get('majors')
+		if majors:
+			majors = [major.strip() for major in majors.split(',')]
+		users = User.query.filter(User.status == 'CONFIRMED')
+		if universities:
+			users = users.filter(User.school.in_(universities))
+			all_users = users.all()
+		if majors:
+			users = users.filter(User.major.in_(majors))
+			all_users = users.all()
+		if class_standings:
+			users = users.filter(User.class_standing.in_(class_standings))
+			all_users = users.all()
+		users = users.all()
+		return render_template('corporate/results.html', users=users, universities=universities, class_standings=class_standings, majors=majors)
 
 # @corp_login_required
 # @roles_required(['corp', 'admin'])
