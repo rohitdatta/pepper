@@ -6,9 +6,9 @@ Univ
 {{ user.fname }} {{ user.lname }} {% if user.resume_uploaded %}<a href="{{ url_for('resume-view') }}?id={{ user.hashid }}">View Resume</a>{% endif %}
 </p>
 {% endfor %}
-{% if universities %}
-    {% for university in universities %}
-		<p>{{ university }}</p>
+{% if schools %}
+    {% for school in schools %}
+		<p>{{ school }}</p>
 	{% endfor %}
 {% endif %}
 Major

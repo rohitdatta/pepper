@@ -45,18 +45,18 @@ def corporate_search():
 		# [school for school in schools if school != None]
 		return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
 	else:
-		universities = request.form.get('universities')
-		if universities:
-			universities = [university.strip() for university in universities.split(',')]
-		class_standings = request.form.get('class_standings')
-		if class_standings:
-			class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
-		majors = request.form.get('majors')
-		if majors:
-			majors = [major.strip() for major in majors.split(',')]
+		schools = request.form.getlist('schools')
+		# if schools:
+		# 	schools = [school.strip() for school in schools.split(',')]
+		class_standings = request.form.getlist('class_standings')
+		# if class_standings:
+		# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
+		majors = request.form.getlist('majors')
+		# if majors:
+		# 	majors = [major.strip() for major in majors.split(',')]
 		users = User.query.filter(User.status == 'CONFIRMED')
-		if universities:
-			users = users.filter(User.school.in_(universities))
+		if schools:
+			users = users.filter(User.school.in_(schools))
 			all_users = users.all()
 		if majors:
 			users = users.filter(User.major.in_(majors))
@@ -65,7 +65,7 @@ def corporate_search():
 			users = users.filter(User.class_standing.in_(class_standings))
 			all_users = users.all()
 		users = users.all()
-		return render_template('corporate/results.html', users=users, universities=universities, class_standings=class_standings, majors=majors)
+		return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings, majors=majors)
 
 # @corp_login_required
 # @roles_required(['corp', 'admin'])
