@@ -16,12 +16,16 @@ def configure_routes(app):
 	# Admin Pages
 	app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.views.create_corp_user, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/internal', 'internal-login', view_func=users.views.internal_login, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/initial-create', 'initial-create', view_func=users.views.initial_create, methods=['GET', 'POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
 
 	# Corporate Portal
 	app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
+	app.add_url_rule('/corp/login/reset', 'forgot-password', view_func=corporate.views.forgot_password, methods=['GET', 'POST'])
+	app.add_url_rule('/corp/login/reset/<token>', 'reset-password', view_func=corporate.views.reset_password, methods=['GET', 'POST'])
+
 	app.add_url_rule('/corp/dashboard', 'corp-dash', view_func=corporate.views.corporate_dash, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/search', 'corp-search', view_func=corporate.views.corporate_search, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/view/resume', 'resume-view', view_func=corporate.views.view_resume, methods=['GET'])

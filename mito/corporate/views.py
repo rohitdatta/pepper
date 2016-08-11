@@ -6,8 +6,7 @@ from mito.utils import corp_login_required, roles_required, s3
 from mito import settings
 from sqlalchemy import distinct
 from mito.app import DB
-
-
+from mito.users.helpers import hash_pwd
 
 def login():
 	if request.method == 'GET':
@@ -27,6 +26,39 @@ def login():
 		login_user(user, remember=True)
 		flash('Logged in successfully!', 'success')
 		return redirect(url_for('corp-dash'))
+
+def forgot_password():
+	if request.method == 'GET':
+		return render_template('users/forgot_password.html')
+	else:
+		email = request.form.get('email')
+		user = User.query.filter_by(email=email).first()
+		if user:
+			user.send_password_reset()
+		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
+		return redirect(url_for('corp-login'))
+
+def reset_password(token):
+	if request.method == 'GET':
+		# find the correct user and log them in then prompt them for new password
+		return render_template('users/reset_password.html')
+	else:
+		# take the password they've submitted and change it accordingly
+		email = current_user.email
+		user = User.from_password_token(email, token)
+		if user and user.id == current_user.id:
+			if request.form.get('password') == request.form.get('password-check'):
+				user.password = hash_pwd(request.form['password'])
+				DB.session.add(user)
+				DB.session.commit()
+				flash('Succesfully changed password!', 'success')
+				return redirect(url_for('corp-dash'))
+			else:
+				flash('You need to enter the same password in both fields!', 'error')
+				return redirect(url_for('reset-password'), token=token)
+		else:
+			flash('Failed to reset password. This is an invalid link. Please contact request a new reset email', 'error')
+			return redirect(url_for('forgot-password'))
 
 @corp_login_required
 @roles_required(['corp', 'admin'])
