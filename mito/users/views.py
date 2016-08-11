@@ -138,7 +138,7 @@ def accept():
 # @roles_required('admin')
 def create_corp_user(): # TODO: require this to be an admin function
 	if request.method == 'GET':
-		return render_template('users/admin/create_corp.html')
+		return render_template('users/admin/create_user.html')
 	else:
 		# Build a user based on the request form
 		user_data = {'fname': request.form['fname'],
@@ -182,8 +182,9 @@ def create_corp_user(): # TODO: require this to be an admin function
 		response = sg.client.mail.send.post(request_body=data)
 		print response.status_code
 		flash('You successfully create a new recruiter account.', 'success')
-		return render_template('users/admin/create_corp.html')
+		return render_template('users/admin/create_user.html')
 
+# Developers can use this portal to log into any particular user when debugging
 def internal_login():
 	if settings.DEBUG:
 		if current_user.is_authenticated:
@@ -197,3 +198,23 @@ def internal_login():
 			return redirect(url_for('landing'))
 	else:
 		return 'Disabled internal debug mode'
+
+def initial_create():
+	user_count = User.query.count()
+	if user_count == 0:
+		if request.method == 'GET':
+			return 'Create the initial user'
+		else:
+			user_info = {
+				'email': request.form.get('email'),
+				'fname': request.form.get('fname'),
+				'lname': request.form.get('lname'),
+				'type': 'admin'
+			}
+			user = User(user_info)
+			user.roles.append(Role(name='admin'))
+	else:
+		return 'Cannot create new admin'
+#
+# @login_required
+# def create_admin_user():

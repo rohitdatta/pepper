@@ -1,16 +1,19 @@
 <h1>Search Page</h1>
 
 <form method="POST" action="">
+	Schools
 	<select name="schools" multiple>
 		{% for school in schools %}
 		<option value="{{ school }}">{{ school }}</option>
 		{% endfor %}
 	</select>
+Majors
 	<select name="majors" multiple>
 		{% for major in majors %}
 		<option value="{{ major }}">{{ major }}</option>
 		{% endfor %}
 	</select>
+Class Standings
 	<select name="class_standings" multiple>
 		{% for class_standing in class_standings %}
 		<option value="{{ class_standing }}">{{ class_standing }}</option>

@@ -51,7 +51,7 @@ class User(DB.Model, UserMixin):
 			self.type = 'MLH'
 			self.access_token = dict['access_token']
 			self.resume_uploaded = False
-		elif dict['type'] == 'corporate': # creating a corporate user
+		else: # creating a non-OAuth user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation
 			# if not email_validation['is_valid']:
@@ -64,7 +64,11 @@ class User(DB.Model, UserMixin):
 			self.password = hash_pwd(dict['password'])
 			self.fname = dict['fname']
 			self.lname = dict['lname']
-			self.type = 'corporate'
+			if dict['type'] == 'corporate': # User account for a recruiter
+				self.type = 'corporate'
+			else: # User account for admins
+				self.type = 'admin'
+
 
 	@property
 	def is_authenticated(self):

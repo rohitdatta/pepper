@@ -1,11 +1,11 @@
-Univ
-
-<h1>Users</h1>
+<h1>Results</h1>
 {% for user in users %}
 <p>
 {{ user.fname }} {{ user.lname }} {% if user.resume_uploaded %}<a href="{{ url_for('resume-view') }}?id={{ user.hashid }}">View Resume</a>{% endif %}
 </p>
 {% endfor %}
+
+<h1>Debugging Info</h1>
 {% if schools %}
     {% for school in schools %}
 		<p>{{ school }}</p>
