@@ -5,11 +5,10 @@ from models import User, Role
 from mito.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from mito import settings
-import sendgrid
 from sendgrid.helpers.mail import *
 import urllib2
 import string, random
-from mito.utils import s3
+from mito.utils import s3, send_email
 
 def landing():
 	if current_user.is_authenticated:
@@ -70,7 +69,6 @@ def confirm_registration():
 		DB.session.add(current_user)
 		DB.session.commit()
 		# send a confirmation email. TODO: this is kinda verbose and long
-		sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 		from_email = Email(settings.GENERAL_INFO_EMAIL)
 		subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
 		to_email = Email(current_user.email)
@@ -152,35 +150,15 @@ def create_corp_user(): # TODO: require this to be an admin function
 		DB.session.commit()
 
 		# send invite to the recruiter # TODO: make this a reset password link
-		data = {
-			"content": [
-				{
-					"type": "text/plain",
-					"value": "Welcome to HackTX! Here's your login info: Password: {0}".format(user_data['password'])
-				}
-			],
-			"from": {
-				"email": "partnerships@freetailhackers.com",
-				"name": "Freetail Hackers"
-			},
-			"personalizations": [
-				{
-					"to": [
-						{
-							"email": user.email,
-							"name": '{0} {1}'.format(user.fname, user.lname)
-						}
-					]
-				}
-			],
-			"reply_to": {
-				"email": "partnerships@freetailhackers.com",
-				"name": "HackTX Team"
-			},
-			"subject": "Your invitation to join HackTX",
-		}
-		response = sg.client.mail.send.post(request_body=data)
-		print response.status_code
+		txt = render_template('emails/corporate_welcome.txt', user=user)
+		html = render_template('emails/corporate_welcome.html', user=user)
+
+		try:
+			if not send_email(from_email=settings.GENERAL_INFO_EMAIL, subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME), to_email=user.email, txt_content=txt, html_content=html):
+				print 'Failed to send message'
+				flash('Unable to send message to recruiter', 'error')
+		except ValueError as e:
+			print e
 		flash('You successfully create a new recruiter account.', 'success')
 		return render_template('users/admin/create_user.html')
 
