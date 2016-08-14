@@ -61,7 +61,6 @@ class User(DB.Model, UserMixin):
 			# 		raise ValueError('%s is an invalid address' % email)
 
 			self.email = email
-			self.password = hash_pwd(dict['password'])
 			self.fname = dict['fname']
 			self.lname = dict['lname']
 			if dict['type'] == 'corporate': # User account for a recruiter
@@ -106,7 +105,7 @@ class User(DB.Model, UserMixin):
 class Role(DB.Model):
 	__tablename__ = 'role'
 	id = DB.Column(DB.Integer(), primary_key=True)
-	name = DB.Column(DB.String(), unique=True)
+	name = DB.Column(DB.String())
 
 class UserRoles(DB.Model):
 	__tablename__ = 'user_roles'

@@ -4,7 +4,7 @@ from functools import wraps
 from flask import g, flash, redirect, url_for
 from hashids import Hashids
 import boto3
-from itsdangerous import URLSafeTimedSerializer
+from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
 import sendgrid
 from sendgrid.helpers.mail import *
 
@@ -12,6 +12,7 @@ resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
 					aws_secret_access_key=settings.AWS_SECRET_KEY)
 ts = URLSafeTimedSerializer(settings.SECRET_KEY)
+s = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 
 

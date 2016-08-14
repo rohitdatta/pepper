@@ -25,6 +25,7 @@ def configure_routes(app):
 	app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/login/reset', 'forgot-password', view_func=corporate.views.forgot_password, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/login/reset/<token>', 'reset-password', view_func=corporate.views.reset_password, methods=['GET', 'POST'])
+	app.add_url_rule('/corp/setup/<token>', 'new-user-setup', view_func=corporate.views.new_user_setup, methods=['GET', 'POST'])
 
 	app.add_url_rule('/corp/dashboard', 'corp-dash', view_func=corporate.views.corporate_dash, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/search', 'corp-search', view_func=corporate.views.corporate_search, methods=['GET', 'POST'])

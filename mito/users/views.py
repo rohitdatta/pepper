@@ -8,7 +8,7 @@ from mito import settings
 from sendgrid.helpers.mail import *
 import urllib2
 import string, random
-from mito.utils import s3, send_email
+from mito.utils import s3, send_email, s
 
 def landing():
 	if current_user.is_authenticated:
@@ -142,7 +142,6 @@ def create_corp_user(): # TODO: require this to be an admin function
 		user_data = {'fname': request.form['fname'],
 					 'lname': request.form['lname'],
 					 'email': request.form['email']}
-		user_data['password'] = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(50))
 		user_data['type'] = 'corporate'
 		user = User(user_data) # TODO: add the recruiter role here
 		user.roles.append(Role(name='corp'))
@@ -150,8 +149,10 @@ def create_corp_user(): # TODO: require this to be an admin function
 		DB.session.commit()
 
 		# send invite to the recruiter # TODO: make this a reset password link
-		txt = render_template('emails/corporate_welcome.txt', user=user)
-		html = render_template('emails/corporate_welcome.html', user=user)
+		token = s.dumps(user.email)
+		url = url_for('reset-password', token=token, _external=True)
+		txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
+		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
 
 		try:
 			if not send_email(from_email=settings.GENERAL_INFO_EMAIL, subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME), to_email=user.email, txt_content=txt, html_content=html):

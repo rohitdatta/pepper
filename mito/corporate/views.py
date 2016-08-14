@@ -2,7 +2,7 @@ from flask import request, render_template, flash, redirect, url_for, g, make_re
 from flask.ext.login import login_user, current_user, login_required
 from mito.users import User
 from helpers import check_password
-from mito.utils import corp_login_required, roles_required, s3, ts
+from mito.utils import corp_login_required, roles_required, s3, ts, s
 from mito import settings
 from sqlalchemy import distinct
 from mito.app import DB
@@ -19,13 +19,43 @@ def login():
 		user = User.query.filter_by(email=email).first()
 		if user is None:
 			flash("We couldn't find an account related with this email. Please verify the email entered.", "warning")
-			return redirect(url_for('login'))
+			redirect(url_for('login'))
+		elif user.password is None:
+			flash('This account has not been setup yet. Please click the login link in your setup email.')
+			return redirect(url_for('corp-login'))
 		elif not check_password(user.password, password):
 			flash("Invalid Password. Please verify the password entered.", 'warning')
 			return redirect(url_for('login'))
 		login_user(user, remember=True)
 		flash('Logged in successfully!', 'success')
 		return redirect(url_for('corp-dash'))
+
+def new_user_setup(token):
+	try:
+		email = s.loads(token)
+		user = User.query.filter_by(email=email).first()
+		if user.password is not None:
+			raise Exception('User has already been set up')
+	except:
+		return render_template('layouts/error.html', error="That's an invalid link"), 401
+
+	if request.method == 'GET':
+		return render_template('users/account_setup.html')
+	else:
+		if user:
+			if request.form.get('password') == request.form.get('password-check'):
+				user.password = hash_pwd(request.form['password'])
+				DB.session.add(user)
+				DB.session.commit()
+				login_user(user, remember=True)
+				flash('Succesfully setup account!', 'success')
+				return redirect(url_for('corp-dash'))
+			else:
+				flash('You need to enter the same password in both fields!', 'error')
+				return redirect(url_for('new-user-setup'), token=token)
+		else:
+			flash('Failed to setup your account. Please double check the link in your email. If this problem persists, please reach out to us to investigate', 'error')
+			return redirect(url_for('landing'))
 
 def forgot_password():
 	if request.method == 'GET':
