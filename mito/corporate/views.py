@@ -2,7 +2,7 @@ from flask import request, render_template, flash, redirect, url_for, g, make_re
 from flask.ext.login import login_user, current_user, login_required
 from mito.users import User
 from helpers import check_password
-from mito.utils import corp_login_required, roles_required, s3
+from mito.utils import corp_login_required, roles_required, s3, ts
 from mito import settings
 from sqlalchemy import distinct
 from mito.app import DB
@@ -34,30 +34,39 @@ def forgot_password():
 		email = request.form.get('email')
 		user = User.query.filter_by(email=email).first()
 		if user:
-			user.send_password_reset()
+			token = ts.dumps(user.email, salt='recover-key')
+			url = url_for('reset-password', token=token, _external=True)
+			html = render_template('emails/reset_password.html', user=user, link=url)
+			# TODO: send email
+
 		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
 		return redirect(url_for('corp-login'))
 
 def reset_password(token):
+	try:
+		email = ts.loads(token, salt='recover-key', max_age=86400)
+		user = User.query.filter_by(email=email).first()
+	except:
+		return render_template('layouts/error.html', error="That's an invalid link"), 401
+
 	if request.method == 'GET':
 		# find the correct user and log them in then prompt them for new password
 		return render_template('users/reset_password.html')
 	else:
 		# take the password they've submitted and change it accordingly
-		email = current_user.email
-		user = User.from_password_token(email, token)
-		if user and user.id == current_user.id:
+		if user:
 			if request.form.get('password') == request.form.get('password-check'):
 				user.password = hash_pwd(request.form['password'])
 				DB.session.add(user)
 				DB.session.commit()
+				login_user(user, remember=True)
 				flash('Succesfully changed password!', 'success')
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
 				return redirect(url_for('reset-password'), token=token)
 		else:
-			flash('Failed to reset password. This is an invalid link. Please contact request a new reset email', 'error')
+			flash('Failed to reset password. This is an invalid link. Please contact us if this error persists', 'error')
 			return redirect(url_for('forgot-password'))
 
 @corp_login_required

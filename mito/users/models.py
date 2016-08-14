@@ -3,7 +3,7 @@ from mito.app import DB
 from datetime import datetime
 from helpers import hash_pwd
 from flask_user import UserMixin
-from mito.utils import resume_hash
+from mito.utils import resume_hash, ts
 
 
 class User(DB.Model, UserMixin):
