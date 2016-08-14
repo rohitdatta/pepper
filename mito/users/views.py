@@ -1,7 +1,7 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask import request, render_template, redirect, url_for, flash
 import requests
-from models import User, Role
+from models import User
 from mito.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from mito import settings
@@ -37,7 +37,7 @@ def callback():
 			user = User.query.filter_by(email=user_info['data']['email']).first()
 			if user is None:
 				user = User(user_info)
-				user.roles.append(Role(name='attendee'))
+				# user.roles.append(Role(name='attendee'))
 			else:
 				user.access_token = access_token
 			DB.session.add(user)
@@ -144,7 +144,7 @@ def create_corp_user(): # TODO: require this to be an admin function
 					 'email': request.form['email']}
 		user_data['type'] = 'corporate'
 		user = User(user_data) # TODO: add the recruiter role here
-		user.roles.append(Role(name='corp'))
+		# user.roles.append(Role(name='corp'))
 		DB.session.add(user)
 		DB.session.commit()
 
@@ -191,7 +191,7 @@ def initial_create():
 				'type': 'admin'
 			}
 			user = User(user_info)
-			user.roles.append(Role(name='admin'))
+			# user.roles.append(Role(name='admin'))
 	else:
 		return 'Cannot create new admin'
 #

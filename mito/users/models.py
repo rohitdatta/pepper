@@ -25,7 +25,7 @@ class User(DB.Model, UserMixin):
 	school = DB.Column(DB.String(255)) # TODO: get this to be a school obj
 	special_needs = DB.Column(DB.Text)
 	checked_in = DB.Column(DB.Boolean)
-	roles = DB.relationship('Role', secondary='user_roles', backref=DB.backref('users', lazy='dynamic'))
+	roles = DB.relationship('UserRole', backref='users', lazy='dynamic')
 	access_token = DB.Column(DB.String(255))
 	password = DB.Column(DB.String(100))
 	type = DB.Column(DB.String(100))
@@ -102,13 +102,9 @@ class User(DB.Model, UserMixin):
 		except IndexError:
 			return None
 
-class Role(DB.Model):
-	__tablename__ = 'role'
-	id = DB.Column(DB.Integer(), primary_key=True)
-	name = DB.Column(DB.String())
 
-class UserRoles(DB.Model):
+class UserRole(DB.Model):
 	__tablename__ = 'user_roles'
 	id = DB.Column(DB.Integer(), primary_key=True)
 	user_id = DB.Column(DB.Integer(), DB.ForeignKey('users.id', ondelete='CASCADE'))
-	role_id = DB.Column(DB.Integer(), DB.ForeignKey('role.id', ondelete='CASCADE'))
+	role_id = DB.Column(DB.String(64))
