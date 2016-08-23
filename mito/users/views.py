@@ -1,14 +1,14 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask import request, render_template, redirect, url_for, flash
 import requests
-from models import User
+from models import User, UserRole
 from mito.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from mito import settings
 from sendgrid.helpers.mail import *
 import urllib2
 import string, random
-from mito.utils import s3, send_email, s
+from mito.utils import s3, send_email, s, roles_required
 
 def landing():
 	if current_user.is_authenticated:
@@ -133,7 +133,7 @@ def accept():
 		return redirect(url_for('dashboard'))
 
 @login_required
-# @roles_required('admin')
+@roles_required('admin')
 def create_corp_user(): # TODO: require this to be an admin function
 	if request.method == 'GET':
 		return render_template('users/admin/create_user.html')
@@ -155,6 +155,7 @@ def create_corp_user(): # TODO: require this to be an admin function
 		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
 
 		try:
+			print txt
 			if not send_email(from_email=settings.GENERAL_INFO_EMAIL, subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME), to_email=user.email, txt_content=txt, html_content=html):
 				print 'Failed to send message'
 				flash('Unable to send message to recruiter', 'error')
@@ -164,7 +165,7 @@ def create_corp_user(): # TODO: require this to be an admin function
 		return render_template('users/admin/create_user.html')
 
 # Developers can use this portal to log into any particular user when debugging
-def internal_login():
+def debug_user():
 	if settings.DEBUG:
 		if current_user.is_authenticated:
 			logout_user()
@@ -173,6 +174,8 @@ def internal_login():
 		else:
 			id = request.form['id']
 			user = User.query.filter_by(id=id).first()
+			if user is None:
+				return 'User does not exist'
 			login_user(user, remember=True)
 			return redirect(url_for('landing'))
 	else:
@@ -182,18 +185,25 @@ def initial_create():
 	user_count = User.query.count()
 	if user_count == 0:
 		if request.method == 'GET':
-			return 'Create the initial user'
+			return render_template('users/admin/initial_create.html')
 		else:
 			user_info = {
 				'email': request.form.get('email'),
 				'fname': request.form.get('fname'),
 				'lname': request.form.get('lname'),
+				'password': request.form.get('password'),
 				'type': 'admin'
 			}
 			user = User(user_info)
-			# user.roles.append(Role(name='admin'))
+			DB.session.add(user)
+			DB.session.commit()
+
+			# add admin role to the user
+			role = UserRole(user.id)
+			role.name = 'admin'
+			DB.session.add(role)
+			DB.session.commit()
+
+			return 'Successfully created initial admin user'
 	else:
 		return 'Cannot create new admin'
-#
-# @login_required
-# def create_admin_user():

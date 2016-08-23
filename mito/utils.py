@@ -22,15 +22,21 @@ def validate_email(email):
 		auth=("api", settings.MAILGUN_PUB_KEY),
 		params={"address": email})
 
-
+# A user who has any of these roles will be permitted to view this page
 def roles_required(*role_names):
 	def wrapper(func):
 		@wraps(func)
 		def decorated_view(*args, **kwargs):
 			if not g.user.is_authenticated:
 				return redirect(url_for('corp-login'))
-			if not g.user.has_roles(*role_names):
-				return 'Not authorized to view this page'
+			user_roles = [role.name for role in get_current_user_roles()]
+			authorized = False
+			for role in role_names:
+				if role in user_roles:
+					authorized = True
+					break
+			if not authorized:
+				return 'Unauthorized'
 			return func(*args, **kwargs)
 		return decorated_view
 	return wrapper
@@ -39,16 +45,12 @@ def roles_required(*role_names):
 def get_current_user_roles():
 	return g.user.roles
 
+# Require user to be logged in and redirect unauthenticated users to corporate login screen
 def corp_login_required(f):
 	@wraps(f)
 	def decorated_view(*args, **kwargs):
 		if not g.user.is_authenticated:
 			return redirect(url_for('corp-login'))
-		if g.user.require_password_change:
-			return redirect(url_for('reset-password'))
-		roles = [role.name for role in get_current_user_roles()]
-		if 'corp' not in roles:
-			return 'unauthorized'
 		return f(*args, **kwargs)
 	return decorated_view
 

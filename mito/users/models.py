@@ -67,6 +67,7 @@ class User(DB.Model, UserMixin):
 				self.type = 'corporate'
 			else: # User account for admins
 				self.type = 'admin'
+				self.password = hash_pwd(dict['password'])
 
 
 	@property
@@ -107,4 +108,7 @@ class UserRole(DB.Model):
 	__tablename__ = 'user_roles'
 	id = DB.Column(DB.Integer(), primary_key=True)
 	user_id = DB.Column(DB.Integer(), DB.ForeignKey('users.id', ondelete='CASCADE'))
-	role_id = DB.Column(DB.String(64))
+	name = DB.Column(DB.String(64))
+
+	def __init__(self, user_id):
+		self.user_id = user_id

@@ -100,12 +100,12 @@ def reset_password(token):
 			return redirect(url_for('forgot-password'))
 
 @corp_login_required
-@roles_required(['corp', 'admin'])
+@roles_required('admin', 'corp')
 def corporate_dash():
 	return render_template('corporate/dashboard.html', user=current_user)
 
 @corp_login_required
-@roles_required(['corp', 'admin'])
+@roles_required('admin', 'corp')
 def corporate_search():
 	if request.method == 'GET':
 		schools = DB.session.query(distinct(User.school)).all()
@@ -138,8 +138,8 @@ def corporate_search():
 		users = users.all()
 		return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings, majors=majors)
 
-# @corp_login_required
-# @roles_required(['corp', 'admin'])
+@corp_login_required
+@roles_required('admin', 'corp')
 def view_resume():
 	hashid = request.args.get('id')
 	user = User.get_with_hashid(hashid)
