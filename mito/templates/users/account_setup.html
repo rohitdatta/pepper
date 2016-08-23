@@ -1,1 +1,9 @@
 Account setup page
+
+<form method="POST" action="">
+	<input type="text" name="fname" placeholder="First Name" value="{{ user.fname }}">
+	<input type="text" name="lname" placeholder="Last Name" value="{{ user.lname }}">
+	<input type="password" name="password" placeholder="Password">
+	<input type="password" name="password-check" placeholder="Password check">
+	<button type="submit">Submit</button>
+</form>

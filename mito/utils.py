@@ -58,7 +58,7 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 	recipient = Email(to_email)
 	sender = Email(from_email)
 	mail = Mail(sender, subject, recipient)
-	if None in txt_content and html_content:
+	if txt_content is None and html_content is None:
 		raise ValueError('Must send some type of content')
 	if txt_content:
 		mail.add_content(Content('text/plain', txt_content))

@@ -1,12 +1,13 @@
 from flask import request, render_template, flash, redirect, url_for, g, make_response
-from flask.ext.login import login_user, current_user, login_required
+from flask.ext.login import login_user, current_user
 from mito.users import User
 from helpers import check_password
-from mito.utils import corp_login_required, roles_required, s3, ts, s
+from mito.utils import corp_login_required, roles_required, s3, ts, s, send_email
 from mito import settings
 from sqlalchemy import distinct
 from mito.app import DB
 from mito.users.helpers import hash_pwd
+from mito.users.models import UserRole
 
 def login():
 	if request.method == 'GET':
@@ -19,13 +20,13 @@ def login():
 		user = User.query.filter_by(email=email).first()
 		if user is None:
 			flash("We couldn't find an account related with this email. Please verify the email entered.", "warning")
-			redirect(url_for('login'))
+			redirect(url_for('corp-login'))
 		elif user.password is None:
 			flash('This account has not been setup yet. Please click the login link in your setup email.')
 			return redirect(url_for('corp-login'))
 		elif not check_password(user.password, password):
 			flash("Invalid Password. Please verify the password entered.", 'warning')
-			return redirect(url_for('login'))
+			return redirect(url_for('corp-login'))
 		login_user(user, remember=True)
 		flash('Logged in successfully!', 'success')
 		return redirect(url_for('corp-dash'))
@@ -35,18 +36,25 @@ def new_user_setup(token):
 		email = s.loads(token)
 		user = User.query.filter_by(email=email).first()
 		if user.password is not None:
-			raise Exception('User has already been set up')
+			flash('User has already been setup. If you need to change the password, please reset your password.')
+			return redirect(url_for('corp-dash'))
 	except:
 		return render_template('layouts/error.html', error="That's an invalid link"), 401
 
 	if request.method == 'GET':
-		return render_template('users/account_setup.html')
+		return render_template('users/account_setup.html', user=user)
 	else:
 		if user:
 			if request.form.get('password') == request.form.get('password-check'):
 				user.password = hash_pwd(request.form['password'])
 				DB.session.add(user)
 				DB.session.commit()
+				# add admin role to the user
+				role = UserRole(user.id)
+				role.name = 'corp'
+				DB.session.add(role)
+				DB.session.commit()
+
 				login_user(user, remember=True)
 				flash('Succesfully setup account!', 'success')
 				return redirect(url_for('corp-dash'))
@@ -67,8 +75,8 @@ def forgot_password():
 			token = ts.dumps(user.email, salt='recover-key')
 			url = url_for('reset-password', token=token, _external=True)
 			html = render_template('emails/reset_password.html', user=user, link=url)
-			# TODO: send email
-
+			txt = render_template('emails/reset_password.txt', user=user, link=url)
+			send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
 		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
 		return redirect(url_for('corp-login'))
 

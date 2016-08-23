@@ -99,7 +99,7 @@ def dashboard():
 	return render_template('users/dashboard/pending.html', user=current_user)
 
 def is_pdf(filename):
-	return '.' in filename and (filename.rsplit('.', 1)[1] == 'pdf' or filename.rsplit('.', 1)[1] == 'PDF')
+	return '.' in filename and filename.lower().rsplit('.', 1)[1] == 'pdf'
 
 @login_required
 def accept():
@@ -143,14 +143,13 @@ def create_corp_user(): # TODO: require this to be an admin function
 					 'lname': request.form['lname'],
 					 'email': request.form['email']}
 		user_data['type'] = 'corporate'
-		user = User(user_data) # TODO: add the recruiter role here
-		# user.roles.append(Role(name='corp'))
+		user = User(user_data)
 		DB.session.add(user)
 		DB.session.commit()
 
-		# send invite to the recruiter # TODO: make this a reset password link
+		# send invite to the recruiter
 		token = s.dumps(user.email)
-		url = url_for('reset-password', token=token, _external=True)
+		url = url_for('new-user-setup', token=token, _external=True)
 		txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
 		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
 
@@ -195,6 +194,7 @@ def initial_create():
 				'type': 'admin'
 			}
 			user = User(user_info)
+			user.status = 'ADMIN'
 			DB.session.add(user)
 			DB.session.commit()
 
