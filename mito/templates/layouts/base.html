@@ -5,10 +5,13 @@
   <title>{% block title %}{{config.HACKATHON_NAME}}{% endblock %}</title>
   <meta name="viewport" content="initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"   integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
 </head>
 <body>
+<noscript>
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -18,15 +21,21 @@
     </ul>
   {% endif %}
 {% endwith %}
+</noscript>
 {% if g.user.is_authenticated %}
-	<nav>
 
-	</nav>
-<a href="{{ url_for('logout') }}">Logout</a>
+{#<a href="{{ url_for('logout') }}">Logout</a>#}
 {% endif %}
 <div class="container">
+<nav class="navbar navbar-fixed-top">
+<ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+      </ul>
+	</nav>
+<div class="content">
 {%  block body %}
 {%  endblock %}
+</div>
 </div>
 
 <footer class="footer">
@@ -34,4 +43,11 @@
 {#		<a href="https://freetailhackers.com"><img class="img-responsive" class="center" src="{{url_for('static', filename='img/logo.svg')}}" width=50></a>#}
       </div>
 </footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
+  <script>
+    /* turning flask flash messages into js popup notifications */
+    window.popupMessages = {{ get_flashed_messages(with_categories=True) | json | safe }};
+  </script>
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
 </body>

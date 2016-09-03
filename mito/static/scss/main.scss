@@ -1,8 +1,14 @@
 @import 'https://fonts.googleapis.com/css?family=Josefin+Sans:400,700';
-$dark: #002db3;
+$dark: #124e78;
 $light: #009999;
+$freetail-tan: #EAF0CE;
+$hacktx-red: #CB0922;
+$hacktx-light-red: #dc0925;
+$freetail-red: #E45243;
+$hacktx-light-blue: #73A8B8;
 $sans-serif-font: Josefin Sans, sans-serif;
-*{
+$desktop-width: 992px;
+* {
   font-family: $sans-serif-font;
 }
 
@@ -33,13 +39,17 @@ body {
 	}
 	:-ms-input-placeholder { /* Internet Explorer 10+ */
 		font-family: $sans-serif-font;
-		 color:    white;
+		 color: white;
 		font-weight: 300;
 	}
 
+  .content {
+	margin-top: 70px;
+  }
+
 	a {
 		color: white;
-		font-weight: 600;
+		font-weight: 400;
       text-decoration: none;
 		&:hover {
 			color: rgba(#FFF, 0.8);
@@ -47,8 +57,13 @@ body {
 		}
 	}
 
+  h1, h2, h3 {
+	color: $freetail-tan;
+	text-shadow: 1.5px 1.5px 1.5px #CB0922;
+  }
+
   h4 {
-	font-weight: 700;
+	font-weight: 300;
   }
 }
 
@@ -59,40 +74,64 @@ body {
 	.col-md-6.right-inline-input {
 		padding-left: 5px;
 	}
+  button {
+	&.confirm {
+	  float: left;
+	}
+  }
 }
 
 button {
-		appearance: none;
-		outline: 0;
-		background-color: white;
-		border: 0;
-		padding: 10px 15px;
-		color: mix($dark, $light);
-		border-radius: 3px;
-		width: 250px;
-		cursor: pointer;
-		font-size: 18px;
-		transition-duration: 0.25s;
-		margin: 0 auto 10px auto;
-		display: block;
-		&:hover{
-			background-color: rgb(245, 247, 249);
-		}
-	}
+  appearance: none;
+  outline: 0;
+  background-color: $hacktx-red;
+  border: 0;
+  padding: 10px 15px;
+  color: #FFFFFF;
+  border-radius: 3px;
+  width: 250px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 700;
+  transition-duration: 0.25s;
+  margin: 0 auto 10px auto;
+  display: block;
+  &:hover{
+	  background-color: $hacktx-light-red;
+  }
+  &.confirm {
+	//float: right !important;
+	//  color: red !important;
+
+  }
+}
 
 table {
   &.info {
 	width: 100%;
 	margin-bottom: 10px;
-	tr:nth-child(odd) {
+	//tr:nth-child(odd) {
+	//  background: rgba(255, 255, 255, 0.3);
+	//}
+
+	col:first-child {
 	  background: rgba(255, 255, 255, 0.3);
 	}
 	td {
-	  height: 35px;
-	  padding-left: 5px;
+		height: 35px;
+		padding-left: 5px;
+		border-bottom: 1pt solid white;
+		min-width: 135px;
+		&.no-border {
+			border-bottom: none !important;
+	  	}
 	}
 
   }
+}
+
+.form-info {
+  margin-top: 20px;
 }
 
 form {
@@ -120,16 +159,14 @@ form {
 .control--radio .control__indicator {
   border-radius: 50%;
 }
-.control:hover input ~ .control__indicator,
-.control input:focus ~ .control__indicator {
+.control:hover input ~ .control__indicator {
   background: #ccc;
 }
 .control input:checked ~ .control__indicator {
-  background: #2aa1c0;
+  background: $hacktx-red;
 }
-.control:hover input:not([disabled]):checked ~ .control__indicator,
-.control input:checked:focus ~ .control__indicator {
-  background: #0e647d;
+.control:hover input:not([disabled]):checked ~ .control__indicator {
+  background: $hacktx-light-red;
 }
 .control input:disabled ~ .control__indicator {
   background: #e6e6e6;
@@ -174,7 +211,7 @@ form {
   }
 
   h4.two-col {
-	padding-top: 10px;
+	//padding-top: 10px;
   }
 
 	input[type=text] {

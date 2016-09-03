@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% block body %}
+	<script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
 	<div class="text-center">
 	<h2>Almost There!</h2>
 	<p>Please review your information</p>
@@ -7,11 +8,12 @@
 <div class="row">
 	<div class="col-md-4 col-md-offset-4">
 <table class="info">
-	<tr>
+	<col><col>
+	<tr class="border_bottom">
 		<td>Name</td>
 		<td>{{ user.fname }} {{ user.lname }}</td>
 	</tr>
-	<tr>
+	<tr class="border_bottom">
 		<td>Email</td>
 		<td>{{ user.email }}</td>
 	</tr>
@@ -48,8 +50,8 @@
 		<td>{{ user.school }}</td>
 	</tr>
 	<tr>
-		<td>Special Needs</td>
-		<td>{{ user.special_needs }}</td>
+		<td class="no-border">Special Needs</td>
+		<td class="no-border">{{ user.special_needs }}</td>
 	</tr>
 </table>
 		</div>
@@ -58,9 +60,13 @@
 	<hr>
 <div class="row">
 <div class="col-md-8 col-md-offset-2">
-<div class="col-md-6">
-<h3>Additional Information</h3>
-<p>At {{ config.HACKATHON_NAME }}, we work hard to celebrate diversity, and part of that involves taking a critical look at ourselves to see how we've been doing. We would love to understand the demographic breakdown, so we can make further improvements in the future. Please select <i>I choose not to disclose</i> if you do not wish to provide this information. It will not be considered in the application process or thereafter.</p>
+	<h3>Additional Information</h3>
+<div class="col-md-6 form-info">
+
+{#	<div class="col-md-11 col-md-offset-1">#}
+<p>At {{ config.HACKATHON_NAME }}, we work hard to celebrate diversity, and part of that involves taking a critical look at ourselves to see how we've been doing. We would love to understand the demographic breakdown, so we can make further improvements in the future.</p>
+	<p>Please select <i>I choose not to disclose</i> if you do not wish to provide this information. It will not be considered in the application process or thereafter.</p>
+{#		</div>#}
 </div>
 	<form action="/confirm" method="POST">
 
@@ -115,10 +121,10 @@
 {#	<input type="radio" name="first-time" value="YES"> Yes<br>#}
 {#	<input type="radio" name="first-time" value="NO"> No<br>#}
 {#	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose#}
+		    <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
 
 		</div>
-<hr>
-		    <button type="submit">Submit</button>
+{#<hr>#}
 
 </form>
 	</div>

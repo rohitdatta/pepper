@@ -3,7 +3,7 @@
   font-family: Josefin Sans, sans-serif; }
 
 body {
-  background: #002db3;
+  background: #124e78;
   color: white !important; }
   body ::-webkit-input-placeholder {
     /* WebKit browsers */
@@ -27,47 +27,63 @@ body {
     font-family: Josefin Sans, sans-serif;
     color: white;
     font-weight: 300; }
+  body .content {
+    margin-top: 70px; }
   body a {
     color: white;
-    font-weight: 600;
+    font-weight: 400;
     text-decoration: none; }
     body a:hover {
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none; }
+  body h1, body h2, body h3 {
+    color: #EAF0CE;
+    text-shadow: 1.5px 1.5px 1.5px #CB0922; }
   body h4 {
-    font-weight: 700; }
+    font-weight: 300; }
 
 @media (min-width: 992px) {
   .col-md-6.left-inline-input {
     padding-right: 5px; }
 
   .col-md-6.right-inline-input {
-    padding-left: 5px; } }
+    padding-left: 5px; }
+
+  button.confirm {
+    float: left; } }
 button {
   appearance: none;
   outline: 0;
-  background-color: white;
+  background-color: #CB0922;
   border: 0;
   padding: 10px 15px;
-  color: #0063a6;
+  color: #FFFFFF;
   border-radius: 3px;
   width: 250px;
   cursor: pointer;
   font-size: 18px;
+  font-weight: 700;
   transition-duration: 0.25s;
   margin: 0 auto 10px auto;
   display: block; }
   button:hover {
-    background-color: #f5f7f9; }
+    background-color: #dc0925; }
 
 table.info {
   width: 100%;
   margin-bottom: 10px; }
-  table.info tr:nth-child(odd) {
+  table.info col:first-child {
     background: rgba(255, 255, 255, 0.3); }
   table.info td {
     height: 35px;
-    padding-left: 5px; }
+    padding-left: 5px;
+    border-bottom: 1pt solid white;
+    min-width: 135px; }
+    table.info td.no-border {
+      border-bottom: none !important; }
+
+.form-info {
+  margin-top: 20px; }
 
 form .control {
   display: block;
@@ -89,14 +105,12 @@ form .control__indicator {
   background: #e6e6e6; }
 form .control--radio .control__indicator {
   border-radius: 50%; }
-form .control:hover input ~ .control__indicator,
-form .control input:focus ~ .control__indicator {
+form .control:hover input ~ .control__indicator {
   background: #ccc; }
 form .control input:checked ~ .control__indicator {
-  background: #2aa1c0; }
-form .control:hover input:not([disabled]):checked ~ .control__indicator,
-form .control input:checked:focus ~ .control__indicator {
-  background: #0e647d; }
+  background: #CB0922; }
+form .control:hover input:not([disabled]):checked ~ .control__indicator {
+  background: #dc0925; }
 form .control input:disabled ~ .control__indicator {
   background: #e6e6e6;
   opacity: 0.6;
@@ -129,8 +143,6 @@ form .control--radio input:disabled ~ .control__indicator:after {
 form label {
   display: block;
   font-weight: 400; }
-form h4.two-col {
-  padding-top: 10px; }
 form input[type=text] {
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -155,7 +167,7 @@ form input[type=text] {
     width: 250px; }
   form input[type=text]::selection {
     color: white;
-    background: rgba(0, 99, 166, 0.75);
+    background: rgba(9, 116, 137, 0.75);
     /* WebKit/Blink Browsers */ }
   form input[type=text] ::-moz-selection {
     background: #000;
@@ -175,7 +187,7 @@ form input[type=text] {
   form input[type=text]:focus {
     background-color: white;
     width: 300px;
-    color: #002db3; }
+    color: #124e78; }
 
 #footer-login {
   position: absolute;

@@ -60,7 +60,7 @@ def confirm_registration():
 		race_list = request.form.getlist('race')
 		first_timer = request.form.get('first-time')
 		if None in (race_list, first_timer):
-			flash('You must fill out the required fields')
+			flash('You must fill out the required fields', 'error')
 			return render_template('users/confirm.html', user=current_user)
 		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
 		current_user.first_hackathon = first_timer
