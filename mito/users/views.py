@@ -7,8 +7,8 @@ from sqlalchemy.exc import IntegrityError
 from mito import settings
 from sendgrid.helpers.mail import *
 import urllib2
-import string, random
 from mito.utils import s3, send_email, s, roles_required
+from helpers import send_status_change_notification
 
 def landing():
 	if current_user.is_authenticated:
@@ -37,7 +37,6 @@ def callback():
 			user = User.query.filter_by(email=user_info['data']['email']).first()
 			if user is None:
 				user = User(user_info)
-				# user.roles.append(Role(name='attendee'))
 			else:
 				user.access_token = access_token
 			DB.session.add(user)
@@ -79,11 +78,29 @@ def confirm_registration():
 		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
 		return redirect(url_for('dashboard'))
 
+def update_user_data():
+	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+	current_user.email = user_info['data']['email']
+	current_user.fname = user_info['data']['first_name']
+	current_user.lname = user_info['data']['last_name']
+	# current_user.class_standing = DB.Column(DB.String(255))
+	current_user.major = user_info['data']['major']
+	current_user.shirt_size = user_info['data']['shirt_size']
+	current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+	current_user.birthday = user_info['data']['date_of_birth']
+	current_user.gender = user_info['data']['gender']
+	current_user.phone_number = user_info['data']['phone_number']
+	current_user.school = user_info['data']['school']['name']
+	current_user.special_needs = user_info['data']['special_needs']
+	DB.session.add(current_user)
+	DB.session.commit()
+
 @login_required
 def dashboard():
 	if current_user.type == 'corporate':
 		return redirect(url_for('corp-dash'))
 	if current_user.status == 'NEW':
+		update_user_data()
 		return redirect(url_for('confirm-registration'))
 	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
@@ -162,6 +179,31 @@ def create_corp_user(): # TODO: require this to be an admin function
 			print e
 		flash('You successfully create a new recruiter account.', 'success')
 		return render_template('users/admin/create_user.html')
+
+@login_required
+@roles_required('admin')
+def batch_modify():
+	if request.method == 'GET':
+		return 'Batch modify page'
+	else:
+		modify_type = request.form.get('type')
+		if modify_type == 'fifo':
+			accepted_attendees = User.query.filter_by(status='PENDING') #TODO: limit by x
+		else: # randomly select n users out of x users
+			x = request.form.get('x') if request.form.get('x') is not 0 else -1# TODO it's the count of users who are pending
+			random_pool = User.query.filter
+			# TODO: figure out how to find x random numbers
+
+@login_required
+@roles_required('admin')
+def modify_user(hashid):
+	# Send a post request that changes the user state to rejected or accepted
+	user = User.get_with_hashid(hashid)
+	user.status == request.form.get('status')
+	DB.session.add(user)
+	DB.session.commit()
+
+	send_status_change_notification(user)
 
 # Developers can use this portal to log into any particular user when debugging
 def debug_user():

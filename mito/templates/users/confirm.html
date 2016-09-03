@@ -1,34 +1,38 @@
-{#{% extends 'layouts/base.html' %}#}
-{#{% block body %}#}
-	This page is used for confirming attendance to HackTX after MyMLH sign in.
-
-<table>
+{% extends 'layouts/base.html' %}
+{% block body %}
+	<div class="text-center">
+	<h2>Almost There!</h2>
+	<p>Please review your information</p>
+		</div>
+<div class="row">
+	<div class="col-md-4 col-md-offset-4">
+<table class="info">
 	<tr>
-		<td>Name: </td>
-		<td>{{ user.fname }} {{ user.lname }}</
+		<td>Name</td>
+		<td>{{ user.fname }} {{ user.lname }}</td>
 	</tr>
 	<tr>
-		<td>Email:</td>
+		<td>Email</td>
 		<td>{{ user.email }}</td>
 	</tr>
 	<tr>
-		<td>Class Standing:</td>
+		<td>Class Standing</td>
 		<td>{{ user.class_standing }}</td>
 	</tr>
 	<tr>
-		<td>Major:</td>
+		<td>Major</td>
 		<td>{{ user.major }}</td>
 	</tr>
 	<tr>
-		<td>Shirt Size:</td>
+		<td>Shirt Size</td>
 		<td>{{ user.shirt_size }}</td>
 	</tr>
 	<tr>
-		<td>Dietary Restrictions:</td>
+		<td>Dietary Restrictions</td>
 		<td>{{ user.dietary_restrictions }}</td>
 	</tr>
 	<tr>
-		<td>Birthday:</td>
+		<td>Birthday</td>
 		<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
 	</tr>
 	<tr>
@@ -48,23 +52,75 @@
 		<td>{{ user.special_needs }}</td>
 	</tr>
 </table>
+		</div>
+	</div>
+		<a href="https://my.mlh.io/edit"><button class="">Edit</button></a>
+	<hr>
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+<div class="col-md-6">
 <h3>Additional Information</h3>
 <p>At {{ config.HACKATHON_NAME }}, we work hard to celebrate diversity, and part of that involves taking a critical look at ourselves to see how we've been doing. We would love to understand the demographic breakdown, so we can make further improvements in the future. Please select <i>I choose not to disclose</i> if you do not wish to provide this information. It will not be considered in the application process or thereafter.</p>
+</div>
+	<form action="/confirm" method="POST">
 
-<form action="/confirm" method="POST">
-	<input type="checkbox" name="race" value="AMERICAN_INDIAN_ALASKAN">American Indian / Alaskan Native
-	<input type="checkbox" name="race" value="ASIAN">Asian
-	<input type="checkbox" name="race" value="BLACK_AFRICAN_AMERICAN">Black and African American
-	<input type="checkbox" name="race" value="HISPANIC_LATINO">Hispanic or Latino
-	<input type="checkbox" name="race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER">Native Hawaiian or Other Pacific Islander
-	<input type="checkbox" name="race" value="EUROPEAN_WHITE">White (Not of Hispanic Origin)
-	<input type="checkbox" name="race" value="NO_DISCLOSURE">I choose not to disclose
+	<div class="col-md-6">
 
-	<p>Is this your first hackathon?</p>
-	<input type="radio" name="first-time" value="YES"> Yes<br>
-	<input type="radio" name="first-time" value="NO"> No<br>
-	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose
 
-    <button type="submit">Submit</button>
+<h4 class="two-col">What race(s) do you identify with?</h4>
+	<label class="control control--checkbox">American Indian / Alaskan Native
+		<input type="checkbox" name="race" value="AMERICAN_INDIAN_ALASKAN"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">Asian
+		<input type="checkbox" name="race" value="ASIAN"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">Black and African American
+		<input type="checkbox" name="race" value="BLACK_AFRICAN_AMERICAN"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">Hispanic or Latino
+		<input type="checkbox" name="race" value="HISPANIC_LATINO"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">Native Hawaiian or Other Pacific Islander
+		<input type="checkbox" name="race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">White (Not of Hispanic Origin)
+		<input type="checkbox" name="race" value="EUROPEAN_WHITE"/>
+		<div class="control__indicator"></div>
+	</label>
+	<label class="control control--checkbox">I choose not to disclose
+		<input type="checkbox" name="race" value="NO_DISCLOSURE"/>
+		<div class="control__indicator"></div>
+	</label>
+<br>
+	<div class="control-group">
+    <h4>Is this your first hackathon?</h4>
+    <label class="control control--radio">Yes
+      <input type="radio" name="radio"/>
+      <div class="control__indicator"></div>
+    </label>
+    <label class="control control--radio">No
+      <input type="radio" name="radio"/>
+      <div class="control__indicator"></div>
+    </label>
+	<label class="control control--radio">I choose not to disclose
+      <input type="radio" name="radio"/>
+      <div class="control__indicator"></div>
+    </label>
+  </div>
+{#	<input type="radio" name="first-time" value="YES"> Yes<br>#}
+{#	<input type="radio" name="first-time" value="NO"> No<br>#}
+{#	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose#}
+
+		</div>
+<hr>
+		    <button type="submit">Submit</button>
+
 </form>
-{#{% endblock %}#}
+	</div>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Josefin+Sans);
+@import 'https://fonts.googleapis.com/css?family=Josefin+Sans:400,700';
 $dark: #002db3;
 $light: #009999;
 $sans-serif-font: Josefin Sans, sans-serif;
@@ -46,6 +46,10 @@ body {
 			text-decoration: none;
 		}
 	}
+
+  h4 {
+	font-weight: 700;
+  }
 }
 
 @media (min-width:992px) {
@@ -76,8 +80,104 @@ button {
 		}
 	}
 
+table {
+  &.info {
+	width: 100%;
+	margin-bottom: 10px;
+	tr:nth-child(odd) {
+	  background: rgba(255, 255, 255, 0.3);
+	}
+	td {
+	  height: 35px;
+	  padding-left: 5px;
+	}
+
+  }
+}
+
 form {
-	input {
+.control {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 18px;
+}
+.control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+}
+.control__indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: #e6e6e6;
+}
+.control--radio .control__indicator {
+  border-radius: 50%;
+}
+.control:hover input ~ .control__indicator,
+.control input:focus ~ .control__indicator {
+  background: #ccc;
+}
+.control input:checked ~ .control__indicator {
+  background: #2aa1c0;
+}
+.control:hover input:not([disabled]):checked ~ .control__indicator,
+.control input:checked:focus ~ .control__indicator {
+  background: #0e647d;
+}
+.control input:disabled ~ .control__indicator {
+  background: #e6e6e6;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.control__indicator:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+.control input:checked ~ .control__indicator:after {
+  display: block;
+}
+.control--checkbox .control__indicator:after {
+  left: 8px;
+  top: 4px;
+  width: 3px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.control--checkbox input:disabled ~ .control__indicator:after {
+  border-color: #7b7b7b;
+}
+.control--radio .control__indicator:after {
+  left: 7px;
+  top: 7px;
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: #fff;
+}
+.control--radio input:disabled ~ .control__indicator:after {
+  background: #7b7b7b;
+}
+
+  label {
+	display: block;
+	font-weight: 400;
+  }
+
+  h4.two-col {
+	padding-top: 10px;
+  }
+
+	input[type=text] {
 		-webkit-appearance: none;
 		-moz-appearance: none;
 		appearance: none;

@@ -1,4 +1,4 @@
-@import url(https://fonts.googleapis.com/css?family=Josefin+Sans);
+@import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
 * {
   font-family: Josefin Sans, sans-serif; }
 
@@ -34,6 +34,8 @@ body {
     body a:hover {
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none; }
+  body h4 {
+    font-weight: 700; }
 
 @media (min-width: 992px) {
   .col-md-6.left-inline-input {
@@ -58,7 +60,78 @@ button {
   button:hover {
     background-color: #f5f7f9; }
 
-form input {
+table.info {
+  width: 100%;
+  margin-bottom: 10px; }
+  table.info tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.3); }
+  table.info td {
+    height: 35px;
+    padding-left: 5px; }
+
+form .control {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  font-size: 18px; }
+form .control input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0; }
+form .control__indicator {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: #e6e6e6; }
+form .control--radio .control__indicator {
+  border-radius: 50%; }
+form .control:hover input ~ .control__indicator,
+form .control input:focus ~ .control__indicator {
+  background: #ccc; }
+form .control input:checked ~ .control__indicator {
+  background: #2aa1c0; }
+form .control:hover input:not([disabled]):checked ~ .control__indicator,
+form .control input:checked:focus ~ .control__indicator {
+  background: #0e647d; }
+form .control input:disabled ~ .control__indicator {
+  background: #e6e6e6;
+  opacity: 0.6;
+  pointer-events: none; }
+form .control__indicator:after {
+  content: '';
+  position: absolute;
+  display: none; }
+form .control input:checked ~ .control__indicator:after {
+  display: block; }
+form .control--checkbox .control__indicator:after {
+  left: 8px;
+  top: 4px;
+  width: 3px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg); }
+form .control--checkbox input:disabled ~ .control__indicator:after {
+  border-color: #7b7b7b; }
+form .control--radio .control__indicator:after {
+  left: 7px;
+  top: 7px;
+  height: 6px;
+  width: 6px;
+  border-radius: 50%;
+  background: #fff; }
+form .control--radio input:disabled ~ .control__indicator:after {
+  background: #7b7b7b; }
+form label {
+  display: block;
+  font-weight: 400; }
+form h4.two-col {
+  padding-top: 10px; }
+form input[type=text] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -78,28 +151,28 @@ form input {
   font-weight: 300;
   transition-duration: 0.25s;
   font-weight: 300; }
-  form input.no-expand:focus {
+  form input[type=text].no-expand:focus {
     width: 250px; }
-  form input::selection {
+  form input[type=text]::selection {
     color: white;
     background: rgba(0, 99, 166, 0.75);
     /* WebKit/Blink Browsers */ }
-  form input ::-moz-selection {
+  form input[type=text] ::-moz-selection {
     background: #000;
     /* Gecko Browsers */ }
   @media (min-width: 992px) {
-    form input.double-width {
+    form input[type=text].double-width {
       width: 525px; }
-      form input.double-width:focus {
+      form input[type=text].double-width:focus {
         width: 525px; } }
   @media (max-width: 992px) {
-    form input.double-width {
+    form input[type=text].double-width {
       width: 250px; }
-      form input.double-width:focus {
+      form input[type=text].double-width:focus {
         width: 250px; } }
-  form input:hover {
+  form input[type=text]:hover {
     background-color: rgba(255, 255, 255, 0.4); }
-  form input:focus {
+  form input[type=text]:focus {
     background-color: white;
     width: 300px;
     color: #002db3; }
