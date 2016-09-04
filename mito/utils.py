@@ -1,7 +1,7 @@
 import requests
 import settings
 from functools import wraps
-from flask import g, flash, redirect, url_for
+from flask import g, redirect, url_for
 from hashids import Hashids
 import boto3
 from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
@@ -22,6 +22,7 @@ def validate_email(email):
 		auth=("api", settings.MAILGUN_PUB_KEY),
 		params={"address": email})
 
+
 # A user who has any of these roles will be permitted to view this page
 def roles_required(*role_names):
 	def wrapper(func):
@@ -38,12 +39,15 @@ def roles_required(*role_names):
 			if not authorized:
 				return 'Unauthorized'
 			return func(*args, **kwargs)
+
 		return decorated_view
+
 	return wrapper
 
 
 def get_current_user_roles():
 	return g.user.roles
+
 
 # Require user to be logged in and redirect unauthenticated users to corporate login screen
 def corp_login_required(f):
@@ -52,7 +56,9 @@ def corp_login_required(f):
 		if not g.user.is_authenticated:
 			return redirect(url_for('corp-login'))
 		return f(*args, **kwargs)
+
 	return decorated_view
+
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
 	recipient = Email(to_email)

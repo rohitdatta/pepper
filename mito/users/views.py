@@ -11,26 +11,34 @@ from mito.utils import s3, send_email, s, roles_required
 from helpers import send_status_change_notification
 import keen
 
+
 def landing():
 	if current_user.is_authenticated:
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
+
 def login():
-	return redirect('https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+	return redirect(
+		'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
+			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+
 
 @login_required
 def logout():
 	logout_user()
 	return redirect(url_for('landing'))
 
+
 def callback():
-	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'), urllib2.quote(settings.BASE_URL, ''))
+	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(
+		settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'),
+		urllib2.quote(settings.BASE_URL, ''))
 	print url
 	resp = requests.post(url)
 	access_token = resp.json()['access_token']
 	user = User.query.filter_by(access_token=access_token).first()
-	if user is None: # create the user
+	if user is None:  # create the user
 		try:
 			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
 			user_info['type'] = 'MLH'
@@ -52,6 +60,7 @@ def callback():
 		login_user(user, remember=True)
 		return redirect(url_for('dashboard'))
 	return redirect(url_for('confirm-registration'))
+
 
 @login_required
 def confirm_registration():
@@ -82,8 +91,11 @@ def confirm_registration():
 		mail = Mail(from_email, subject, to_email, content)
 		response = sg.client.mail.send.post(request_body=mail.get())
 		print response.status_code
-		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
+		flash(
+			'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
+				settings.HACKATHON_NAME), 'success')
 		return redirect(url_for('dashboard'))
+
 
 def update_user_data():
 	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
@@ -101,6 +113,7 @@ def update_user_data():
 	current_user.special_needs = user_info['data']['special_needs']
 	DB.session.add(current_user)
 	DB.session.commit()
+
 
 @login_required
 def dashboard():
@@ -122,16 +135,21 @@ def dashboard():
 		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
 	return render_template('users/dashboard/pending.html', user=current_user)
 
+
 def is_pdf(filename):
 	return '.' in filename and filename.lower().rsplit('.', 1)[1] == 'pdf'
+
 
 @login_required
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
-			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(settings.HACKATHON_NAME),
-			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(settings.HACKATHON_NAME),
-			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(settings.HACKATHON_NAME),
+			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
+				settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
+				settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
+				settings.HACKATHON_NAME),
 			None: "Corporate users cannot view this page."
 		}
 		flash(message[current_user.status], 'error')
@@ -143,7 +161,8 @@ def accept():
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS
-				s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname, current_user.fname)).put(Body=resume)
+				s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
+																		  current_user.fname)).put(Body=resume)
 				current_user.resume_uploaded = True
 			else:
 				flash('Resume must be in PDF format')
@@ -155,6 +174,7 @@ def accept():
 		DB.session.add(current_user)
 		DB.session.commit()
 		return redirect(url_for('dashboard'))
+
 
 @login_required
 @roles_required('admin')
@@ -179,13 +199,16 @@ def create_corp_user():
 
 		try:
 			print txt
-			if not send_email(from_email=settings.GENERAL_INFO_EMAIL, subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME), to_email=user.email, txt_content=txt, html_content=html):
+			if not send_email(from_email=settings.GENERAL_INFO_EMAIL,
+							  subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME),
+							  to_email=user.email, txt_content=txt, html_content=html):
 				print 'Failed to send message'
 				flash('Unable to send message to recruiter', 'error')
 		except ValueError as e:
 			print e
 		flash('You successfully create a new recruiter account.', 'success')
 		return render_template('users/admin/create_user.html')
+
 
 @login_required
 @roles_required('admin')
@@ -195,11 +218,13 @@ def batch_modify():
 	else:
 		modify_type = request.form.get('type')
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='PENDING') #TODO: limit by x
-		else: # randomly select n users out of x users
-			x = request.form.get('x') if request.form.get('x') is not 0 else -1# TODO it's the count of users who are pending
+			accepted_attendees = User.query.filter_by(status='PENDING')  # TODO: limit by x
+		else:  # randomly select n users out of x users
+			x = request.form.get('x') if request.form.get(
+				'x') is not 0 else -1  # TODO it's the count of users who are pending
 			random_pool = User.query.filter
-			# TODO: figure out how to find x random numbers
+		# TODO: figure out how to find x random numbers
+
 
 @login_required
 @roles_required('admin')
@@ -211,6 +236,7 @@ def modify_user(hashid):
 	DB.session.commit()
 
 	send_status_change_notification(user)
+
 
 # Developers can use this portal to log into any particular user when debugging
 def debug_user():
@@ -228,6 +254,7 @@ def debug_user():
 			return redirect(url_for('landing'))
 	else:
 		return 'Disabled internal debug mode'
+
 
 def initial_create():
 	user_count = User.query.count()
