@@ -9,6 +9,7 @@ from sendgrid.helpers.mail import *
 import urllib2
 from mito.utils import s3, send_email, s, roles_required
 from helpers import send_status_change_notification
+import keen
 
 def landing():
 	if current_user.is_authenticated:
@@ -55,6 +56,8 @@ def callback():
 @login_required
 def confirm_registration():
 	if request.method == 'GET':
+		if current_user.status != 'NEW':
+			return redirect(url_for('dashboard'))
 		return render_template('users/confirm.html', user=current_user)
 	else:
 		race_list = request.form.getlist('race')
@@ -67,6 +70,10 @@ def confirm_registration():
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
+
+		# keen.add_event('sign_ups', {
+		# 	'created_at'
+		# })
 		# send a confirmation email. TODO: this is kinda verbose and long
 		from_email = Email(settings.GENERAL_INFO_EMAIL)
 		subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
@@ -151,7 +158,7 @@ def accept():
 
 @login_required
 @roles_required('admin')
-def create_corp_user(): # TODO: require this to be an admin function
+def create_corp_user():
 	if request.method == 'GET':
 		return render_template('users/admin/create_user.html')
 	else:

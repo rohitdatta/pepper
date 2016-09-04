@@ -28,7 +28,7 @@ body {
     color: white;
     font-weight: 300; }
   body .content {
-    margin-top: 70px; }
+    padding-top: 70px; }
   body a {
     color: white;
     font-weight: 400;
@@ -68,6 +68,12 @@ button {
   display: block; }
   button:hover {
     background-color: #dc0925; }
+
+h1 {
+  font-size: 36pt; }
+
+p {
+  font-size: 18pt; }
 
 table.info {
   width: 100%;
@@ -189,11 +195,30 @@ form input[type=text] {
     width: 300px;
     color: #124e78; }
 
-#footer-login {
+html {
+  position: relative;
+  min-height: 100%; }
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  padding-bottom: 10px; }
+
+.header {
+  width: 100%;
+  background-color: #5983A0;
+  position: fixed;
+  min-height: 70px;
+  z-index: 99; }
+  .header a {
+    vertical-align: center;
+    font-size: 1.5em;
+    line-height: 70px; }
+
+.footer {
   position: absolute;
   bottom: 0;
   width: 100%;
+  margin-top: 50px;
   /* Set the fixed height of the footer here */
   height: 60px; }
-  #footer-login .container p {
-    margin: 20px 0; }

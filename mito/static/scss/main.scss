@@ -5,7 +5,7 @@ $freetail-tan: #EAF0CE;
 $hacktx-red: #CB0922;
 $hacktx-light-red: #dc0925;
 $freetail-red: #E45243;
-$hacktx-light-blue: #73A8B8;
+$hacktx-light-blue: #5983A0;
 $sans-serif-font: Josefin Sans, sans-serif;
 $desktop-width: 992px;
 * {
@@ -44,7 +44,7 @@ body {
 	}
 
   .content {
-	margin-top: 70px;
+	padding-top: 70px;
   }
 
 	a {
@@ -104,6 +104,13 @@ button {
 	//  color: red !important;
 
   }
+}
+
+h1 {
+  font-size: 36pt;
+}
+p {
+  font-size:18pt;
 }
 
 table {
@@ -278,15 +285,34 @@ form {
 	}
 }
 
-#footer-login {
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	/* Set the fixed height of the footer here */
-	height: 60px;
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  padding-bottom: 10px;
+}
 
-	.container p {
-	margin: 20px 0;
-	}
-
+.header {
+  width: 100%;
+  background-color: $hacktx-light-blue;
+  position: fixed;
+  min-height: 70px;
+  z-index: 99;
+  & a{
+	vertical-align: center;
+	font-size: 1.5em;
+	line-height: 70px;
+  }
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  margin-top: 50px;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  //background-color: #f5f5f5;
 }

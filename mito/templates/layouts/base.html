@@ -9,6 +9,9 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
+<script type=text/javascript>
+  $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
 </head>
 <body>
 <noscript>
@@ -24,14 +27,16 @@
 </noscript>
 {% if g.user.is_authenticated %}
 
-{#<a href="{{ url_for('logout') }}">Logout</a>#}
 {% endif %}
-<div class="container">
-<nav class="navbar navbar-fixed-top">
-<ul class="nav navbar-nav navbar-right">
-        <li><a href="#">Link</a></li>
-      </ul>
+<nav class="header">
+	<div class="container">
+		<div class="col-md-3 col-md-offset-5 col-xs-3">
+		<a href="https://hacktx.com" ><img src="{{ url_for('static', filename='branding/logo.png') }}" height="60"></a></div>
+	<a href="{{ url_for('logout') }}" class="pull-right">Logout</a>
+		</div>
 	</nav>
+<div class="container">
+
 <div class="content">
 {%  block body %}
 {%  endblock %}
@@ -40,7 +45,7 @@
 
 <footer class="footer">
 	<div class="col-md-6 col-md-offset-3">
-{#		<a href="https://freetailhackers.com"><img class="img-responsive" class="center" src="{{url_for('static', filename='img/logo.svg')}}" width=50></a>#}
+		<a href="https://freetailhackers.com"><img class="img-responsive center-block" src="{{url_for('static', filename='branding/badge.svg')}}" width=50></a>
       </div>
 </footer>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
