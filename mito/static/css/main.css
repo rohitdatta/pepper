@@ -1,10 +1,27 @@
 @import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
+.confirmation button {
+  display: block; }
+  .confirmation button.decision {
+    width: 100% !important; }
+
+.accept button {
+  background: #5983A0; }
+  .accept button.submit {
+    background-color: #CB0922; }
+    .accept button.submit:hover {
+      background-color: #dc0925; }
+  .accept button.selected {
+    background-color: #CB0922;
+    color: white; }
+
 * {
   font-family: Josefin Sans, sans-serif; }
 
 body {
   background: #124e78;
   color: white !important; }
+  body .center {
+    text-align: center; }
   body ::-webkit-input-placeholder {
     /* WebKit browsers */
     font-family: Josefin Sans, sans-serif;
@@ -31,8 +48,10 @@ body {
     padding-top: 70px; }
   body a {
     color: white;
-    font-weight: 400;
+    font-weight: 700;
     text-decoration: none; }
+    body a.decorate {
+      border-bottom: 1px dotted white; }
     body a:hover {
       color: rgba(255, 255, 255, 0.8);
       text-decoration: none; }
@@ -60,20 +79,32 @@ button {
   color: #FFFFFF;
   border-radius: 3px;
   width: 250px;
+  font-weight: 400;
   cursor: pointer;
   font-size: 18px;
   font-weight: 700;
   transition-duration: 0.25s;
   margin: 0 auto 10px auto;
-  display: block; }
+  display: inline; }
+  @media (max-width: 1200px) {
+    button {
+      width: 200px; } }
+  @media (max-width: 992px) {
+    button {
+      display: block;
+      margin-right: auto;
+      margin-left: auto; } }
   button:hover {
     background-color: #dc0925; }
 
 h1 {
   font-size: 36pt; }
 
-p {
+.large-text p {
   font-size: 18pt; }
+
+.top-buffer {
+  margin-top: 50px; }
 
 table.info {
   width: 100%;
@@ -148,7 +179,10 @@ form .control--radio input:disabled ~ .control__indicator:after {
   background: #7b7b7b; }
 form label {
   display: block;
-  font-weight: 400; }
+  font-weight: 400;
+  font-size: 12pt; }
+  form label.title {
+    font-size: 24pt; }
 form input[type=text] {
   -webkit-appearance: none;
   -moz-appearance: none;

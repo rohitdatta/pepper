@@ -1,8 +1,47 @@
-{#{% extends 'layouts/base.html' %}#}
-{% block body %}
-	Acceptance Form
-	<form method="POST" action="{{ url_for('accept-invite') }}" enctype=multipart/form-data>
-		<input type=file name="resume">
-	<button type="submit">Submit</button>
-	</form>
+{% extends 'layouts/base.html' %}
+{% block content %}
+	<script src="{{ url_for('static', filename='js/accept.js') }}"></script>
+	<div class="col-md-6 col-md-offset-3">
+	<div class="center">
+		<h2>Congratulations {{ user.fname }}!</h2>
+		<div class="large-text">
+			<p>You're in! We're super excited to have you join us this year at {{ config.HACKATHON_NAME }}!</p>
+			<p>What's next? We want to get you checked in as fast as possible, so we'll need your signature on some legal documents required by UT Austin.</p>
+		</div>
+	</div>
+	<div class="accept top-buffer">
+		<form method="POST" action="{{ url_for('accept-invite') }}" enctype=multipart/form-data>
+			<div class="col-md-12">
+
+				<div class="form-group">
+					<label for="btn-input" class="center title">Will you be coming to {{ config.HACKATHON_NAME }}?</label><br>
+					<div class="col-md-6">
+						<button id="accept" type="button" class="decision" data-toggle="button">I'll Be There!</button>
+					</div>
+					<div class="col-md-6">
+						<button id="reject" type="button" class="decision">Sorry, I Can't Make It</button>
+					</div>
+					<div class="col-md-12">
+						<div id="accept-fields" hidden>
+							<p>Great! Once you fill out this form, you'll be confirmed!</p>
+							<div class="form-group">
+								<label>You're awesome and we want to show that to our partners. Upload your resume and
+									we'll share it with our partners. (PDFs only)</label>
+								<input type=file name="resume">
+								<button type="submit" name="accept" class="center-block">Submit</button>
+
+							</div>
+						</div>
+						<div id="reject-area" class="large-text" hidden>
+							<p class="center">Sorry to hear that you won't be able to make it. We'd love for you to join us for our hackathon this spring! Once you submit, your spot will be released to another student.</p>
+							<button type="submit" name="reject" class="center-block submit">Submit</button>
+
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</form>
+	</div>
+	</div>
 {% endblock %}

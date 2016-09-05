@@ -1,0 +1,6 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+<h1>{{ config.HACKATHON_NAME }}</h1>
+<a href="/logout">Logout</a>
+    Sorry you couldn't make it this year, {{ user.fname }}! Unfortunately, once an invitation has been declined, we are unable to change your status. Hope to see you again next year!
+{% endblock %}

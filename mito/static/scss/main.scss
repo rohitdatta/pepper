@@ -9,6 +9,36 @@ $freetail-red: #E45243;
 $hacktx-light-blue: #5983A0;
 $sans-serif-font: Josefin Sans, sans-serif;
 $desktop-width: 992px;
+
+//  Page-specific rules
+
+.confirmation {
+  button {
+	display: block;
+	&.decision {
+	  width: 100% !important;
+	}
+  }
+}
+
+
+
+.accept {
+  button {
+	background: $hacktx-light-blue;
+	&.submit {
+	  background-color: $hacktx-red;
+	  &:hover {
+		background-color: $hacktx-light-red;
+	  }
+	}
+	&.selected {
+	  background-color: $hacktx-red;
+	  color: white;
+	}
+  }
+}
+
 * {
   font-family: $sans-serif-font;
 }
@@ -20,6 +50,10 @@ body {
   //background: -o-linear-gradient(top left, $dark 0%, $light 100%);
   //background: linear-gradient(to bottom right, $dark 0%, $light 100%);
   color: white !important;
+
+  .center {
+	text-align: center;
+  }
 
   ::-webkit-input-placeholder { /* WebKit browsers */
 	font-family: $sans-serif-font;
@@ -50,8 +84,11 @@ body {
 
   a {
 	color: white;
-	font-weight: 400;
+	font-weight: 700;
 	text-decoration: none;
+	&.decorate {
+	  	border-bottom: 1px dotted white;
+	}
 	&:hover {
 	  color: rgba(#FFF, 0.8);
 	  text-decoration: none;
@@ -91,19 +128,27 @@ button {
   color: #FFFFFF;
   border-radius: 3px;
   width: 250px;
+  font-weight: 400;
+  @media(max-width: 1200px) {
+	width: 200px;
+  }
+  @media (max-width: 992px) {
+	display: block;
+	margin-right: auto;
+	margin-left: auto;
+  }
   cursor: pointer;
   font-size: 18px;
   font-weight: 700;
   transition-duration: 0.25s;
   margin: 0 auto 10px auto;
-  display: block;
+  display: inline;
   &:hover {
 	background-color: $hacktx-light-red;
   }
   &.confirm {
 	//float: right !important;
 	//  color: red !important;
-
   }
 }
 
@@ -111,8 +156,14 @@ h1 {
   font-size: 36pt;
 }
 
-p {
-  font-size: 18pt;
+.large-text {
+  p {
+	font-size: 18pt;
+  }
+}
+
+.top-buffer {
+  margin-top: 50px;
 }
 
 table {
@@ -217,6 +268,13 @@ form {
   label {
 	display: block;
 	font-weight: 400;
+	font-size: 12pt;
+	&.title {
+	  //font-weight:700;
+	  font-size: 24pt;
+	  //color: $freetail-tan;
+	  //text-shadow: 1.5px 1.5px 1.5px #CB0922;
+	}
   }
 
   h4.two-col {

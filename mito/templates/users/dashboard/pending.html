@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% block body %}
+{% block content %}
 	<script src="{{ url_for('static', filename='js/pending.js') }}"></script>
 	<div class="text-center col-md-8 col-md-offset-2">
 		<h1>Thanks for applying to {{ config.HACKATHON_NAME }} {{ user.fname }}!</h1>

@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% block body %}
+{% block content %}
     Thanks for applying to {{ config.HACKATHON_NAME }} {{ user.fname }}! We don't currently have space to guarantee you admission to {{ config.HACKATHON_NAME }}, but we'd really like to try to fit you in, so we've placed you on our waiting list.
 <a href="{{ url_for('logout') }}">Logout</a>
 {% endblock %}

@@ -126,6 +126,8 @@ def dashboard():
 		return redirect(url_for('accept-invite'))
 	elif current_user.status == 'CONFIRMED':
 		return render_template('users/dashboard/confirmed.html')
+	elif current_user.status == 'DECLINED':
+		return render_template('users/dashboard/declined.html', user=current_user)
 	elif current_user.status == 'REJECTED':
 		return render_template('users/dashboard/rejected.html', user=current_user)
 	elif current_user.status == 'WAITLISTED':
@@ -144,6 +146,7 @@ def is_pdf(filename):
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
+			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(settings.HACKATHON_NAME),
 			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
 				settings.HACKATHON_NAME),
 			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
@@ -155,22 +158,22 @@ def accept():
 		flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		return render_template('users/accept.html')
+		return render_template('users/accept.html', user=current_user)
 	else:
-		# if request.form['acceptance'] == 'accept':
-		if 'resume' in request.files:
-			resume = request.files['resume']
-			if is_pdf(resume.filename):  # if pdf upload to AWS
-				s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
-																		  current_user.fname)).put(Body=resume)
-				current_user.resume_uploaded = True
-			else:
-				flash('Resume must be in PDF format')
-				return redirect(url_for('accept-invite'))
-		current_user.status = 'CONFIRMED'
-		flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
-		# else:
-		# 	current_user.status = 'REJECTED'
+		if 'accept' in request.form: #User has accepted the invite
+			if 'resume' in request.files:
+				resume = request.files['resume']
+				if is_pdf(resume.filename):  # if pdf upload to AWS
+					s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
+																			  current_user.fname)).put(Body=resume)
+					current_user.resume_uploaded = True
+				else:
+					flash('Resume must be in PDF format')
+					return redirect(url_for('accept-invite'))
+			current_user.status = 'CONFIRMED'
+			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
+		else:
+			current_user.status = 'DECLINED'
 		DB.session.add(current_user)
 		DB.session.commit()
 		return redirect(url_for('dashboard'))

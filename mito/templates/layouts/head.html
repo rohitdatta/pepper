@@ -14,9 +14,12 @@
 	<script type=text/javascript>
 		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 	</script>
+	{% block imports %}
+	{% endblock %}
 </head>
 <body>
-
+{% block body %}
+{% endblock %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
 <script>
 	/* turning flask flash messages into js popup notifications */
