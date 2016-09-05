@@ -125,7 +125,7 @@ def dashboard():
 	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
 	elif current_user.status == 'CONFIRMED':
-		return render_template('users/dashboard/confirmed.html')
+		return render_template('users/dashboard/confirmed.html', user=current_user)
 	elif current_user.status == 'DECLINED':
 		return render_template('users/dashboard/declined.html', user=current_user)
 	elif current_user.status == 'REJECTED':
