@@ -1,4 +1,4 @@
-from mito.app import DB
+from pepper.app import DB
 
 class Role(DB.Model):
 	id = DB.Column(DB.Integer, primary_key=True)

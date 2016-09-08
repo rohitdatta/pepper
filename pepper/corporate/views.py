@@ -1,13 +1,13 @@
 from flask import request, render_template, flash, redirect, url_for, g, make_response
 from flask.ext.login import login_user, current_user
-from mito.users import User
+from pepper.users import User
 from helpers import check_password
-from mito.utils import corp_login_required, roles_required, s3, ts, s, send_email
-from mito import settings
+from pepper.utils import corp_login_required, roles_required, s3, ts, s, send_email
+from pepper import settings
 from sqlalchemy import distinct
-from mito.app import DB
-from mito.users.helpers import hash_pwd
-from mito.users.models import UserRole
+from pepper.app import DB
+from pepper.users.helpers import hash_pwd
+from pepper.users.models import UserRole
 
 def login():
 	if request.method == 'GET':

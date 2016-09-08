@@ -2,12 +2,12 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, render_template, redirect, url_for, flash
 import requests
 from models import User, UserRole
-from mito.app import DB, sg
+from pepper.app import DB, sg
 from sqlalchemy.exc import IntegrityError
-from mito import settings
+from pepper import settings
 from sendgrid.helpers.mail import *
 import urllib2
-from mito.utils import s3, send_email, s, roles_required
+from pepper.utils import s3, send_email, s, roles_required
 from helpers import send_status_change_notification
 import keen
 
@@ -158,7 +158,7 @@ def accept():
 			if 'resume' in request.files:
 				resume = request.files['resume']
 				if is_pdf(resume.filename):  # if pdf upload to AWS
-					s3.Object('hacktx-mito', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
+					s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
 																			  current_user.fname)).put(Body=resume)
 					current_user.resume_uploaded = True
 				else:

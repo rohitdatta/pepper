@@ -1,4 +1,4 @@
-from mito.app import redis_store
+from pepper.app import redis_store
 
 
 def toggle_application_period():

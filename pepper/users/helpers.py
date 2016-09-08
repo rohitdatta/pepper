@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash
-from mito.utils import send_email
-from mito import settings
+from pepper.utils import send_email
+from pepper import settings
 from flask import render_template
 
 def hash_pwd(password):

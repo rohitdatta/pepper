@@ -1,5 +1,5 @@
 
-from mito.app import DB
+from pepper.app import DB
 
 class Announcement(DB.Model):
 	__tablename__ = 'announcements'
