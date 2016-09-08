@@ -11,7 +11,6 @@ from mito.utils import s3, send_email, s, roles_required
 from helpers import send_status_change_notification
 import keen
 
-
 def landing():
 	if current_user.is_authenticated:
 		return redirect(url_for('dashboard'))
@@ -84,13 +83,16 @@ def confirm_registration():
 		# 	'created_at'
 		# })
 		# send a confirmation email. TODO: this is kinda verbose and long
-		from_email = Email(settings.GENERAL_INFO_EMAIL)
-		subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
-		to_email = Email(current_user.email)
-		content = Content('text/plain', 'Thanks for applying to {0}'.format(settings.HACKATHON_NAME))
-		mail = Mail(from_email, subject, to_email, content)
-		response = sg.client.mail.send.post(request_body=mail.get())
-		print response.status_code
+		html = render_template('emails/pre_inline/../templates/emails/applied.html', user=current_user)
+		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME), current_user.email, txt_content=None, html_content=html)
+
+		# from_email = Email(settings.GENERAL_INFO_EMAIL)
+		# subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
+		# to_email = Email(current_user.email)
+		# content = Content('text/plain', 'Thanks for applying to {0}'.format(settings.HACKATHON_NAME))
+		# mail = Mail(from_email, subject, to_email, content)
+		# response = sg.client.mail.send.post(request_body=mail.get())
+		# print response.status_code
 		flash(
 			'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
 				settings.HACKATHON_NAME), 'success')
@@ -197,8 +199,8 @@ def create_corp_user():
 		# send invite to the recruiter
 		token = s.dumps(user.email)
 		url = url_for('new-user-setup', token=token, _external=True)
-		txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
-		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
+		txt = render_template('emails/pre_inline/../templates/emails/corporate_welcome.txt', user=user, setup_url=url)
+		html = render_template('emails/pre_inline/../templates/emails/corporate_welcome.html', user=user, setup_url=url)
 
 		try:
 			print txt

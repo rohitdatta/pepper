@@ -62,8 +62,18 @@
 			<button class="">Edit</button>
 		</a>
 		<hr>
-		<div class="row">
-			<div class="col-md-8 col-md-offset-2">
+		<div class="col-md-8 col-md-offset-2">
+			<form action="/confirm" method="POST">
+			<div class="row">
+				<h3>Resume</h3>
+				<div class="col-md-6 form-info">
+					<p>Upload your resume here. We'll be sharing this with our partners so you can get cool jobs, swag, and more! Endless opportunities!</p>
+				</div>
+				<div class="col-md-6">
+					<input type=file name="resume" style="">
+				</div>
+</div>
+			<div class="row">
 				<h3>Additional Information</h3>
 				<div class="col-md-6 form-info">
 
@@ -75,7 +85,6 @@
 						will not be considered in the application process or thereafter.</p>
 					{#		</div>#}
 				</div>
-				<form action="/confirm" method="POST">
 
 					<div class="col-md-6">
 
@@ -120,7 +129,7 @@
 								<input type="radio" name="first-time" value="NO"/>
 								<div class="control__indicator"></div>
 							</label>
-							<label class="control control--radio">I choose not to disclose
+							<label class="control control--radio">Not sure
 								<input type="radio" name="first-time" value="NO_DISCLOSURE">
 								<div class="control__indicator"></div>
 							</label>
@@ -134,8 +143,8 @@
 					</div>
 					{#<hr>#}
 
-				</form>
 			</div>
+		</form>
 		</div>
 	</div>
 {% endblock %}

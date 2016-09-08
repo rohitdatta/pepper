@@ -7,6 +7,7 @@ import boto3
 from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
 import sendgrid
 from sendgrid.helpers.mail import *
+from premailer import transform
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -61,14 +62,17 @@ def corp_login_required(f):
 
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
-	recipient = Email(to_email)
-	sender = Email(from_email)
-	mail = Mail(sender, subject, recipient)
+	mail = Mail()
+	mail.set_from(Email(from_email))
+	personalization = Personalization()
+	personalization.add_to(Email(to_email))
+	personalization.set_subject(subject)
+	mail.add_personalization(personalization)
 	if txt_content is None and html_content is None:
 		raise ValueError('Must send some type of content')
 	if txt_content:
 		mail.add_content(Content('text/plain', txt_content))
 	if html_content:
-		mail.add_content(Content('text/html', html_content))
+		mail.add_content(Content('text/html', transform(html_content)))
 	response = sg.client.mail.send.post(request_body=mail.get())
 	return response.status_code == 200
