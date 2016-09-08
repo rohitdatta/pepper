@@ -82,17 +82,9 @@ def confirm_registration():
 		# keen.add_event('sign_ups', {
 		# 	'created_at'
 		# })
-		# send a confirmation email. TODO: this is kinda verbose and long
-		html = render_template('emails/pre_inline/../templates/emails/applied.html', user=current_user)
+		# send a confirmation email
+		html = render_template('emails/applied.html', user=current_user)
 		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME), current_user.email, txt_content=None, html_content=html)
-
-		# from_email = Email(settings.GENERAL_INFO_EMAIL)
-		# subject = 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME)
-		# to_email = Email(current_user.email)
-		# content = Content('text/plain', 'Thanks for applying to {0}'.format(settings.HACKATHON_NAME))
-		# mail = Mail(from_email, subject, to_email, content)
-		# response = sg.client.mail.send.post(request_body=mail.get())
-		# print response.status_code
 		flash(
 			'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
 				settings.HACKATHON_NAME), 'success')

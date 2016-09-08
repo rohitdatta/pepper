@@ -74,8 +74,8 @@ def forgot_password():
 		if user:
 			token = ts.dumps(user.email, salt='recover-key')
 			url = url_for('reset-password', token=token, _external=True)
-			html = render_template('emails/pre_inline/../templates/emails/reset_password.html', user=user, link=url)
-			txt = render_template('emails/pre_inline/../templates/emails/reset_password.txt', user=user, link=url)
+			html = render_template('emails/reset_password.html', user=user, link=url)
+			txt = render_template('emails/reset_password.txt', user=user, link=url)
 			send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
 		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
 		return redirect(url_for('corp-login'))

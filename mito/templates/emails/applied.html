@@ -1,75 +1,27 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
-<head>
-	<meta name="viewport" content="width=device-width" />
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>New form submission</title>
-	<style type="text/css">
-		{% include 'emails/style.css' %}
-	</style>
-</head>
-
-<body itemscope itemtype="http://schema.org/EmailMessage">
-
-	<table class="body-wrap">
-		<tr>
-			<td></td>
-			<td class="container" width="600">
-				<div class="content">
-					<table class="main" width="100%" cellpadding="0" cellspacing="0">
-						<tr>
-							<td class="alert alert-neutral">
-								<img src="{{ url_for('static', filename='branding/logo.png', _external=True) }}">
-							</td>
-						</tr>
-						<tr>
-							<td class="content-wrap">
-								<table width="100%" cellpadding="0" cellspacing="0">
-									<tr>
-										<td class="content-block">
-											Hey {{ user.fname }}!
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your application. Our hope is to be able to provide you with more details in ~7 days. There's nothing more you need to provide us with, but if you have any questions, don't hesitate to reach out to us at <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											We'll send you another email when we have a status update, but you can always check your application status at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>.
-										</td>
-									</tr>
-									<tr>
-										<td class="content-block">
-											♥ Team {{ config.HACKATHON_NAME }}
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-					<div class="footer">
-						<table width="100%">
-							<tr>
-								<td class="aligncenter content-block">You are receiving this because you applied to {{ config.HACKATHON_NAME }}. If you don't remember doing that or no longer wish to receive these emails, please send an email to <a href="mailto:{{config.GENERAL_INFO_EMAIL}}">{{config.GENERAL_INFO_EMAIL}}</a>.</td>
-							</tr>
-							<tr>
-								<td class="aligncenter content-block">
-									<a href="https://facebook.com/HackTX"><img src="{{url_for('static', filename='img/social/fb.png', _external=True)}}"></a>
-									<a href="https://twitter.com/HackTX"><img src="{{url_for('static', filename='img/social/twitter.png', _external=True)}}"></a>
-									<a href="https://github.com/HackTX"><img src="{{url_for('static', filename='img/social/github.png', _external=True)}}"></a>
-								</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</td>
-			<td></td>
-		</tr>
-	</table>
-
-</body>
-
-</html>
+{% extends 'emails/base.html' %}
+{% block message %}
+	<tr>
+		<td class="content-block">
+			Hey {{ user.fname }}!
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your
+			application. Our hope is to be able to provide you with more details in ~7 days. There's nothing more you
+			need to provide us with, but if you have any questions, don't hesitate to reach out to us at <a
+				href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			We'll send you another email when we have a status update, but you can always check your application status
+			at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			♥ Team {{ config.HACKATHON_NAME }}
+		</td>
+	</tr>
+{% endblock %}

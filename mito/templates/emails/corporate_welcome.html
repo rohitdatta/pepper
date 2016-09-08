@@ -1,5 +1,18 @@
-Hey {{ user.fname }},
-
-Thanks for joining us for {{ config.HACKATHON_NAME }}! You now have access to my{{ config.HACKATHON_NAME }}, a secure portal to download resumes and search for particular attendees information.
-
-To join, please click <a href="{{ setup_url }}">here</a>
+{% extends 'emails/base.html' %}
+{% block message %}
+	<tr>
+		<td class="content-block">
+			Hi {{ user.fname }}!
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Thanks for joining us for {{ config.HACKATHON_NAME }}! You now have access to my{{ config.HACKATHON_NAME }}, a secure portal to download resumes and search for particular attendees information.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			To join, please click <a href="{{ setup_url }}">here</a>
+		</td>
+	</tr>
+{% endblock %}
