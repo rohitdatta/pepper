@@ -5,7 +5,6 @@ from models import User, UserRole
 from pepper.app import DB, sg
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
-from sendgrid.helpers.mail import *
 import urllib2
 from pepper.utils import s3, send_email, s, roles_required
 from helpers import send_status_change_notification
@@ -68,11 +67,22 @@ def confirm_registration():
 			return redirect(url_for('dashboard'))
 		return render_template('users/confirm.html', user=current_user)
 	else:
+		if 'resume' in request.files:
+			resume = request.files['resume']
+			if is_pdf(resume.filename):  # if pdf upload to AWS
+				s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
+				current_user.resume_uploaded = True
+			else:
+				flash('Resume must be in PDF format')
+				return redirect(request.url)
+		else:
+			flash('Please upload your resume', 'error')
+			return redirect(request.url)
 		race_list = request.form.getlist('race')
 		first_timer = request.form.get('first-time')
 		if None in (race_list, first_timer):
 			flash('You must fill out the required fields', 'error')
-			return render_template('users/confirm.html', user=current_user)
+			return redirect(request.url)
 		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
 		current_user.first_hackathon = first_timer
 		current_user.status = 'PENDING'
@@ -82,6 +92,7 @@ def confirm_registration():
 		# keen.add_event('sign_ups', {
 		# 	'created_at'
 		# })
+
 		# send a confirmation email
 		html = render_template('emails/applied.html', user=current_user)
 		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME), current_user.email, txt_content=None, html_content=html)
