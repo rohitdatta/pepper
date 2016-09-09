@@ -64,6 +64,7 @@
 		<hr>
 		<div class="col-md-8 col-md-offset-2">
 			<form action="/confirm" method="POST" enctype="multipart/form-data">
+				<p>*All items required</p>
 			<div class="row">
 				<h3>Resume</h3>
 				<div class="col-md-6 form-info">
@@ -83,8 +84,36 @@
 				</div>
 
 					<div class="col-md-6">
-
-
+						<div class="control-group">
+							<h4>Skill Level</h4>
+							<label class="control control--radio">Have been programming for a week-a month
+								<input type="radio" name="skill-level" value="1"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming for 6 months
+								<input type="radio" name="skill-level" value="2"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming 1 year
+								<input type="radio" name="skill-level" value="3"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming > 1 year
+								<input type="radio" name="skill-level" value="4"/>
+								<div class="control__indicator"></div>
+							</label>
+						</div>
+						<br>
+						<div class="control-group">
+							<h4>How many hackathons have you been to?</h4>
+							<input type="number" name="num-hackathons" required min="0">
+						</div>
+						<br>
+						<div class="control-group">
+							<h4>Interests</h4>
+							<textarea name="interests" rows="5" placeholder="iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech"></textarea>
+						</div>
+						<br>
 						<h4 class="two-col">What race(s) do you identify with?</h4>
 						<label class="control control--checkbox">American Indian / Alaskan Native
 							<input type="checkbox" name="race" value="AMERICAN_INDIAN_ALASKAN"/>
@@ -115,21 +144,21 @@
 							<div class="control__indicator"></div>
 						</label>
 						<br>
-						<div class="control-group">
-							<h4>Is this your first hackathon?</h4>
-							<label class="control control--radio">Yes
-								<input type="radio" name="first-time" value="YES"/>
-								<div class="control__indicator"></div>
-							</label>
-							<label class="control control--radio">No
-								<input type="radio" name="first-time" value="NO"/>
-								<div class="control__indicator"></div>
-							</label>
-							<label class="control control--radio">Not sure
-								<input type="radio" name="first-time" value="NO_DISCLOSURE">
-								<div class="control__indicator"></div>
-							</label>
-						</div>
+{#						<div class="control-group">#}
+{#							<h4>Is this your first hackathon?</h4>#}
+{#							<label class="control control--radio">Yes#}
+{#								<input type="radio" name="first-time" value="YES"/>#}
+{#								<div class="control__indicator"></div>#}
+{#							</label>#}
+{#							<label class="control control--radio">No#}
+{#								<input type="radio" name="first-time" value="NO"/>#}
+{#								<div class="control__indicator"></div>#}
+{#							</label>#}
+{#							<label class="control control--radio">Not sure#}
+{#								<input type="radio" name="first-time" value="NO_DISCLOSURE">#}
+{#								<div class="control__indicator"></div>#}
+{#							</label>#}
+{#						</div>#}
 						{#	<input type="radio" name="first-time" value="YES"> Yes<br>#}
 						{#	<input type="radio" name="first-time" value="NO"> No<br>#}
 						{#	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose#}

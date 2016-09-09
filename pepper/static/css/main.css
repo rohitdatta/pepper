@@ -183,7 +183,7 @@ form label {
   font-size: 12pt; }
   form label.title {
     font-size: 24pt; }
-form input[type=text] {
+form input[type=text], form input[type=number], form textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -203,31 +203,58 @@ form input[type=text] {
   font-weight: 300;
   transition-duration: 0.25s;
   font-weight: 300; }
-  form input[type=text].no-expand:focus {
+  form input[type=text].no-expand:focus, form input.no-expand[type=number]:focus, form textarea.no-expand:focus {
     width: 250px; }
-  form input[type=text]::selection {
+  form input[type=text]::selection, form input[type=number]::selection, form textarea::selection {
     color: white;
     background: rgba(9, 116, 137, 0.75);
     /* WebKit/Blink Browsers */ }
-  form input[type=text] ::-moz-selection {
+  form input[type=text] ::-moz-selection, form input[type=number] ::-moz-selection, form textarea ::-moz-selection {
     background: #000;
     /* Gecko Browsers */ }
   @media (min-width: 992px) {
-    form input[type=text].double-width {
+    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width {
       width: 525px; }
-      form input[type=text].double-width:focus {
+      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus {
         width: 525px; } }
   @media (max-width: 992px) {
-    form input[type=text].double-width {
+    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width {
       width: 250px; }
-      form input[type=text].double-width:focus {
+      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus {
         width: 250px; } }
-  form input[type=text]:hover {
+  form input[type=text]:hover, form input[type=number]:hover, form textarea:hover {
     background-color: rgba(255, 255, 255, 0.4); }
-  form input[type=text]:focus {
+  form input[type=text]:focus, form input[type=number]:focus, form textarea:focus {
     background-color: white;
-    width: 300px;
-    color: #124e78; }
+    color: #124e78;
+    width: 300px; }
+form input[type=number] {
+  display: inline;
+  width: 100px; }
+  form input[type=number]:focus {
+    width: 150px; }
+form textarea {
+  display: inline;
+  width: 100%;
+  text-align: left;
+  color: red; }
+  form textarea:focus {
+    width: 100%;
+    height: 10em; }
+form ::-webkit-input-placeholder {
+  /* Chrome */
+  color: #bfbfbf; }
+form :-ms-input-placeholder {
+  /* IE 10+ */
+  color: #bfbfbf; }
+form ::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #bfbfbf;
+  opacity: 1; }
+form :-moz-placeholder {
+  /* Firefox 4 - 18 */
+  color: #bfbfbf;
+  opacity: 1; }
 
 html {
   position: relative;
