@@ -67,24 +67,25 @@ def confirm_registration():
 			return redirect(url_for('dashboard'))
 		return render_template('users/confirm.html', user=current_user)
 	else:
+		skill_level = request.form.get('skill-level')
+		num_hackathons = request.form.get('num-hackathons')
+		interests = request.form.get('interests')
+		race_list = request.form.getlist('race')
+		if None in (skill_level, num_hackathons, interests, race_list):
+			flash('You must fill out the required fields', 'error')
+			return redirect(request.url)
+		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS
 				s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
 				current_user.resume_uploaded = True
 			else:
-				flash('Resume must be in PDF format')
+				flash('Resume must be in PDF format', 'error')
 				return redirect(request.url)
 		else:
 			flash('Please upload your resume', 'error')
 			return redirect(request.url)
-		race_list = request.form.getlist('race')
-		first_timer = request.form.get('first-time')
-		if None in (race_list, first_timer):
-			flash('You must fill out the required fields', 'error')
-			return redirect(request.url)
-		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
-		current_user.first_hackathon = first_timer
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
