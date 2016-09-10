@@ -2,7 +2,7 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, render_template, redirect, url_for, flash
 import requests
 from models import User, UserRole
-from pepper.app import DB, sg
+from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
@@ -74,12 +74,14 @@ def confirm_registration():
 		if None in (skill_level, num_hackathons, interests, race_list):
 			flash('You must fill out the required fields', 'error')
 			return redirect(request.url)
+		current_user.skill_level = skill_level
+		current_user.num_hackathons = num_hackathons
+		current_user.interests = interests
 		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS
 				s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
-				current_user.resume_uploaded = True
 			else:
 				flash('Resume must be in PDF format', 'error')
 				return redirect(request.url)
