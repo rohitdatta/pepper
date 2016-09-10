@@ -8,11 +8,11 @@ from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
 from pepper import create_app, app
 
-crm_app = create_app()
-manager = Manager(crm_app)
+hackathon_identity_app = create_app()
+manager = Manager(hackathon_identity_app)
 
 # Migration commands for when you create DB
-Migrate(crm_app, app.DB)
+Migrate(hackathon_identity_app, app.DB)
 manager.add_command('db', MigrateCommand)
 
 @manager.command

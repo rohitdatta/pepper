@@ -1,2 +1,2 @@
 from app import create_app
-nucelus = create_app()
+hackathon_identity_app = create_app()
