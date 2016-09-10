@@ -163,21 +163,41 @@ def accept():
 		flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		signature_request = hs_client.send_signature_request_embedded_with_template(
-			test_mode=True,
-			client_id=settings.HELLO_SIGN_CLIENT_ID,
-			template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
-			subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
-			message='Please sign the medical authorization waiver for UT Austin',
-			signers=[
-				{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
-			]
-		)
-		# bar = hs_client.get_embedded_object('937f259c5ac95990228a147d19a61222083c281b')
-		for signature in signature_request.signatures:
-			embedded_obj = hs_client.get_embedded_object(signature.signature_id)
-			sign_url = embedded_obj.sign_url
-		return render_template('users/accept.html', user=current_user, sign_url=sign_url)
+		if current_user.med_auth_signature_id is None: # Generate the medical authorization waiver
+			med_signature_request = hs_client.send_signature_request_embedded_with_template(
+				test_mode=settings.DEBUG,
+				client_id=settings.HELLO_SIGN_CLIENT_ID,
+				template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
+				subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
+				message='Please sign the medical authorization waiver for UT Austin',
+				signers=[
+					{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
+				]
+			)
+			current_user.med_auth_signature_id = med_signature_request.signatures[0].signature_id
+		if current_user.waiver_signature_id is None:
+			waiver_signature_request = hs_client.send_signature_request_embedded_with_template(
+				test_mode=settings.DEBUG,
+				client_id=settings.HELLO_SIGN_CLIENT_ID,
+				template_id=settings.HELLO_SIGN_WAIVER_TEMPLATE_ID,
+				subject='Release Waiver for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname,
+																		 current_user.lname),
+				message='Please sign the release waiver for UT Austin',
+				signers=[
+					{'role_name': 'Attendee', 'email_address': current_user.email,
+					 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
+				]
+			)
+			current_user.waiver_signature_id = waiver_signature_request.signatures[0].signature_id
+
+		DB.session.add(current_user)
+		DB.session.commit()
+		med_waiver_url = hs_client.get_embedded_object(current_user.med_auth_signature_id).sign_url
+		release_waiver_url = hs_client.get_embedded_object(current_user.waiver_signature_id).sign_url
+			# for signature in med_signature_request.signatures:
+			# 	embedded_obj = hs_client.get_embedded_object(signature.signature_id)
+			# 	sign_url = embedded_obj.sign_url
+		return render_template('users/accept.html', user=current_user, sign_url=med_waiver_url)
 	else:
 		if 'accept' in request.form: #User has accepted the invite
 			# if 'resume' in request.files:
