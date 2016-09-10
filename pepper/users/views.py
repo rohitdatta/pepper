@@ -129,6 +129,8 @@ def dashboard():
 		return redirect(url_for('confirm-registration'))
 	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))
+	elif current_user.status == 'SIGNING':
+		return redirect(url_for('sign'))
 	elif current_user.status == 'CONFIRMED':
 		return render_template('users/dashboard/confirmed.html', user=current_user)
 	elif current_user.status == 'DECLINED':
@@ -150,6 +152,45 @@ def is_pdf(filename):
 @login_required
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
+		message = {
+			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(settings.HACKATHON_NAME),
+			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
+				settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
+				settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
+				settings.HACKATHON_NAME),
+			None: "Corporate users cannot view this page."
+		}
+		flash(message[current_user.status], 'error')
+		return redirect(url_for('dashboard'))
+	if request.method == 'GET':
+			# for signature in med_signature_request.signatures:
+			# 	embedded_obj = hs_client.get_embedded_object(signature.signature_id)
+			# 	sign_url = embedded_obj.sign_url
+		return render_template('users/accept.html', user=current_user)
+	else:
+		if 'accept' in request.form: #User has accepted the invite
+			# if 'resume' in request.files:
+			# 	resume = request.files['resume']
+			# 	if is_pdf(resume.filename):  # if pdf upload to AWS
+			# 		s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
+			# 																  current_user.fname)).put(Body=resume)
+			# 		current_user.resume_uploaded = True
+			# 	else:
+			# 		flash('Resume must be in PDF format')
+			# 		return redirect(url_for('accept-invite'))
+			current_user.status = 'SIGNING'
+			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
+		else:
+			current_user.status = 'DECLINED'
+		DB.session.add(current_user)
+		DB.session.commit()
+		return redirect(url_for('dashboard'))
+
+@login_required
+def sign():
+	if current_user.status != 'SIGNING':  # they aren't allowed to accept their invitation
 		message = {
 			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(settings.HACKATHON_NAME),
 			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
@@ -194,29 +235,7 @@ def accept():
 		DB.session.commit()
 		med_waiver_url = hs_client.get_embedded_object(current_user.med_auth_signature_id).sign_url
 		release_waiver_url = hs_client.get_embedded_object(current_user.waiver_signature_id).sign_url
-			# for signature in med_signature_request.signatures:
-			# 	embedded_obj = hs_client.get_embedded_object(signature.signature_id)
-			# 	sign_url = embedded_obj.sign_url
-		return render_template('users/accept.html', user=current_user, sign_url=release_waiver_url)
-	else:
-		if 'accept' in request.form: #User has accepted the invite
-			# if 'resume' in request.files:
-			# 	resume = request.files['resume']
-			# 	if is_pdf(resume.filename):  # if pdf upload to AWS
-			# 		s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
-			# 																  current_user.fname)).put(Body=resume)
-			# 		current_user.resume_uploaded = True
-			# 	else:
-			# 		flash('Resume must be in PDF format')
-			# 		return redirect(url_for('accept-invite'))
-			current_user.status = 'CONFIRMED'
-			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
-		else:
-			current_user.status = 'DECLINED'
-		DB.session.add(current_user)
-		DB.session.commit()
-		return redirect(url_for('dashboard'))
-
+		return render_template('users/sign.html', user=current_user, sign_url=med_waiver_url)
 
 @login_required
 @roles_required('admin')
@@ -236,8 +255,8 @@ def create_corp_user():
 		# send invite to the recruiter
 		token = s.dumps(user.email)
 		url = url_for('new-user-setup', token=token, _external=True)
-		txt = render_template('emails/pre_inline/../templates/emails/corporate_welcome.txt', user=user, setup_url=url)
-		html = render_template('emails/pre_inline/../templates/emails/corporate_welcome.html', user=user, setup_url=url)
+		txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
+		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
 
 		try:
 			print txt

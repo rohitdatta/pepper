@@ -12,6 +12,7 @@ def configure_routes(app):
 	app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
 	app.add_url_rule('/confirm', 'confirm-registration', view_func=users.views.confirm_registration, methods=['GET', 'POST'])
 	app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
+	app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
 
 	# Admin Pages
 	app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.views.create_corp_user, methods=['GET', 'POST'])
