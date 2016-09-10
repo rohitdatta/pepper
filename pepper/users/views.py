@@ -197,7 +197,7 @@ def accept():
 			# for signature in med_signature_request.signatures:
 			# 	embedded_obj = hs_client.get_embedded_object(signature.signature_id)
 			# 	sign_url = embedded_obj.sign_url
-		return render_template('users/accept.html', user=current_user, sign_url=med_waiver_url)
+		return render_template('users/accept.html', user=current_user, sign_url=release_waiver_url)
 	else:
 		if 'accept' in request.form: #User has accepted the invite
 			# if 'resume' in request.files:
