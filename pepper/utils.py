@@ -8,6 +8,7 @@ from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
 import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
+from hellosign_sdk import HSClient
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -15,6 +16,7 @@ s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
 ts = URLSafeTimedSerializer(settings.SECRET_KEY)
 s = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
+hs_client = HSClient(api_key=settings.HELLO_SIGN_API_KEY)
 
 
 def validate_email(email):
@@ -63,7 +65,7 @@ def corp_login_required(f):
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
 	mail = Mail()
-	mail.set_from(Email(from_email))
+	mail.set_from(Email(from_email, settings.HACKATHON_NAME))
 	personalization = Personalization()
 	personalization.add_to(Email(to_email))
 	personalization.set_subject(subject)

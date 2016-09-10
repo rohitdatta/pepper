@@ -15,18 +15,15 @@ def landing():
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
-
 def login():
 	return redirect(
 		'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
 
-
 @login_required
 def logout():
 	logout_user()
 	return redirect(url_for('landing'))
-
 
 def callback():
 	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(

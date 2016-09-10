@@ -1,4 +1,25 @@
 {% extends 'emails/base.html' %}
+{% block email_schema %}
+	<script type="application/ld+json">
+	{
+	  "@context": "http://schema.org",
+	  "@type": "EmailMessage",
+	  "potentialAction": {
+		"@type": "ViewAction",
+		"target": "{{ url_for('dashboard', _external=True) }}",
+		"name": "View Application Status",
+		"url": "{{ url_for('dashboard', _external=True) }}"
+	  },
+	  "description": "Check your application status for {{ config.HACKATHON_NAME }}",
+	    "publisher": {
+			"@type": "Organization",
+			"name": "{{ config.HACKATHON_NAME }}",
+			"url": "https://hacktx.com",
+			"url/googlePlus": "https://plus.google.com/b/106817110964597718723"
+		  }
+	}
+	</script>
+{% endblock %}
 {% block message %}
 	<tr>
 		<td class="content-block">
