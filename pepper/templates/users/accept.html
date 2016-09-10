@@ -1,4 +1,22 @@
 {% extends 'layouts/base.html' %}
+{% block imports %}
+<script type="text/javascript" src="https://s3.amazonaws.com/cdn.hellosign.com/public/js/hellosign-embedded.LATEST.min.js"></script>
+	<script>
+	HelloSign.init({{ config.HELLO_SIGN_CLIENT_ID }});
+
+	$(document).ready(function() {
+		HelloSign.open({
+			'url': '{{ sign_url }}',
+			'debug': true,
+			'allowCancel': true,
+			'skipDomainVerification': true,
+			messageListener: function(eventData) {
+				// do something
+			}
+		});
+	});
+	</script>
+{% endblock %}
 {% block content %}
 	<script src="{{ url_for('static', filename='js/accept.js') }}"></script>
 	<div class="col-md-6 col-md-offset-3">

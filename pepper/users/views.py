@@ -6,7 +6,7 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required
+from pepper.utils import s3, send_email, s, roles_required, hs_client
 from helpers import send_status_change_notification
 import keen
 
@@ -163,18 +163,32 @@ def accept():
 		flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		return render_template('users/accept.html', user=current_user)
+		signature_request = hs_client.send_signature_request_embedded_with_template(
+			test_mode=True,
+			client_id=settings.HELLO_SIGN_CLIENT_ID,
+			template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
+			subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
+			message='Please sign the medical authorization waiver for UT Austin',
+			signers=[
+				{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
+			]
+		)
+		# bar = hs_client.get_embedded_object('937f259c5ac95990228a147d19a61222083c281b')
+		for signature in signature_request.signatures:
+			embedded_obj = hs_client.get_embedded_object(signature.signature_id)
+			sign_url = embedded_obj.sign_url
+		return render_template('users/accept.html', user=current_user, sign_url=sign_url)
 	else:
 		if 'accept' in request.form: #User has accepted the invite
-			if 'resume' in request.files:
-				resume = request.files['resume']
-				if is_pdf(resume.filename):  # if pdf upload to AWS
-					s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
-																			  current_user.fname)).put(Body=resume)
-					current_user.resume_uploaded = True
-				else:
-					flash('Resume must be in PDF format')
-					return redirect(url_for('accept-invite'))
+			# if 'resume' in request.files:
+			# 	resume = request.files['resume']
+			# 	if is_pdf(resume.filename):  # if pdf upload to AWS
+			# 		s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
+			# 																  current_user.fname)).put(Body=resume)
+			# 		current_user.resume_uploaded = True
+			# 	else:
+			# 		flash('Resume must be in PDF format')
+			# 		return redirect(url_for('accept-invite'))
 			current_user.status = 'CONFIRMED'
 			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
 		else:
