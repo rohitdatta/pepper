@@ -55,7 +55,8 @@ class User(DB.Model, UserMixin):
 			self.type = 'MLH'
 			self.access_token = dict['access_token']
 			self.resume_uploaded = False
-			self.school = dict['data']['school']['name']
+			self.school_id = dict['data']['school']['id']
+			self.school_name = dict['data']['school']['name']
 		else: # creating a non-OAuth user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation
