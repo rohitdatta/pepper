@@ -9,6 +9,7 @@ import urllib2
 from pepper.utils import s3, send_email, s, roles_required, hs_client
 from helpers import send_status_change_notification
 import keen
+from datetime import datetime
 
 def landing():
 	if current_user.is_authenticated:
@@ -88,10 +89,10 @@ def confirm_registration():
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
-
+		fmt = '%Y-%m-%dT%H:%M:%S:%z'
 		keen.add_event('sign_ups', {
-			'created_at': '',
-			'date_of_birth': current_user.birthday,
+			'created_at': datetime.utcnow().strftime(fmt),
+			'date_of_birth': current_user.birthday.strftime(fmt),
 			'dietary_restrictions': current_user.dietary_restrictions,
 			'email': current_user.email,
 			'first_name': current_user.fname,
@@ -100,8 +101,10 @@ def confirm_registration():
 			'id': current_user.id,
 			'major': current_user.major,
 			'phone_number': current_user.phone_number,
-			'school.id': current_user.school_id,
-			'school.name': current_user.school_name,
+			'school': {
+				'id': current_user.school_id,
+				'name': current_user.school_name
+			},
 			'shirt_size': current_user.shirt_size,
 			'special_needs': current_user.special_needs
 		})
