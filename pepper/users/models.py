@@ -22,7 +22,8 @@ class User(DB.Model, UserMixin):
 	birthday = DB.Column(DB.Date)
 	gender = DB.Column(DB.String(255))
 	phone_number = DB.Column(DB.String(255))
-	school = DB.Column(DB.String(255)) # TODO: get this to be a school obj
+	school_id = DB.Column(DB.Integer)
+	school_name = DB.Column(DB.String(255))
 	special_needs = DB.Column(DB.Text)
 	checked_in = DB.Column(DB.Boolean)
 	roles = DB.relationship('UserRole', backref='users', lazy='dynamic')

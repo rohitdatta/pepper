@@ -89,9 +89,22 @@ def confirm_registration():
 		DB.session.add(current_user)
 		DB.session.commit()
 
-		# keen.add_event('sign_ups', {
-		# 	'created_at'
-		# })
+		keen.add_event('sign_ups', {
+			'created_at': '',
+			'date_of_birth': current_user.birthday,
+			'dietary_restrictions': current_user.dietary_restrictions,
+			'email': current_user.email,
+			'first_name': current_user.fname,
+			'last_name': current_user.lname,
+			'gender': current_user.gender,
+			'id': current_user.id,
+			'major': current_user.major,
+			'phone_number': current_user.phone_number,
+			'school.id': current_user.school_id,
+			'school.name': current_user.school_name,
+			'shirt_size': current_user.shirt_size,
+			'special_needs': current_user.special_needs
+		})
 
 		# send a confirmation email
 		html = render_template('emails/applied.html', user=current_user)
