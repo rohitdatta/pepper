@@ -67,6 +67,8 @@ def confirm_registration():
 	else:
 		skill_level = request.form.get('skill-level')
 		num_hackathons = request.form.get('num-hackathons')
+		if int(num_hackathons) > 9223372036854775807:
+			flash("{} seems like a lot of hackathons! I don't think you've been to that many".format(num_hackathons), 'error')
 		interests = request.form.get('interests')
 		race_list = request.form.getlist('race')
 		if None in (skill_level, num_hackathons, interests, race_list):
