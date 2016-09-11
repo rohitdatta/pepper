@@ -130,7 +130,8 @@ def update_user_data():
 	current_user.birthday = user_info['data']['date_of_birth']
 	current_user.gender = user_info['data']['gender']
 	current_user.phone_number = user_info['data']['phone_number']
-	current_user.school = user_info['data']['school']['name']
+	current_user.school_id = user_info['data']['school']['id']
+	current_user.school_name = user_info['data']['school']['name']
 	current_user.special_needs = user_info['data']['special_needs']
 	DB.session.add(current_user)
 	DB.session.commit()
