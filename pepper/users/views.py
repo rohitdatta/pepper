@@ -41,7 +41,11 @@ def callback():
 			user_info['access_token'] = access_token
 			user = User.query.filter_by(email=user_info['data']['email']).first()
 			if user is None:
-				user = User(user_info)
+				if settings.REGISTRATION_OPEN:
+					user = User(user_info)
+				else:
+					flash('Registration is currently closed', 'error')
+					return redirect(url_for('landing'))
 			else:
 				user.access_token = access_token
 			DB.session.add(user)

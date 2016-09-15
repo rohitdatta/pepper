@@ -70,6 +70,7 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 	personalization.add_to(Email(to_email))
 	personalization.set_subject(subject)
 	mail.add_personalization(personalization)
+	foo = transform(html_content)
 	if txt_content is None and html_content is None:
 		raise ValueError('Must send some type of content')
 	if txt_content:
