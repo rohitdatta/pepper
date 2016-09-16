@@ -4,6 +4,7 @@ import json
 from flask import g
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
+from flask.ext.cdn import CDN
 from flask_sslify import SSLify
 from flask_redis import Redis
 import sendgrid
@@ -12,6 +13,7 @@ import settings
 DB = SQLAlchemy()
 redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
+cdn = CDN()
 
 import routes
 from users.models import User
@@ -41,5 +43,10 @@ def create_app():
 	configure_login(app)
 
 	app.jinja_env.filters['json'] = json.dumps
+
+	app.config['CDN_DOMAIN'] = settings.CDN_URL
+	app.config['CDN_HTTPS'] = True
+	cdn.init_app(app)
+
 	SSLify(app)
 	return app

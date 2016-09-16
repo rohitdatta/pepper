@@ -20,3 +20,4 @@ hashids
 keen
 premailer
 hellosign-python-sdk
+flask-cdn
