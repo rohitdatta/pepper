@@ -92,6 +92,7 @@ def confirm_registration():
 		current_user.interests = interests
 		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
 		current_user.class_standing = class_standing
+		current_user.time_applied = datetime.utcnow()
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS

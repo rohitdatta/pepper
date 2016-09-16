@@ -327,4 +327,6 @@ body {
   width: 100%;
   margin-top: 50px;
   /* Set the fixed height of the footer here */
-  height: 60px; }
+  height: 70px; }
+  .footer img {
+    padding-bottom: 10px; }

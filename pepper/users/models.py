@@ -36,6 +36,7 @@ class User(DB.Model, UserMixin):
 	race = DB.Column(DB.String(255))
 	med_auth_signature_id = DB.Column(DB.String(255))
 	waiver_signature_id = DB.Column(DB.String(255))
+	time_applied = DB.Column(DB.DateTime)
 
 	def __init__(self, dict):
 		if dict['type'] == 'MLH': # if creating a MyMLH user
