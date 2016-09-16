@@ -106,7 +106,7 @@ def confirm_registration():
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
-		fmt = '%Y-%m-%dT%H:%M:%S:%z'
+		fmt = '%Y-%m-%dT%H:%M:%S.%f'
 		keen.add_event('sign_ups', {
 			'date_of_birth': current_user.birthday.strftime(fmt),
 			'dietary_restrictions': current_user.dietary_restrictions,
