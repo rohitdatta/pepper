@@ -4,6 +4,9 @@
   .confirmation button.decision {
     width: 100% !important; }
 
+.red {
+  color: #CB0922; }
+
 .accept button {
   background: #5983A0; }
   .accept button.submit {

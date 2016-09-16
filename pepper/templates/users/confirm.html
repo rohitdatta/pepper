@@ -63,8 +63,8 @@
 		</a>
 		<hr>
 		<div class="col-md-8 col-md-offset-2">
-			<form action="/confirm" method="POST" enctype="multipart/form-data">
-				<p>*All items required</p>
+			<form action="{{ url_for('confirm-registration') }}" method="POST" enctype="multipart/form-data">
+				<p class="large-text"><span class="red">*</span> All items required</p>
 			<div class="row">
 				<h3>Resume</h3>
 				<div class="col-md-6 form-info">
@@ -106,7 +106,7 @@
 						<br>
 						<div class="control-group">
 							<h4>How many hackathons have you been to?</h4>
-							<input type="number" name="num-hackathons" required min="0">
+							<input type="number" class="number" name="num-hackathons" required min="0">
 						</div>
 						<br>
 						<div class="control-group">
@@ -116,54 +116,41 @@
 						<br>
 						<h4 class="two-col">What race(s) do you identify with?</h4>
 						<label class="control control--checkbox">American Indian / Alaskan Native
-							<input type="checkbox" name="race" value="AMERICAN_INDIAN_ALASKAN"/>
+							<input type="checkbox" name="race" class="other-race" value="AMERICAN_INDIAN_ALASKAN"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">Asian
-							<input type="checkbox" name="race" value="ASIAN"/>
+							<input type="checkbox" name="race" class="other-race" value="ASIAN"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">Black and African American
-							<input type="checkbox" name="race" value="BLACK_AFRICAN_AMERICAN"/>
+							<input type="checkbox" name="race" class="other-race" value="BLACK_AFRICAN_AMERICAN"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">Hispanic or Latino
-							<input type="checkbox" name="race" value="HISPANIC_LATINO"/>
+							<input type="checkbox" name="race" class="other-race" value="HISPANIC_LATINO"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">Native Hawaiian or Other Pacific Islander
-							<input type="checkbox" name="race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER"/>
+							<input type="checkbox" name="race" class="other-race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">White (Not of Hispanic Origin)
-							<input type="checkbox" name="race" value="EUROPEAN_WHITE"/>
+							<input type="checkbox" name="race" class="other-race" value="EUROPEAN_WHITE"/>
 							<div class="control__indicator"></div>
 						</label>
 						<label class="control control--checkbox">I choose not to disclose
-							<input type="checkbox" name="race" value="NO_DISCLOSURE"/>
+							<input type="checkbox" name="race" class="no-race" value="NO_DISCLOSURE"/>
 							<div class="control__indicator"></div>
 						</label>
 						<br>
-{#						<div class="control-group">#}
-{#							<h4>Is this your first hackathon?</h4>#}
-{#							<label class="control control--radio">Yes#}
-{#								<input type="radio" name="first-time" value="YES"/>#}
-{#								<div class="control__indicator"></div>#}
-{#							</label>#}
-{#							<label class="control control--radio">No#}
-{#								<input type="radio" name="first-time" value="NO"/>#}
-{#								<div class="control__indicator"></div>#}
-{#							</label>#}
-{#							<label class="control control--radio">Not sure#}
-{#								<input type="radio" name="first-time" value="NO_DISCLOSURE">#}
-{#								<div class="control__indicator"></div>#}
-{#							</label>#}
-{#						</div>#}
-						{#	<input type="radio" name="first-time" value="YES"> Yes<br>#}
-						{#	<input type="radio" name="first-time" value="NO"> No<br>#}
-						{#	<input type="radio" name="first-time" value="NO_DISCLOSURE"> I choose not to disclose#}
-						<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right"
-																		aria-hidden="true"></i></button>
+						<p>We participate in Major League Hacking (MLH) as a MLH Member Event. You authorize us to share certain application/registration information for event administration, ranking, MLH administration, pre and post-event informational e-mails, and occasional messages about hackathons in line with the MLH Privacy Policy.</p>
+						<label class="control control--checkbox">I agree
+							<input type="checkbox" name="mlh" value="TRUE" required/>
+							<div class="control__indicator"></div>
+						</label>
+						<br>
+						<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
 
 					</div>
 					{#<hr>#}
