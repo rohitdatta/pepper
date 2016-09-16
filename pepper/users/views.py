@@ -81,8 +81,7 @@ def confirm_registration():
 		interests = request.form.get('interests')
 		race_list = request.form.getlist('race')
 		class_standing = request.form.get('class-standing')
-		# if request.form.get('MLH') is not
-		if request.form.get('mlh') is not 'TRUE':
+		if request.form.get('mlh') != 'TRUE':
 			flash('You must agree to MLH data sharing', 'error')
 			return redirect(request.url)
 		if None in (skill_level, num_hackathons, interests, race_list, class_standing):
