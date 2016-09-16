@@ -80,13 +80,19 @@ def confirm_registration():
 			return redirect(request.url)
 		interests = request.form.get('interests')
 		race_list = request.form.getlist('race')
-		if None in (skill_level, num_hackathons, interests, race_list):
+		class_standing = request.form.get('class-standing')
+		# if request.form.get('MLH') is not
+		if request.form.get('mlh') is not 'TRUE':
+			flash('You must agree to MLH data sharing', 'error')
+			return redirect(request.url)
+		if None in (skill_level, num_hackathons, interests, race_list, class_standing):
 			flash('You must fill out the required fields', 'error')
 			return redirect(request.url)
 		current_user.skill_level = skill_level
 		current_user.num_hackathons = num_hackathons
 		current_user.interests = interests
 		current_user.race = 'NO_DISCLOSURE' if 'NO_DISCLOSURE' in race_list else ','.join(race_list)
+		current_user.class_standing = class_standing
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS

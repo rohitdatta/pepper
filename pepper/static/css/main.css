@@ -180,6 +180,48 @@ form .control--radio .control__indicator:after {
   background: #fff; }
 form .control--radio input:disabled ~ .control__indicator:after {
   background: #7b7b7b; }
+form .select {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 15px;
+  width: 100%; }
+form .select select {
+  display: inline-block;
+  width: 100%;
+  cursor: pointer;
+  padding: 10px 15px;
+  outline: 0;
+  border: 0;
+  border-radius: 0;
+  background: #e6e6e6;
+  color: #7b7b7b;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none; }
+form .select select::-ms-expand {
+  display: none; }
+form .select select:hover,
+form .select select:focus {
+  color: #000;
+  background: #ccc; }
+form .select select:disabled {
+  opacity: 0.5;
+  pointer-events: none; }
+form .select__arrow {
+  position: absolute;
+  top: 16px;
+  right: 15px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  border-style: solid;
+  border-width: 8px 5px 0 5px;
+  border-color: #7b7b7b transparent transparent transparent; }
+form .select select:hover ~ .select__arrow,
+form .select select:focus ~ .select__arrow {
+  border-top-color: #000; }
+form .select select:disabled ~ .select__arrow {
+  border-top-color: #ccc; }
 form label {
   display: block;
   font-weight: 400;

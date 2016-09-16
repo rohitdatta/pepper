@@ -19,10 +19,10 @@
 						<td>Email</td>
 						<td>{{ user.email }}</td>
 					</tr>
-					<tr>
-						<td>Class Standing</td>
-						<td>{{ user.class_standing }}</td>
-					</tr>
+{#					<tr>#}
+{#						<td>Class Standing</td>#}
+{#						<td>{{ user.class_standing }}</td>#}
+{#					</tr>#}
 					<tr>
 						<td>Major</td>
 						<td>{{ user.major }}</td>
@@ -86,6 +86,10 @@
 					<div class="col-md-6">
 						<div class="control-group">
 							<h4>Skill Level</h4>
+							<label class="control control--radio">Have never programmed
+								<input type="radio" name="skill-level" value="0"/>
+								<div class="control__indicator"></div>
+							</label>
 							<label class="control control--radio">Have been programming for a week-a month
 								<input type="radio" name="skill-level" value="1"/>
 								<div class="control__indicator"></div>
@@ -107,6 +111,20 @@
 						<div class="control-group">
 							<h4>How many hackathons have you been to?</h4>
 							<input type="number" class="number" name="num-hackathons" required min="0">
+						</div>
+						<div class="control-group">
+							<h4>What is your class standing?</h4>
+							<div class="select" name="class-standing">
+							  <select>
+								  <option>Freshman</option>
+								  <option>Sophomore</option>
+								  <option>Junior</option>
+								  <option>Senior</option>
+								  <option>Graduate Student</option>
+								  <option>High Schooler</option>
+							  </select>
+							  <div class="select__arrow"></div>
+							</div>
 						</div>
 						<br>
 						<div class="control-group">
