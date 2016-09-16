@@ -108,7 +108,6 @@ def confirm_registration():
 		DB.session.commit()
 		fmt = '%Y-%m-%dT%H:%M:%S:%z'
 		keen.add_event('sign_ups', {
-			'created_at': datetime.utcnow().strftime(fmt),
 			'date_of_birth': current_user.birthday.strftime(fmt),
 			'dietary_restrictions': current_user.dietary_restrictions,
 			'email': current_user.email,
@@ -122,6 +121,14 @@ def confirm_registration():
 				'id': current_user.school_id,
 				'name': current_user.school_name
 			},
+			'keen': {
+				'timestamp': current_user.time_applied.strftime(fmt)
+			},
+			'interests': interests,
+			'skill_level': skill_level,
+			'races': race_list,
+			'num_hackathons': num_hackathons,
+			'class_standing': class_standing,
 			'shirt_size': current_user.shirt_size,
 			'special_needs': current_user.special_needs
 		})
