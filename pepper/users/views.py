@@ -66,6 +66,7 @@ def callback():
 def confirm_registration():
 	if not settings.REGISTRATION_OPEN:
 		flash('Registration is currently closed', 'error')
+		logout_user()
 		return redirect(url_for('landing'))
 	if request.method == 'GET':
 		if current_user.status != 'NEW':
