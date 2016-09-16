@@ -28,16 +28,7 @@
 	</tr>
 	<tr>
 		<td class="content-block">
-			Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your
-			application. Our hope is to be able to provide you with more details in ~7 days. There's nothing more you
-			need to provide us with, but if you have any questions, don't hesitate to reach out to us at <a
-				href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			We'll send you another email when we have a status update, but you can always check your application status
-			at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>.
+			Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your application. You'll receive another email when we have a status update, but you can always check your application status at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>. That's all we need from you for now, but if you have any questions, please email <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
 		</td>
 	</tr>
 	<tr>
