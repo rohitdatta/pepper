@@ -35,8 +35,8 @@ def callback():
 	if 'access_token' in resp:
 		access_token = resp['access_token']
 	else:
-		g.log = g.log.bind(code=request.args.get('code'))
-		g.log.error('Unable to register')
+		g.log = g.log.bind(auth_code=request.args.get('code'))
+		g.log.error('Unable to get access token for user with:')
 		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
