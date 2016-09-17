@@ -33,7 +33,7 @@ def callback():
 	print url
 	resp = requests.post(url).json()
 	if 'access_token' in resp:
-		access_token = resp.json()['access_token']
+		access_token = resp['access_token']
 	else:
 		g.log = g.log.bind(code=request.args.get('code'))
 		g.log.error('Unable to register')
