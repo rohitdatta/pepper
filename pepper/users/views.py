@@ -58,7 +58,7 @@ def callback():
 				user.access_token = access_token
 			DB.session.add(user)
 			DB.session.commit()
-			g.log.info('Successfully cureated user')
+			g.log.info('Successfully created user')
 			login_user(user, remember=True)
 		except IntegrityError:
 			# a unique value already exists this should never happen
@@ -76,6 +76,8 @@ def callback():
 @login_required
 def confirm_registration():
 	if not settings.REGISTRATION_OPEN:
+		g.log = g.log.bind(email=current_user.email, access_token=current_user.access_token)
+		g.log.info('Applications closed user redirected to homepage')
 		flash('Registration is currently closed', 'error')
 		logout_user()
 		return redirect(url_for('landing'))
