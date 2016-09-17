@@ -27,15 +27,20 @@ def logout():
 	return redirect(url_for('landing'))
 
 def callback():
-	url = 'https://my.mlh.io/oauth/token?client_id={0}&client_secret={1}&code={2}&redirect_uri={3}callback&grant_type=authorization_code'.format(
-		settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'),
-		urllib2.quote(settings.BASE_URL, ''))
-	print url
-	resp = requests.post(url).json()
-	if 'access_token' in resp:
-		access_token = resp['access_token']
+	url = 'https://my.mlh.io/oauth/token'
+	body = {
+		'client_id': settings.MLH_APPLICATION_ID,
+		'client_secret': settings.MLH_SECRET,
+		'code': request.args.get('code'),
+		'grant_type': 'authorization_code',
+		'redirect_uri': settings.BASE_URL + "callback"
+	}
+	resp = requests.post(url, json=body)
+	json = resp.json()
+	if 'access_token' in json:
+		access_token = json['access_token']
 	else:
-		g.log = g.log.bind(auth_code=request.args.get('code'))
+		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text)
 		g.log.error('Unable to get access token for user with:')
 		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
 	user = User.query.filter_by(access_token=access_token).first()
