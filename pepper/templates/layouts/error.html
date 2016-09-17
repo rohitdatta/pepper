@@ -1,4 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
-{{ error_msg }}
+	<h1>{{ title }}</h1>
+	<div class="large-text">
+		<p>{{ message|safe }}</p>
+	</div>
 {% endblock %}

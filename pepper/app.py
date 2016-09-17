@@ -1,7 +1,7 @@
 import flask
 import json
 
-from flask import g
+from flask import g, request, render_template
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask.ext.cdn import CDN
@@ -9,6 +9,7 @@ from flask_sslify import SSLify
 from flask_redis import Redis
 import sendgrid
 import settings
+import structlog
 
 DB = SQLAlchemy()
 redis_store = Redis()
@@ -32,6 +33,46 @@ def configure_login(app):
 	def before_request():
 		g.user = current_user
 
+def configure_logger(app):
+	def processor(_, method, event):
+		levelcolor = {
+			'debug': 32,
+			'info': 34,
+			'warning': 33,
+			'error': 31
+		}.get(method, 37)
+
+		return '\x1b[{clr}m{met}\x1b[0m [\x1b[35m{rid}\x1b[0m] {msg} {rest}'.format(
+			clr=levelcolor,
+			met=method.upper(),
+			rid=request.headers.get('X-Request-Id', '~'),
+			msg=event.pop('event'),
+			rest=' '.join(['\x1b[%sm%s\x1b[0m=%s' % (levelcolor, k.upper(), v)
+							for k, v in event.items()])
+		)
+
+	structlog.configure(
+		processors=[
+			structlog.processors.ExceptionPrettyPrinter(),
+			processor
+		]
+	)
+
+	logger = structlog.get_logger()
+
+	@app.before_request
+	def get_request_id():
+		g.log = logger.new()
+
+def setup_error_handlers(app):
+	@app.errorhandler(404)
+	def page_note_found(error):
+		return render_template('layouts/error.html', title='Page Not Found', message="That page appear not to exist. Maybe you're looking for our <a href='{}' class='decorate'>homepage</a>?".format(settings.BASE_URL)), 404
+
+	@app.errorhandler(500)
+	def internal_error(error):
+		return render_template('layouts/error.html', title='Internal Server Error', message='We appear to be under a heavy load right now and unable to process this request. Our tech team has been alerted to this error and is working hard to fix it. We appreciate your patience!'), 500
+
 
 def create_app():
 	app = flask.Flask(__name__)
@@ -41,6 +82,8 @@ def create_app():
 	redis_store.init_app(app)
 	routes.configure_routes(app)
 	configure_login(app)
+	configure_logger(app)
+	setup_error_handlers(app)
 
 	app.jinja_env.filters['json'] = json.dumps
 

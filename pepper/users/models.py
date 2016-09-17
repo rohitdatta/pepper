@@ -1,4 +1,3 @@
-
 from pepper.app import DB
 from datetime import datetime
 from helpers import hash_pwd

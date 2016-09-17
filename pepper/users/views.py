@@ -1,5 +1,5 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, redirect, url_for, flash
+from flask import request, render_template, redirect, url_for, flash, g
 import requests
 from models import User, UserRole
 from pepper.app import DB
@@ -31,17 +31,25 @@ def callback():
 		settings.MLH_APPLICATION_ID, settings.MLH_SECRET, request.args.get('code'),
 		urllib2.quote(settings.BASE_URL, ''))
 	print url
-	resp = requests.post(url)
-	access_token = resp.json()['access_token']
+	resp = requests.post(url).json()
+	if 'access_token' in resp:
+		access_token = resp.json()['access_token']
+	else:
+		g.log = g.log.bind(code=request.args.get('code'))
+		g.log.error('Unable to register')
+		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
 		try:
+			g.log.info('Creating a user')
 			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
 			user_info['type'] = 'MLH'
 			user_info['access_token'] = access_token
+			g.log = g.log.bind(email=user_info['data']['email'])
 			user = User.query.filter_by(email=user_info['data']['email']).first()
 			if user is None:
 				if settings.REGISTRATION_OPEN:
+					g.log.info('Creating a new user from MLH info')
 					user = User(user_info)
 				else:
 					flash('Registration is currently closed', 'error')
@@ -50,12 +58,15 @@ def callback():
 				user.access_token = access_token
 			DB.session.add(user)
 			DB.session.commit()
+			g.log.info('Successfully cureated user')
 			login_user(user, remember=True)
 		except IntegrityError:
 			# a unique value already exists this should never happen
 			DB.session.rollback()
 			flash('A fatal error occurred. Please contact us for help', 'error')
 			return render_template('static_pages/index.html')
+		except Exception:
+			g.log.error('Unable to create the user')
 	else:
 		login_user(user, remember=True)
 		return redirect(url_for('dashboard'))
@@ -106,6 +117,8 @@ def confirm_registration():
 		current_user.status = 'PENDING'
 		DB.session.add(current_user)
 		DB.session.commit()
+		g.log = g.log.bind(email=current_user.email)
+		g.log.info('User successfully applied')
 		fmt = '%Y-%m-%dT%H:%M:%S.%f'
 		keen.add_event('sign_ups', {
 			'date_of_birth': current_user.birthday.strftime(fmt),
@@ -136,9 +149,10 @@ def confirm_registration():
 		# send a confirmation email
 		html = render_template('emails/applied.html', user=current_user)
 		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME), current_user.email, txt_content=None, html_content=html)
-		flash(
-			'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
-				settings.HACKATHON_NAME), 'success')
+		g.log.info('Successfully sent a confirmation email')
+
+		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
+
 		return redirect(url_for('dashboard'))
 
 
