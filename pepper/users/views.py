@@ -363,7 +363,7 @@ def modify_user(hashid):
 
 # Developers can use this portal to log into any particular user when debugging
 def debug_user():
-	if settings.DEBUG:
+	if settings.DEBUG or (current_user.is_authenticated and current_user.status == 'ADMIN'):
 		if current_user.is_authenticated:
 			logout_user()
 		if request.method == 'GET':
