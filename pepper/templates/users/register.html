@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+	<div class="center">
+		<h2>HackTX 2016 Registration</h2>
+		<form method="POST" action="">
+			<input type="text" placeholder="First Name" name="fname" required>
+			<input type="text" placeholder="Last Name" name="lname" required>
+			<input type="text" placeholder="Email" name="email" required>
+			<input type="text" placeholder="Phone Number" name="phone_number" required>
+			<input type="password" placeholder="Password" name="password" required>
+			<input type="date" placeholder="Birthday" name="date_of_birth" required>
+			<select name="gender">
+			  <option value="Female">Female</option>
+			  <option value="Male">Male</option>
+			  <option value="Non-Binary">Non-Binary</option>
+			  <option value="I prefer not to say">I prefer not to say</option>
+			  <option value="Other">Other</option>
+			</select>
+			<select name="shirt_size">
+				<option value="Women's - S">Women's - S</option>
+				<option value="Women's - M">Women's - M</option>
+				<option value="Women's - L">Women's - L</option>
+				<option value="Women's - XL">Women's - XL</option>
+				<option value="Unisex - XS">Unisex - XS</option>
+				<option value="Unisex - S">Unisex - S</option>
+				<option value="Unisex - M">Unisex - M</option>
+				<option value="Unisex - L">Unisex - L</option>
+				<option value="Unisex - XL">Unisex - XL</option>
+			</select>
+			<input type="text" placeholder="School" name="school_name" required>
+			<input type="text" placeholder="Major" name="major" required>
+			<select name="dietary_restrictions">
+				<option value="Gluten-Free">Gluten-Free</option>
+				<option value="Vegan">Vegan</option>
+				<option value="Vegetarian">Vegetarian</option>
+				<option selected="selected" value="None">None</option>
+				<option value="Other">Other</option>
+			</select>
+			<input type="text" placeholder="Special Needs" name="special_needs">
+			<button type="submit">Submit</button>
+		</form>
+	</div>
+{% endblock %}

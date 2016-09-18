@@ -6,8 +6,9 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required, hs_client
-from helpers import send_status_change_notification
+# from pepper.utils import s3, send_email, s, roles_required, hs_client
+from pepper.utils import s3, send_email, s, roles_required
+from helpers import send_status_change_notification, check_password
 import keen
 from datetime import datetime
 
@@ -20,6 +21,72 @@ def login():
 	return redirect(
 		'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+
+def login_local():
+	if request.method == 'GET':
+		if current_user.is_authenticated:
+			return redirect(url_for('dashboard'))
+		return render_template('users/login.html')
+	else:
+		email = request.form['email']
+		password = request.form['password']
+		user = User.query.filter_by(email=email).first()
+		if user is None:
+			flash("We couldn't find an account related with this email. Please verify the email entered.", "warning")
+			return redirect(url_for('login_local'))
+		elif user.password is None:
+			flash('This account has not been setup yet. Please click the login link in your setup email.')
+			return redirect(url_for('login_local'))
+		elif not check_password(user.password, password):
+			flash("Invalid Password. Please verify the password entered.", 'warning')
+			return redirect(url_for('login_local'))
+
+		user_role = UserRole.query.filter_by(user_id=user.id).first()
+		if user_role is not None:
+			flash("Invalid login portal, please login in again")
+			return redirect(url_for('corp-login'))
+
+		login_user(user, remember=True)
+		flash('Logged in successfully!', 'success')
+		return redirect(url_for('dashboard'))
+
+def register():
+	if not settings.REGISTRATION_OPEN:
+		flash('Registration is currently closed', 'error')
+		return redirect(url_for('landing'))
+	if request.method == 'GET':
+		return render_template('users/register.html')
+	else: # Local registration
+		user_info = {
+				'email': request.form.get('email'),
+				'first_name': request.form.get('fname'),
+				'last_name': request.form.get('lname'),
+				'password': request.form.get('password'),
+				'type': 'local',
+				'date_of_birth': request.form.get('date_of_birth'),
+				'major': request.form.get('major'),
+				'shirt_size': request.form.get('shirt_size'),
+				'dietary_restrictions': request.form.get('dietary_restrictions'),
+				'gender': request.form.get('gender'),
+				'phone_number': request.form.get('phone_number'),
+				'special_needs': request.form.get('special_needs'),
+				'school_name': request.form.get('school_name')
+		}
+		user = User.query.filter_by(email=user_info['email']).first()
+		if user is None:  # create the user
+			g.log.info('Creating a user')
+			g.log = g.log.bind(email=user_info['email'])
+			g.log.info('Creating a new user from local information')
+			user = User(user_info)
+			DB.session.add(user)
+			DB.session.commit()
+			g.log.info('Successfully created user')
+			login_user(user, remember=True)
+		else: # Admin/Corporate need to login in from a different page
+			flash('The account already exists, please login again', 'error')
+			return redirect(url_for('login_local'))
+
+		return redirect(url_for('confirm-registration'))
 
 @login_required
 def logout():
@@ -42,7 +109,8 @@ def callback():
 	else:
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text)
 		g.log.error('Unable to get access token for user with:')
-		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
+		return redirect(url_for('register'))
+		# return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
 		try:
@@ -165,21 +233,22 @@ def confirm_registration():
 
 def update_user_data():
 	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
-	current_user.email = user_info['data']['email']
-	current_user.fname = user_info['data']['first_name']
-	current_user.lname = user_info['data']['last_name']
-	# current_user.class_standing = DB.Column(DB.String(255))
-	current_user.major = user_info['data']['major']
-	current_user.shirt_size = user_info['data']['shirt_size']
-	current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
-	current_user.birthday = user_info['data']['date_of_birth']
-	current_user.gender = user_info['data']['gender']
-	current_user.phone_number = user_info['data']['phone_number']
-	current_user.school_id = user_info['data']['school']['id']
-	current_user.school_name = user_info['data']['school']['name']
-	current_user.special_needs = user_info['data']['special_needs']
-	DB.session.add(current_user)
-	DB.session.commit()
+	if 'data' in user_info:
+		current_user.email = user_info['data']['email']
+		current_user.fname = user_info['data']['first_name']
+		current_user.lname = user_info['data']['last_name']
+		# current_user.class_standing = DB.Column(DB.String(255))
+		current_user.major = user_info['data']['major']
+		current_user.shirt_size = user_info['data']['shirt_size']
+		current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+		current_user.birthday = user_info['data']['date_of_birth']
+		current_user.gender = user_info['data']['gender']
+		current_user.phone_number = user_info['data']['phone_number']
+		current_user.school_id = user_info['data']['school']['id']
+		current_user.school_name = user_info['data']['school']['name']
+		current_user.special_needs = user_info['data']['special_needs']
+		DB.session.add(current_user)
+		DB.session.commit()
 
 
 @login_required
