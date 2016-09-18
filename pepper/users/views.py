@@ -84,7 +84,7 @@ def register_local():
 
 			token = s.dumps(user.email)
 			url = url_for('confirm-account', token=token, _external=True)
-			html = render_template('emails/confirm_account.html', link=url)
+			html = render_template('emails/confirm_account.html', link=url, user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
 			login_user(user, remember=True)
 		else: # Admin/Corporate need to login in from a different page
@@ -102,6 +102,8 @@ def edit_profile():
 			return render_template('users/edit_profile.html', user=current_user)
 	else:
 		old_password = request.form.get('old_password')
+		if request.form.get('new_password') is None:
+			request.form['new_password'] = old_password
 		updated_user_info = {
 				'email': request.form.get('email'),
 				'first_name': request.form.get('fname'),
@@ -184,14 +186,15 @@ def callback():
 
 def confirm_account(token):
 	try:
-		email = s.loads(token, salt='confirm-account')
+		email = s.loads(token)
 		user = User.query.filter_by(email=email).first()
 		user.confirmed = True
 		DB.session.add(user)
 		DB.session.commit()
+		flash('Successfully confirmed account', 'success')
 		return redirect(url_for('confirm-registration'))
 	except:
-		return render_template('layouts/error.html', error="That's an invalid link. Please contact {} for help.".format(settings.GENERAL_INFO_EMAIL)), 401
+		return render_template('layouts/error.html', message="That's an invalid link. Please contact {} for help.".format(settings.GENERAL_INFO_EMAIL)), 401
 
 @login_required
 def confirm_registration():
@@ -204,7 +207,7 @@ def confirm_registration():
 	if request.method == 'GET':
 		if current_user.status != 'NEW':
 			return redirect(url_for('dashboard'))
-		elif not current_user.confirmed:
+		elif current_user.confirmed == False:
 			return render_template('layouts/error.html', title='Confirm Account', message='You need to confirm your account before proceeding'), 403
 		return render_template('users/confirm.html', user=current_user)
 	else:
