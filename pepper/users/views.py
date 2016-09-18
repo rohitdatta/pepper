@@ -8,7 +8,7 @@ from pepper import settings
 import urllib2
 # from pepper.utils import s3, send_email, s, roles_required, hs_client
 from pepper.utils import s3, send_email, s, roles_required
-from helpers import send_status_change_notification, check_password
+from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
 
@@ -50,12 +50,12 @@ def login_local():
 		flash('Logged in successfully!', 'success')
 		return redirect(url_for('dashboard'))
 
-def register():
+def register_local():
 	if not settings.REGISTRATION_OPEN:
 		flash('Registration is currently closed', 'error')
 		return redirect(url_for('landing'))
 	if request.method == 'GET':
-		return render_template('users/register.html')
+		return render_template('users/register_local.html')
 	else: # Local registration
 		user_info = {
 				'email': request.form.get('email'),
@@ -89,6 +89,38 @@ def register():
 		return redirect(url_for('confirm-registration'))
 
 @login_required
+def edit_profile():
+	if request.method == 'GET':
+		if current_user.type == 'MLH':
+			return redirect("https://my.mlh.io/edit")
+		elif current_user.type == 'local':
+			return render_template('users/edit_profile.html', user=current_user)
+	else:
+		old_password = request.form.get('old_password')
+		updated_user_info = {
+				'email': request.form.get('email'),
+				'first_name': request.form.get('fname'),
+				'last_name': request.form.get('lname'),
+				'password': request.form.get('new_password'),
+				'type': 'local',
+				'date_of_birth': request.form.get('date_of_birth'),
+				'major': request.form.get('major'),
+				'shirt_size': request.form.get('shirt_size'),
+				'dietary_restrictions': request.form.get('dietary_restrictions'),
+				'gender': request.form.get('gender'),
+				'phone_number': request.form.get('phone_number'),
+				'special_needs': request.form.get('special_needs'),
+				'school_name': request.form.get('school_name')
+		}
+		if not check_password(current_user.password, old_password):
+			flash('Profile update failed because of invalid Password. Please verify the password entered.', 'warning')
+			return render_template('users/confirm.html', user=current_user)
+		else:
+			update_user_data('local', local_updated_info=updated_user_info)
+			flash('Profile updated!', 'success')
+			return redirect(url_for('dashboard'))
+
+@login_required
 def logout():
 	logout_user()
 	return redirect(url_for('landing'))
@@ -109,7 +141,7 @@ def callback():
 	else:
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text)
 		g.log.error('Unable to get access token for user with:')
-		return redirect(url_for('register'))
+		return redirect(url_for('register_local'))
 		# return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
@@ -231,24 +263,41 @@ def confirm_registration():
 		return redirect(url_for('dashboard'))
 
 
-def update_user_data():
-	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
-	if 'data' in user_info:
-		current_user.email = user_info['data']['email']
-		current_user.fname = user_info['data']['first_name']
-		current_user.lname = user_info['data']['last_name']
-		# current_user.class_standing = DB.Column(DB.String(255))
-		current_user.major = user_info['data']['major']
-		current_user.shirt_size = user_info['data']['shirt_size']
-		current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
-		current_user.birthday = user_info['data']['date_of_birth']
-		current_user.gender = user_info['data']['gender']
-		current_user.phone_number = user_info['data']['phone_number']
-		current_user.school_id = user_info['data']['school']['id']
-		current_user.school_name = user_info['data']['school']['name']
-		current_user.special_needs = user_info['data']['special_needs']
-		DB.session.add(current_user)
-		DB.session.commit()
+def update_user_data(type, local_updated_info=None):
+	if type == 'MLH':
+		user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+		if 'data' in user_info:
+			current_user.email = user_info['data']['email']
+			current_user.fname = user_info['data']['first_name']
+			current_user.lname = user_info['data']['last_name']
+			# current_user.class_standing = DB.Column(DB.String(255))
+			current_user.major = user_info['data']['major']
+			current_user.shirt_size = user_info['data']['shirt_size']
+			current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+			current_user.birthday = user_info['data']['date_of_birth']
+			current_user.gender = user_info['data']['gender']
+			current_user.phone_number = user_info['data']['phone_number']
+			current_user.school_id = user_info['data']['school']['id']
+			current_user.school_name = user_info['data']['school']['name']
+			current_user.special_needs = user_info['data']['special_needs']
+			DB.session.add(current_user)
+			DB.session.commit()
+	elif type == 'local' and local_updated_info is not None:
+			current_user.email = local_updated_info['email']
+			current_user.fname = local_updated_info['first_name']
+			current_user.lname = local_updated_info['last_name']
+			current_user.major = local_updated_info['major']
+			current_user.shirt_size = local_updated_info['shirt_size']
+			current_user.dietary_restrictions = local_updated_info['dietary_restrictions']
+			current_user.birthday = local_updated_info['date_of_birth']
+			current_user.gender = local_updated_info['gender']
+			current_user.phone_number = local_updated_info['phone_number']
+			current_user.school_name = local_updated_info['school_name']
+			current_user.special_needs = local_updated_info['special_needs']
+			current_user.password = hash_pwd(local_updated_info['password'])
+			DB.session.add(current_user)
+			DB.session.commit()
+
 
 
 @login_required
@@ -256,7 +305,7 @@ def dashboard():
 	if current_user.type == 'corporate':
 		return redirect(url_for('corp-dash'))
 	if current_user.status == 'NEW':
-		update_user_data()
+		update_user_data('MLH')
 		return redirect(url_for('confirm-registration'))
 	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))

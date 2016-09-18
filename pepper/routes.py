@@ -6,11 +6,12 @@ def configure_routes(app):
 	# Logging in
 	app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
 	app.add_url_rule('/login_local', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
-	app.add_url_rule('/register', 'register', view_func=users.views.register, methods=['GET', 'POST'])
+	app.add_url_rule('/register_local', 'register_local', view_func=users.views.register_local, methods=['GET', 'POST'])
 	app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
 	app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
 
 	# User action pages
+	app.add_url_rule('/edit_profile', 'edit_profile', view_func=users.views.edit_profile, methods=['GET', 'POST'])
 	app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
 	app.add_url_rule('/confirm', 'confirm-registration', view_func=users.views.confirm_registration, methods=['GET', 'POST'])
 	app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])

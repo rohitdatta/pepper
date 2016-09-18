@@ -71,7 +71,7 @@ class User(DB.Model, UserMixin):
 			self.phone_number = dict['phone_number']
 			self.special_needs = dict['special_needs']
 			self.checked_in = False
-			self.type = 'regular'
+			self.type = 'local'
 			self.password = hash_pwd(dict['password'])
 			self.resume_uploaded = False
 			self.school_name = dict['school_name']
