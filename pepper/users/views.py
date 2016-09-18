@@ -143,10 +143,20 @@ def callback():
 	}
 	resp = requests.post(url, json=body)
 	json = resp.json()
+	
+	if resp.status_code == 401:
+		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
+			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
+		
+		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, redirect_url=redirect_url)
+		g.log.error('Got expired auth code, redirecting: ')
+		
+		return redirect(redirect_url)
+	
 	if 'access_token' in json:
 		access_token = json['access_token']
 	else:
-		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text)
+		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, body=body)
 		g.log.error('Unable to get access token for user with:')
 		return redirect(url_for('register_local'))
 		# return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
@@ -501,7 +511,7 @@ def modify_user(hashid):
 
 # Developers can use this portal to log into any particular user when debugging
 def debug_user():
-	if settings.DEBUG:
+	if settings.DEBUG or (current_user.is_authenticated and current_user.status == 'ADMIN'):
 		if current_user.is_authenticated:
 			logout_user()
 		if request.method == 'GET':
