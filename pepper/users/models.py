@@ -36,6 +36,7 @@ class User(DB.Model, UserMixin):
 	med_auth_signature_id = DB.Column(DB.String(255))
 	waiver_signature_id = DB.Column(DB.String(255))
 	time_applied = DB.Column(DB.DateTime)
+	confirmed = DB.Column(DB.Boolean)
 
 	def __init__(self, dict):
 		if dict['type'] == 'MLH': # if creating a MyMLH user
@@ -75,6 +76,7 @@ class User(DB.Model, UserMixin):
 			self.password = hash_pwd(dict['password'])
 			self.resume_uploaded = False
 			self.school_name = dict['school_name']
+			self.confirmed = False
 		else: # creating a non-OAuth user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation

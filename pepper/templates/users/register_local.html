@@ -1,23 +1,29 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-	<div class="center">
-		<h2>{{ config.HACKATHON_NAME }} Registration</h2>
+	<div class="center col-md-4 col-md-offset-4">
+		<h1>{{ config.HACKATHON_NAME }} Registration</h1>
+		<p>Looks like we're not being able to register you through our standard MLH sign in. No worries! While we sort things out, we're going to get your information on this portal, and flag your application for further review. Keep an eye out on your email in case our team has more questions for you. Thanks for bearing with us!</p>
 		<form method="POST" action="">
 			<input type="text" placeholder="First Name" name="fname" required>
 			<input type="text" placeholder="Last Name" name="lname" required>
 			<input type="text" placeholder="Email" name="email" required>
 			<input type="text" placeholder="Phone Number" name="phone_number" required>
 			<input type="password" placeholder="Password" name="password" required>
-			<input type="date" placeholder="Birthday" name="date_of_birth" required>
-			<select name="gender">
+			<input type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="Birthday" name="date_of_birth" required>
+			<div class="select">
+			<select name="gender" style="width:250px;">
+			  <option selected disabled>Gender</option>
 			  <option value="Female">Female</option>
 			  <option value="Male">Male</option>
 			  <option value="Non-Binary">Non-Binary</option>
 			  <option value="I prefer not to say">I prefer not to say</option>
 			  <option value="Other">Other</option>
 			</select>
-			<select name="shirt_size">
+				</div>
+			<div class="select">
+			<select name="shirt_size" style="width:250px;">
+				<option selected disabled>T-Shirt Size</option>
 				<option value="Women's - S">Women's - S</option>
 				<option value="Women's - M">Women's - M</option>
 				<option value="Women's - L">Women's - L</option>
@@ -28,16 +34,20 @@
 				<option value="Unisex - L">Unisex - L</option>
 				<option value="Unisex - XL">Unisex - XL</option>
 			</select>
+				</div>
 			<input type="text" placeholder="School" name="school_name" required>
 			<input type="text" placeholder="Major" name="major" required>
-			<select name="dietary_restrictions">
+			<div class="select">
+			<select name="dietary_restrictions" style="width:250px;">
+				<option selected disabled>Dietary Restrictions</option>
 				<option value="Gluten-Free">Gluten-Free</option>
 				<option value="Vegan">Vegan</option>
 				<option value="Vegetarian">Vegetarian</option>
-				<option selected="selected" value="None">None</option>
+				<option value="None">None</option>
 				<option value="Other">Other</option>
 			</select>
-			<input type="text" placeholder="Special Needs" name="special_needs">
+				</div>
+			<textarea placeholder="Special Needs" name="special_needs" style="width:250px;"></textarea>
 			<button type="submit">Submit</button>
 		</form>
 	</div>

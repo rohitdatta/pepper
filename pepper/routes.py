@@ -5,8 +5,9 @@ def configure_routes(app):
 
 	# Logging in
 	app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
-	app.add_url_rule('/login_local', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
-	app.add_url_rule('/register_local', 'register_local', view_func=users.views.register_local, methods=['GET', 'POST'])
+	app.add_url_rule('/alt/login', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
+	app.add_url_rule('/register', 'register_local', view_func=users.views.register_local, methods=['GET', 'POST'])
+	app.add_url_rule('/register/confirm/<token>', 'confirm-account', view_func=users.views.confirm_account, methods=['GET'])
 	app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
 	app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
 

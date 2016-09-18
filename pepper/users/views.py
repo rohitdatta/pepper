@@ -7,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
 # from pepper.utils import s3, send_email, s, roles_required, hs_client
-from pepper.utils import s3, send_email, s, roles_required
+from pepper.utils import s3, send_email, s, roles_required, ts
 from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
@@ -81,6 +81,11 @@ def register_local():
 			DB.session.add(user)
 			DB.session.commit()
 			g.log.info('Successfully created user')
+
+			token = s.dumps(user.email)
+			url = url_for('confirm-account', token=token, _external=True)
+			html = render_template('emails/confirm_account.html', link=url)
+			send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
 			login_user(user, remember=True)
 		else: # Admin/Corporate need to login in from a different page
 			flash('The account already exists, please login again', 'error')
@@ -177,6 +182,16 @@ def callback():
 		return redirect(url_for('dashboard'))
 	return redirect(url_for('confirm-registration'))
 
+def confirm_account(token):
+	try:
+		email = s.loads(token, salt='confirm-account')
+		user = User.query.filter_by(email=email).first()
+		user.confirmed = True
+		DB.session.add(user)
+		DB.session.commit()
+		return redirect(url_for('confirm-registration'))
+	except:
+		return render_template('layouts/error.html', error="That's an invalid link. Please contact {} for help.".format(settings.GENERAL_INFO_EMAIL)), 401
 
 @login_required
 def confirm_registration():
@@ -189,6 +204,8 @@ def confirm_registration():
 	if request.method == 'GET':
 		if current_user.status != 'NEW':
 			return redirect(url_for('dashboard'))
+		elif not current_user.confirmed:
+			return render_template('layouts/error.html', title='Confirm Account', message='You need to confirm your account before proceeding'), 403
 		return render_template('users/confirm.html', user=current_user)
 	else:
 		skill_level = request.form.get('skill-level')
