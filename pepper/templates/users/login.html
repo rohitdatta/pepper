@@ -1,8 +1,9 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="center">
+    <div class="center col-md-6 col-md-offset-3">
         <h2>{{ config.HACKATHON_NAME }} Sign-In</h2>
+		<p>Never created a username and password on HackTX? That's because you're using MyMLH for sign in. MyMLH is our preferred login provider to streamline your sign up process, but we maintain a username password system in case of a MyMLH error.</p>
         <form action="" method="post">
             <input type="text" placeholder="Email" name="email" required>
             <input type="password" placeholder="Password" name="password" required>

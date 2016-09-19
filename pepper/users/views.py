@@ -6,8 +6,7 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-# from pepper.utils import s3, send_email, s, roles_required, hs_client
-from pepper.utils import s3, send_email, s, roles_required, ts
+from pepper.utils import s3, send_email, s, roles_required, hs_client, ts
 from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
@@ -53,6 +52,9 @@ def login_local():
 def register_local():
 	if not settings.REGISTRATION_OPEN:
 		flash('Registration is currently closed', 'error')
+		return redirect(url_for('landing'))
+	if not settings.FALLBACK_LOCAL_REGISTER:
+		flash('Sign up through MyMLH', 'error')
 		return redirect(url_for('landing'))
 	if request.method == 'GET':
 		return render_template('users/register_local.html')
@@ -144,22 +146,27 @@ def callback():
 	resp = requests.post(url, json=body)
 	json = resp.json()
 	
-	if resp.status_code == 401:
+	if resp.status_code == 401: # MLH sent expired token
 		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
 		
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, redirect_url=redirect_url)
 		g.log.error('Got expired auth code, redirecting: ')
-		
-		return redirect(redirect_url)
-	
+		if settings.FALLBACK_LOCAL_REGISTER: # If our fallback is to request a new MLH code
+			g.log.info('Redirecting user to local registration')
+			return redirect(url_for('register_local'))
+		else:
+			g.log.info('Requesting a new auth code from MLH')
+			return redirect(redirect_url)
+
 	if 'access_token' in json:
 		access_token = json['access_token']
-	else:
+	else: # This is VERY bad, we should never hit this error
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, body=body)
-		g.log.error('Unable to get access token for user with:')
-		return redirect(url_for('register_local'))
-		# return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
+		g.log.error('URGENT: FAILED BOTH MLH AUTH CODE CHECKS')
+		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. This is a fatal error. Please contact {} for assistance".format(settings.GENERAL_INFO_EMAIL)), 505
+
+
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
 		try:
