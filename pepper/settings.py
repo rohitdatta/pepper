@@ -4,7 +4,7 @@ DEBUG = os.getenv('DEBUG') in ['True', 'true', '1', 'yes']
 if DEBUG:
 	SQLALCHEMY_ECHO = True
 
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+SQLALCHEMY_DATABASE_URI = os.getenv('AWS_RDS_URL')
 
 LOG_LEVEL = os.getenv('LOG_LEVEL') or 'debug'
 SERVICE_NAME = os.getenv('SERVICE_NAME') or 'Nucelus'
@@ -31,4 +31,3 @@ REGISTRATION_OPEN = os.getenv('REGISTRATION_OPEN') in ['True', 'true', '1', 'yes
 LETS_ENCRYPT_PATH = os.getenv('LETS_ENCRYPT_PATH')
 LETS_ENCRYPT_PATH_CHALLENGE = os.getenv('LETS_ENCRYPT_PATH_CHALLENGE')
 CDN_URL = os.getenv('CDN_URL')
-FALLBACK_LOCAL_REGISTER = os.getenv('FALLBACK_LOCAL_REGISTER') in ['True', 'true', '1', 'yes']
