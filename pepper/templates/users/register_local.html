@@ -1,6 +1,11 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
+	<script>
+	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+    alert('MLH is unable to authenticate you. Please complete registration on a computer.');
+}
+	</script>
 	<div class="center col-md-4 col-md-offset-4">
 		<h1>{{ config.HACKATHON_NAME }} Registration</h1>
 		<p>Looks like we're not being able to register you through our standard MLH sign in. No worries! While we sort things out, we're going to get your information on this portal, and flag your application for further review. Keep an eye out on your email in case our team has more questions for you. Thanks for bearing with us!</p>
