@@ -225,7 +225,7 @@ def confirm_registration():
 		if current_user.status != 'NEW':
 			return redirect(url_for('dashboard'))
 		elif current_user.confirmed == False:
-			return render_template('layouts/error.html', title='Confirm Account', message='You need to confirm your account before proceeding'), 403
+			return render_template('layouts/error.html', title='Confirm Account', message='Please check your email to confirm your account before proceeding'), 403
 		return render_template('users/confirm.html', user=current_user)
 	else:
 		skill_level = request.form.get('skill-level')
