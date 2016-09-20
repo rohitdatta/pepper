@@ -73,7 +73,7 @@ def forgot_password():
 		user = User.query.filter_by(email=email).first()
 		if user:
 			token = ts.dumps(user.email, salt='recover-key')
-			url = url_for('reset-password', token=token, _external=True)
+			url = url_for('corp-reset-password', token=token, _external=True)
 			html = render_template('emails/reset_password.html', user=user, link=url)
 			txt = render_template('emails/reset_password.txt', user=user, link=url)
 			send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
@@ -102,10 +102,10 @@ def reset_password(token):
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
-				return redirect(url_for('reset-password'), token=token)
+				return redirect(url_for('corp-reset-password'), token=token)
 		else:
 			flash('Failed to reset password. This is an invalid link. Please contact us if this error persists', 'error')
-			return redirect(url_for('forgot-password'))
+			return redirect(url_for('corp-forgot-password'))
 
 @corp_login_required
 @roles_required('admin', 'corp')

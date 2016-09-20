@@ -4,11 +4,12 @@
     <div class="center">
         <h2>{{ config.HACKATHON_NAME }} Sign-In</h2>
         <form action="" method="post">
-            <input type="text" placeholder="Email" name="email" required>
+            <input type="email" placeholder="Email" name="email" required>
             <input type="password" placeholder="Password" name="password" required>
             <div class="form-group">
                 <button type="submit">Sign in</button>
             </div>
         </form>
+        <a href="{{ url_for('forgot-password') }}" class=""><p>Forgot your password?</p></a>
     </div>
 {% endblock %}

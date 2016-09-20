@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
-{% block content %}
+
+{% block content %}	
 	<script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
 	<div class="confirmation">
 		<div class="text-center">
@@ -71,7 +72,7 @@
 					<p>Please upload your resume here. We'll be sharing this with our partners so you can get cool jobs, swag, and more! (PDFs only)</p>
 				</div>
 				<div class="col-md-6">
-					<input type=file name="resume">
+					<input type=file name="resume" accept="application/pdf">
 				</div>
 </div>
 			<div class="row">
