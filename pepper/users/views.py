@@ -36,7 +36,11 @@ def callback():
 		'redirect_uri': settings.BASE_URL + "callback"
 	}
 	resp = requests.post(url, json=body)
-	json = resp.json()
+	try:
+		json = resp.json()
+	except Exception as e:
+		g.log = g.log.bind(error=e, response=resp)
+		g.log.error('Error Decoding Jason')
 	
 	if resp.status_code == 401:
 		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
