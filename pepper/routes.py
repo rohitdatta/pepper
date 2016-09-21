@@ -6,6 +6,8 @@ def configure_routes(app):
 	# Logging in
 	app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
 	app.add_url_rule('/alt/login', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
+	app.add_url_rule('/alt/login/reset', 'forgot-password', view_func=users.views.forgot_password, methods=['GET', 'POST'])
+	app.add_url_rule('/alt/login/reset/<token>', 'reset-password', view_func=users.views.reset_password, methods=['GET', 'POST'])
 	app.add_url_rule('/register', 'register_local', view_func=users.views.register_local, methods=['GET', 'POST'])
 	app.add_url_rule('/register/confirm/<token>', 'confirm-account', view_func=users.views.confirm_account, methods=['GET'])
 	app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
@@ -31,8 +33,8 @@ def configure_routes(app):
 
 	# Corporate Portal
 	app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
-	app.add_url_rule('/corp/login/reset', 'forgot-password', view_func=corporate.views.forgot_password, methods=['GET', 'POST'])
-	app.add_url_rule('/corp/login/reset/<token>', 'reset-password', view_func=corporate.views.reset_password, methods=['GET', 'POST'])
+	app.add_url_rule('/corp/login/reset', 'corp-forgot-password', view_func=corporate.views.forgot_password, methods=['GET', 'POST'])
+	app.add_url_rule('/corp/login/reset/<token>', 'corp-reset-password', view_func=corporate.views.reset_password, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/setup/<token>', 'new-user-setup', view_func=corporate.views.new_user_setup, methods=['GET', 'POST'])
 
 	app.add_url_rule('/corp/dashboard', 'corp-dash', view_func=corporate.views.corporate_dash, methods=['GET', 'POST'])

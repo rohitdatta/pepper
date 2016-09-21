@@ -5,11 +5,12 @@
         <h2>{{ config.HACKATHON_NAME }} Sign-In</h2>
 		<p>Never created a username and password on HackTX? That's because you're using MyMLH for sign in. MyMLH is our preferred login provider to streamline your sign up process, but we maintain a username password system in case of a MyMLH error.</p>
         <form action="" method="post">
-            <input type="text" placeholder="Email" name="email" required>
+            <input type="email" placeholder="Email" name="email" required>
             <input type="password" placeholder="Password" name="password" required>
             <div class="form-group">
                 <button type="submit">Sign in</button>
             </div>
         </form>
+        <a href="{{ url_for('forgot-password') }}" class=""><p>Forgot your password?</p></a>
     </div>
 {% endblock %}

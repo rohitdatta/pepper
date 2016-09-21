@@ -74,6 +74,10 @@ def register_local():
 				'special_needs': request.form.get('special_needs'),
 				'school_name': request.form.get('school_name')
 		}
+
+		if request.form.get('gender_other') != '' and user_info['gender'] == 'Other':
+			user_info['gender'] = request.form.get('gender_other')
+		
 		user = User.query.filter_by(email=user_info['email']).first()
 		if user is None:  # create the user
 			g.log.info('Creating a user')
@@ -103,9 +107,6 @@ def edit_profile():
 		elif current_user.type == 'local':
 			return render_template('users/edit_profile.html', user=current_user)
 	else:
-		old_password = request.form.get('old_password')
-		if request.form.get('new_password') is None:
-			request.form['new_password'] = old_password
 		updated_user_info = {
 				'email': request.form.get('email'),
 				'first_name': request.form.get('fname'),
@@ -121,10 +122,14 @@ def edit_profile():
 				'special_needs': request.form.get('special_needs'),
 				'school_name': request.form.get('school_name')
 		}
-		if not check_password(current_user.password, old_password):
+		if request.form.get('new_password') == '':
+			updated_user_info['password'] = request.form.get('old_password')
+		if not check_password(current_user.password, request.form.get('old_password')):
 			flash('Profile update failed because of invalid Password. Please verify the password entered.', 'warning')
 			return render_template('users/confirm.html', user=current_user)
 		else:
+			if request.form.get('gender_other') != '' and updated_user_info['gender'] == 'Other':
+				updated_user_info['gender'] = request.form.get('gender_other')
 			update_user_data('local', local_updated_info=updated_user_info)
 			flash('Profile updated!', 'success')
 			return redirect(url_for('dashboard'))
@@ -298,6 +303,49 @@ def confirm_registration():
 		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
 
 		return redirect(url_for('dashboard'))
+
+
+def forgot_password():
+	if request.method == 'GET':
+		return render_template('users/forgot_password.html')
+	else:
+		email = request.form.get('email')
+		user = User.query.filter_by(email=email).first()
+		if user:
+			token = ts.dumps(user.email, salt='recover-key')
+			url = url_for('reset-password', token=token, _external=True)
+			html = render_template('emails/reset_password.html', user=user, link=url)
+			txt = render_template('emails/reset_password.txt', user=user, link=url)
+			send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
+		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
+		return redirect(url_for('login_local'))
+
+def reset_password(token):
+	try:
+		email = ts.loads(token, salt='recover-key', max_age=86400)
+		user = User.query.filter_by(email=email).first()
+	except:
+		return render_template('layouts/error.html', error="That's an invalid link"), 401
+
+	if request.method == 'GET':
+		# find the correct user and log them in then prompt them for new password
+		return render_template('users/reset_password.html')
+	else:
+		# take the password they've submitted and change it accordingly
+		if user:
+			if request.form.get('password') == request.form.get('password-check'):
+				user.password = hash_pwd(request.form['password'])
+				DB.session.add(user)
+				DB.session.commit()
+				login_user(user, remember=True)
+				flash('Succesfully changed password!', 'success')
+				return redirect(url_for('dashboard'))
+			else:
+				flash('You need to enter the same password in both fields!', 'error')
+				return redirect(url_for('reset-password'), token=token)
+		else:
+			flash('Failed to reset password. This is an invalid link. Please contact us if this error persists', 'error')
+			return redirect(url_for('forgot-password'))
 
 
 def update_user_data(type, local_updated_info=None):
