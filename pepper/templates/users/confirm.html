@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
-{% block content %}
+
+{% block content %}	
 	<script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
 	<div class="confirmation">
 		<div class="text-center">
@@ -58,7 +59,7 @@
 				</table>
 			</div>
 		</div>
-		<a href="https://my.mlh.io/edit">
+		<a href="{{ url_for('edit_profile') }}">
 			<button class="">Edit</button>
 		</a>
 		<hr>
@@ -71,7 +72,7 @@
 					<p>Please upload your resume here. We'll be sharing this with our partners so you can get cool jobs, swag, and more! (PDFs only)</p>
 				</div>
 				<div class="col-md-6">
-					<input type=file name="resume">
+					<input type=file name="resume" accept="application/pdf">
 				</div>
 </div>
 			<div class="row">
@@ -129,7 +130,7 @@
 						<br>
 						<div class="control-group">
 							<h4>Interests</h4>
-							<textarea name="interests" rows="5" placeholder="iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech"></textarea>
+							<textarea name="interests" rows="5" placeholder="Some examples: iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech"></textarea>
 						</div>
 						<br>
 						<h4 class="two-col">What race(s) do you identify with?</h4>

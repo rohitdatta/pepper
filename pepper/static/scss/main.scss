@@ -337,7 +337,7 @@ form {
   }
 
   input {
-	&[type=text] {
+	&[type=text], &[type=password], &[type=date] {
 	  -webkit-appearance: none;
 	  -moz-appearance: none;
 	  appearance: none;
@@ -445,7 +445,7 @@ html {
 
 body {
   /* Margin bottom by footer height */
-  margin-bottom: 60px;
+  margin-bottom: 85px;
   padding-bottom: 10px;
 }
 

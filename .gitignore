@@ -3,3 +3,4 @@ venv/
 *.pyc
 .env
 .DS_Store
+*.dump

@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+<script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/validate.js') }}"></script>
+
+<div class="center col-md-4 col-md-offset-4">
+	<h2>{{ config.HACKATHON_NAME }} Profile Edit</h2>
+	<form method="POST" action="" id="edit_local">
+		<input type="text" placeholder="First Name" name="fname" value="{{ user.fname }}">
+		<input type="text" placeholder="Last Name" name="lname" value="{{ user.lname }}">
+		<input type="email" placeholder="Email" name="email" value="{{ user.email }}">
+		<input type="text" placeholder="Phone Number" name="phone_number" value="{{ user.phone_number }}">
+		<input type="date" placeholder="Birthday" name="date_of_birth" value="{{ user.birthday }}">
+		<div class="select" style="width:250px;">
+			<select name="gender" id="dropdown_gender">
+				<option value="Female" {% if user.gender == "Female" %} selected="selected" {% endif %}>Female</option>
+				<option value="Male" {% if user.gender == "Male" %} selected="selected" {% endif %} >Male</option>
+				<option value="Non-Binary" {% if user.gender == "Non-Binary" %} selected="selected" {% endif %}>Non-Binary</option>
+				<option value="I prefer not to say" {% if user.gender == "I prefer not to say" %} selected="selected" {% endif %}>I prefer not to say</option>
+				<option value="Other" {% if user.gender not in ["Female", "Male", "Non-Binary", "I prefer not to say"] %} selected="selected" {% endif %}>Other</option>
+			</select>
+		</div>
+		<input type="text" placeholder="Gender" id="input_gender" name="gender_other" {% if user.gender in ["Female", "Male", "Non-Binary", "I prefer not to say"] %} style="display: none;" {% endif %} value="{{ user.gender }}"/>
+		<div class="select" style="width:250px;">
+			<select name="shirt_size">
+				<option value="Women's - S" {% if user.shirt_size == "Women's - S" %} selected="selected" {% endif %} >Women's - S</option>
+				<option value="Women's - M" {% if user.shirt_size == "Women's - M" %} selected="selected" {% endif %} >Women's - M</option>
+				<option value="Women's - L" {% if user.shirt_size == "Women's - L" %} selected="selected" {% endif %} >Women's - L</option>
+				<option value="Women's - XL" {% if user.shirt_size == "Women's - XL" %} selected="selected" {% endif %} >Women's - XL</option>
+				<option value="Unisex - XS" {% if user.shirt_size == "Unisex - XS" %} selected="selected" {% endif %} >Unisex - XS</option>
+				<option value="Unisex - S" {% if user.shirt_size == "Unisex - S" %} selected="selected" {% endif %} >Unisex - S</option>
+				<option value="Unisex - M" {% if user.shirt_size == "Unisex - M" %} selected="selected" {% endif %} >Unisex - M</option>
+				<option value="Unisex - L" {% if user.shirt_size == "Unisex - L" %} selected="selected" {% endif %} >Unisex - L</option>
+				<option value="Unisex - XL" {% if user.shirt_size == "Unisex - XL" %} selected="selected" {% endif %} >Unisex - XL</option>
+			</select>
+		</div>
+		<input type="text" placeholder="School" name="school_name" value="{{ user.school_name }}">
+		<input type="text" placeholder="Major" name="major" value="{{ user.major }}">
+		<div class="select" style="width:250px;">
+			<select name="dietary_restrictions">
+				<option value="Gluten-Free" {% if user.dietary_restrictions == "Gluten-Free" %} selected="selected" {% endif %} >Gluten-Free</option>
+				<option value="Vegan" {% if user.dietary_restrictions == "Vegan" %} selected="selected" {% endif %} >Vegan</option>
+				<option value="Vegetarian" {% if user.dietary_restrictions == "Vegetarian" %} selected="selected" {% endif %} >Vegetarian</option>
+				<option value="None" {% if user.dietary_restrictions == "None" %} selected="selected" {% endif %} >None</option>
+				<option value="Other" {% if user.dietary_restrictions == "Other" %} selected="selected" {% endif %} >Other</option>
+			</select>
+		</div>
+		<input type="text" placeholder="Special Needs" value="{{ user.special_needs }}" name="special_needs">
+		<div class="medium-text">
+			<p>We need your current password if you want to make changes.</p>
+		</div>
+		<input type="password" placeholder="Old Password" name="old_password">
+		<input type="password" placeholder="New Password" name="new_password">
+		<button type="submit">Submit</button>
+	</form>
+</div>
+{% endblock %}

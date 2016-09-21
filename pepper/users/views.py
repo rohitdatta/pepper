@@ -6,8 +6,8 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required, hs_client
-from helpers import send_status_change_notification
+from pepper.utils import s3, send_email, s, roles_required, hs_client, ts
+from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
 
@@ -20,6 +20,119 @@ def login():
 	return redirect(
 		'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+
+def login_local():
+	if request.method == 'GET':
+		if current_user.is_authenticated:
+			return redirect(url_for('dashboard'))
+		return render_template('users/login.html')
+	else:
+		email = request.form['email']
+		password = request.form['password']
+		user = User.query.filter_by(email=email).first()
+		if user is None:
+			flash("We couldn't find an account related with this email. Please verify the email entered.", "warning")
+			return redirect(url_for('login_local'))
+		elif user.password is None:
+			flash('This account has not been setup yet. Please click the login link in your setup email.')
+			return redirect(url_for('login_local'))
+		elif not check_password(user.password, password):
+			flash("Invalid Password. Please verify the password entered.", 'warning')
+			return redirect(url_for('login_local'))
+
+		user_role = UserRole.query.filter_by(user_id=user.id).first()
+		if user_role is not None:
+			flash("Invalid login portal, please login in again")
+			return redirect(url_for('corp-login'))
+
+		login_user(user, remember=True)
+		flash('Logged in successfully!', 'success')
+		return redirect(url_for('dashboard'))
+
+def register_local():
+	if not settings.REGISTRATION_OPEN:
+		flash('Registration is currently closed', 'error')
+		return redirect(url_for('landing'))
+	if not settings.FALLBACK_LOCAL_REGISTER:
+		flash('Sign up through MyMLH', 'error')
+		return redirect(url_for('landing'))
+	if request.method == 'GET':
+		return render_template('users/register_local.html')
+	else: # Local registration
+		user_info = {
+				'email': request.form.get('email'),
+				'first_name': request.form.get('fname'),
+				'last_name': request.form.get('lname'),
+				'password': request.form.get('password'),
+				'type': 'local',
+				'date_of_birth': request.form.get('date_of_birth'),
+				'major': request.form.get('major'),
+				'shirt_size': request.form.get('shirt_size'),
+				'dietary_restrictions': request.form.get('dietary_restrictions'),
+				'gender': request.form.get('gender'),
+				'phone_number': request.form.get('phone_number'),
+				'special_needs': request.form.get('special_needs'),
+				'school_name': request.form.get('school_name')
+		}
+
+		if request.form.get('gender_other') != '' and user_info['gender'] == 'Other':
+			user_info['gender'] = request.form.get('gender_other')
+		
+		user = User.query.filter_by(email=user_info['email']).first()
+		if user is None:  # create the user
+			g.log.info('Creating a user')
+			g.log = g.log.bind(email=user_info['email'])
+			g.log.info('Creating a new user from local information')
+			user = User(user_info)
+			DB.session.add(user)
+			DB.session.commit()
+			g.log.info('Successfully created user')
+
+			token = s.dumps(user.email)
+			url = url_for('confirm-account', token=token, _external=True)
+			html = render_template('emails/confirm_account.html', link=url, user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
+			login_user(user, remember=True)
+		else: # Admin/Corporate need to login in from a different page
+			flash('The account already exists, please login again', 'error')
+			return redirect(url_for('login_local'))
+
+		return redirect(url_for('confirm-registration'))
+
+@login_required
+def edit_profile():
+	if request.method == 'GET':
+		if current_user.type == 'MLH':
+			return redirect("https://my.mlh.io/edit")
+		elif current_user.type == 'local':
+			return render_template('users/edit_profile.html', user=current_user)
+	else:
+		updated_user_info = {
+				'email': request.form.get('email'),
+				'first_name': request.form.get('fname'),
+				'last_name': request.form.get('lname'),
+				'password': request.form.get('new_password'),
+				'type': 'local',
+				'date_of_birth': request.form.get('date_of_birth'),
+				'major': request.form.get('major'),
+				'shirt_size': request.form.get('shirt_size'),
+				'dietary_restrictions': request.form.get('dietary_restrictions'),
+				'gender': request.form.get('gender'),
+				'phone_number': request.form.get('phone_number'),
+				'special_needs': request.form.get('special_needs'),
+				'school_name': request.form.get('school_name')
+		}
+		if request.form.get('new_password') == '':
+			updated_user_info['password'] = request.form.get('old_password')
+		if not check_password(current_user.password, request.form.get('old_password')):
+			flash('Profile update failed because of invalid Password. Please verify the password entered.', 'warning')
+			return render_template('users/confirm.html', user=current_user)
+		else:
+			if request.form.get('gender_other') != '' and updated_user_info['gender'] == 'Other':
+				updated_user_info['gender'] = request.form.get('gender_other')
+			update_user_data('local', local_updated_info=updated_user_info)
+			flash('Profile updated!', 'success')
+			return redirect(url_for('dashboard'))
 
 @login_required
 def logout():
@@ -38,21 +151,27 @@ def callback():
 	resp = requests.post(url, json=body)
 	json = resp.json()
 	
-	if resp.status_code == 401:
+	if resp.status_code == 401: # MLH sent expired token
 		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
 		
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, redirect_url=redirect_url)
 		g.log.error('Got expired auth code, redirecting: ')
-		
-		return redirect(redirect_url)
-	
+		if settings.FALLBACK_LOCAL_REGISTER: # If our fallback is to request a new MLH code
+			g.log.info('Redirecting user to local registration')
+			return redirect(url_for('register_local'))
+		else:
+			g.log.info('Requesting a new auth code from MLH')
+			return redirect(redirect_url)
+
 	if 'access_token' in json:
 		access_token = json['access_token']
-	else:
+	else: # This is VERY bad, we should never hit this error
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, body=body)
-		g.log.error('Unable to get access token for user with:')
-		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. Our tech team has been notified of the problem and we'll work with MLH to fix everything."), 505
+		g.log.error('URGENT: FAILED BOTH MLH AUTH CODE CHECKS')
+		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. This is a fatal error. Please contact {} for assistance".format(settings.GENERAL_INFO_EMAIL)), 505
+
+
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
 		try:
@@ -87,6 +206,17 @@ def callback():
 		return redirect(url_for('dashboard'))
 	return redirect(url_for('confirm-registration'))
 
+def confirm_account(token):
+	try:
+		email = s.loads(token)
+		user = User.query.filter_by(email=email).first()
+		user.confirmed = True
+		DB.session.add(user)
+		DB.session.commit()
+		flash('Successfully confirmed account', 'success')
+		return redirect(url_for('confirm-registration'))
+	except:
+		return render_template('layouts/error.html', message="That's an invalid link. Please contact {} for help.".format(settings.GENERAL_INFO_EMAIL)), 401
 
 @login_required
 def confirm_registration():
@@ -99,6 +229,8 @@ def confirm_registration():
 	if request.method == 'GET':
 		if current_user.status != 'NEW':
 			return redirect(url_for('dashboard'))
+		elif current_user.confirmed == False:
+			return render_template('layouts/error.html', title='Confirm Account', message='Please check your email to confirm your account before proceeding'), 403
 		return render_template('users/confirm.html', user=current_user)
 	else:
 		skill_level = request.form.get('skill-level')
@@ -173,23 +305,84 @@ def confirm_registration():
 		return redirect(url_for('dashboard'))
 
 
-def update_user_data():
-	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
-	current_user.email = user_info['data']['email']
-	current_user.fname = user_info['data']['first_name']
-	current_user.lname = user_info['data']['last_name']
-	# current_user.class_standing = DB.Column(DB.String(255))
-	current_user.major = user_info['data']['major']
-	current_user.shirt_size = user_info['data']['shirt_size']
-	current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
-	current_user.birthday = user_info['data']['date_of_birth']
-	current_user.gender = user_info['data']['gender']
-	current_user.phone_number = user_info['data']['phone_number']
-	current_user.school_id = user_info['data']['school']['id']
-	current_user.school_name = user_info['data']['school']['name']
-	current_user.special_needs = user_info['data']['special_needs']
-	DB.session.add(current_user)
-	DB.session.commit()
+def forgot_password():
+	if request.method == 'GET':
+		return render_template('users/forgot_password.html')
+	else:
+		email = request.form.get('email')
+		user = User.query.filter_by(email=email).first()
+		if user:
+			token = ts.dumps(user.email, salt='recover-key')
+			url = url_for('reset-password', token=token, _external=True)
+			html = render_template('emails/reset_password.html', user=user, link=url)
+			txt = render_template('emails/reset_password.txt', user=user, link=url)
+			send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
+		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
+		return redirect(url_for('login_local'))
+
+def reset_password(token):
+	try:
+		email = ts.loads(token, salt='recover-key', max_age=86400)
+		user = User.query.filter_by(email=email).first()
+	except:
+		return render_template('layouts/error.html', error="That's an invalid link"), 401
+
+	if request.method == 'GET':
+		# find the correct user and log them in then prompt them for new password
+		return render_template('users/reset_password.html')
+	else:
+		# take the password they've submitted and change it accordingly
+		if user:
+			if request.form.get('password') == request.form.get('password-check'):
+				user.password = hash_pwd(request.form['password'])
+				DB.session.add(user)
+				DB.session.commit()
+				login_user(user, remember=True)
+				flash('Succesfully changed password!', 'success')
+				return redirect(url_for('dashboard'))
+			else:
+				flash('You need to enter the same password in both fields!', 'error')
+				return redirect(url_for('reset-password'), token=token)
+		else:
+			flash('Failed to reset password. This is an invalid link. Please contact us if this error persists', 'error')
+			return redirect(url_for('forgot-password'))
+
+
+def update_user_data(type, local_updated_info=None):
+	if type == 'MLH':
+		user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+		if 'data' in user_info:
+			current_user.email = user_info['data']['email']
+			current_user.fname = user_info['data']['first_name']
+			current_user.lname = user_info['data']['last_name']
+			# current_user.class_standing = DB.Column(DB.String(255))
+			current_user.major = user_info['data']['major']
+			current_user.shirt_size = user_info['data']['shirt_size']
+			current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+			current_user.birthday = user_info['data']['date_of_birth']
+			current_user.gender = user_info['data']['gender']
+			current_user.phone_number = user_info['data']['phone_number']
+			current_user.school_id = user_info['data']['school']['id']
+			current_user.school_name = user_info['data']['school']['name']
+			current_user.special_needs = user_info['data']['special_needs']
+			DB.session.add(current_user)
+			DB.session.commit()
+	elif type == 'local' and local_updated_info is not None:
+			current_user.email = local_updated_info['email']
+			current_user.fname = local_updated_info['first_name']
+			current_user.lname = local_updated_info['last_name']
+			current_user.major = local_updated_info['major']
+			current_user.shirt_size = local_updated_info['shirt_size']
+			current_user.dietary_restrictions = local_updated_info['dietary_restrictions']
+			current_user.birthday = local_updated_info['date_of_birth']
+			current_user.gender = local_updated_info['gender']
+			current_user.phone_number = local_updated_info['phone_number']
+			current_user.school_name = local_updated_info['school_name']
+			current_user.special_needs = local_updated_info['special_needs']
+			current_user.password = hash_pwd(local_updated_info['password'])
+			DB.session.add(current_user)
+			DB.session.commit()
+
 
 
 @login_required
@@ -197,7 +390,7 @@ def dashboard():
 	if current_user.type == 'corporate':
 		return redirect(url_for('corp-dash'))
 	if current_user.status == 'NEW':
-		update_user_data()
+		update_user_data('MLH')
 		return redirect(url_for('confirm-registration'))
 	elif current_user.status == 'ACCEPTED':
 		return redirect(url_for('accept-invite'))

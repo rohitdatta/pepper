@@ -36,6 +36,7 @@ class User(DB.Model, UserMixin):
 	med_auth_signature_id = DB.Column(DB.String(255))
 	waiver_signature_id = DB.Column(DB.String(255))
 	time_applied = DB.Column(DB.DateTime)
+	confirmed = DB.Column(DB.Boolean)
 
 	def __init__(self, dict):
 		if dict['type'] == 'MLH': # if creating a MyMLH user
@@ -57,6 +58,25 @@ class User(DB.Model, UserMixin):
 			self.resume_uploaded = False
 			self.school_id = dict['data']['school']['id']
 			self.school_name = dict['data']['school']['name']
+		elif dict['type'] == 'local': # if creating an user through local sign up
+			self.email = dict['email']
+			self.fname = dict['first_name']
+			self.lname = dict['last_name']
+			self.birthday = dict['date_of_birth']
+			self.status = 'NEW'
+			self.created = datetime.utcnow()
+			self.major = dict['major']
+			self.shirt_size = dict['shirt_size']
+			self.dietary_restrictions = dict['dietary_restrictions']
+			self.gender = dict['gender']
+			self.phone_number = dict['phone_number']
+			self.special_needs = dict['special_needs']
+			self.checked_in = False
+			self.type = 'local'
+			self.password = hash_pwd(dict['password'])
+			self.resume_uploaded = False
+			self.school_name = dict['school_name']
+			self.confirmed = False
 		else: # creating a non-OAuth user
 			email = dict['email'].lower().strip()
 			# email_validation = validate_email(email) #TODO: Email validation
