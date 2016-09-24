@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+	<script src="{{ url_for('static', filename='js/update.js') }}"></script>
+	<div class="update">
+	<div class="col-md-6 col-md-offset-3">
+		<h1 class="center">Update Your Information</h1>
+
+		<p>To prevent misuse, you are no longer allowed to change your name or email address. If you need to update your special needs or dietary restrictions, please do so on MyMLH and then click refresh.</p>
+
+		<div class="row">
+				<table class="info">
+					<col>
+					<col>
+					<tr class="border_bottom">
+						<td>Name</td>
+						<td>{{ user.fname }} {{ user.lname }}</td>
+					</tr>
+					<tr class="border_bottom">
+						<td>Email</td>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr>
+						<td>Major</td>
+						<td>{{ user.major }}</td>
+					</tr>
+					<tr>
+						<td>Shirt Size</td>
+						<td>{{ user.shirt_size }}</td>
+					</tr>
+					<tr>
+						<td>Dietary Restrictions</td>
+						<td id="dietary-restrictions">{{ user.dietary_restrictions }}</td>
+					</tr>
+					<tr>
+						<td>Birthday</td>
+						<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
+					</tr>
+					<tr>
+						<td>Gender</td>
+						<td>{{ user.gender }}</td>
+					</tr>
+					<tr>
+						<td>Phone Number</td>
+						<td>{{ user.phone_number }}</td>
+					</tr>
+					<tr>
+						<td>School</td>
+						<td>{{ user.school_name }}</td>
+					</tr>
+					<tr>
+						<td>Special Needs</td>
+						<td id="special-needs">{{ user.special_needs }}</td>
+					</tr>
+					<tr>
+						<td class="no-border">Resume</td>
+						<td class="no-border"><a href="{{ url_for('view-own-resume') }}" class="decorate" target="_blank">View Resume</a></td>
+					</tr>
+
+				</table>
+		</div>
+		<button id="refresh">Refresh</button>
+		<hr>
+
+		<form action="" method="POST" enctype="multipart/form-data">
+			<p>Uploaded the wrong resume? No worries, you can upload a new copy here. </p>
+			<input type=file name="resume" accept="application/pdf">
+			<br>
+			<button type="submit">Upload</button>
+		</form>
+	</div>
+	</div>
+{% endblock %}

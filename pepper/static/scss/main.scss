@@ -13,7 +13,7 @@ $hacktx-gray: #bfbfbf;
 
 //  Page-specific rules
 
-.confirmation {
+.confirmation, .update {
   button {
 	display: block;
 	&.decision {
@@ -97,6 +97,9 @@ body {
 	  color: rgba(#FFF, 0.8);
 	  text-decoration: none;
 	}
+	&:active {
+	  color: white;
+	}
   }
 
   h1, h2, h3 {
@@ -150,9 +153,8 @@ button {
   &:hover {
 	background-color: $hacktx-light-red;
   }
-  &.confirm {
-	//float: right !important;
-	//  color: red !important;
+  &:disabled {
+	background-color: $hacktx-gray;
   }
 }
 

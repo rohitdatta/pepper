@@ -1,12 +1,12 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, redirect, url_for, flash, g
+from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response
 import requests
 from models import User, UserRole
 from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required, hs_client, ts
+from pepper.utils import s3, send_email, s, roles_required, hs_client, ts, s3_client
 from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
@@ -396,28 +396,72 @@ def update_user_data(type, local_updated_info=None):
 
 @login_required
 def dashboard():
-	if current_user.type == 'corporate':
-		return redirect(url_for('corp-dash'))
-	if current_user.status == 'NEW':
-		update_user_data('MLH')
-		return redirect(url_for('confirm-registration'))
-	elif current_user.status == 'ACCEPTED':
-		return redirect(url_for('accept-invite'))
-	elif current_user.status == 'SIGNING':
-		return redirect(url_for('sign'))
-	elif current_user.status == 'CONFIRMED':
-		return render_template('users/dashboard/confirmed.html', user=current_user)
-	elif current_user.status == 'DECLINED':
-		return render_template('users/dashboard/declined.html', user=current_user)
-	elif current_user.status == 'REJECTED':
-		return render_template('users/dashboard/rejected.html', user=current_user)
-	elif current_user.status == 'WAITLISTED':
-		return render_template('users/dashboard/waitlisted.html', user=current_user)
-	elif current_user.status == 'ADMIN':
-		users = User.query.order_by(User.created.asc())
-		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
-	return render_template('users/dashboard/pending.html', user=current_user)
+	if request.method == 'GET':
+		if current_user.type == 'corporate':
+			return redirect(url_for('corp-dash'))
+		if current_user.status == 'NEW':
+			update_user_data('MLH')
+			return redirect(url_for('confirm-registration'))
+		elif current_user.status == 'ACCEPTED':
+			return redirect(url_for('accept-invite'))
+		elif current_user.status == 'SIGNING':
+			return redirect(url_for('sign'))
+		elif current_user.status == 'CONFIRMED':
+			return render_template('users/dashboard/confirmed.html', user=current_user)
+		elif current_user.status == 'DECLINED':
+			return render_template('users/dashboard/declined.html', user=current_user)
+		elif current_user.status == 'REJECTED':
+			return render_template('users/dashboard/rejected.html', user=current_user)
+		elif current_user.status == 'WAITLISTED':
+			return render_template('users/dashboard/waitlisted.html', user=current_user)
+		elif current_user.status == 'ADMIN':
+			users = User.query.order_by(User.created.asc())
+			return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
+		return render_template('users/dashboard/pending.html', user=current_user)
 
+@login_required
+def refresh_from_MLH():
+	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+	if 'data' in user_info:
+		current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+		current_user.special_needs = user_info['data']['special_needs']
+		DB.session.add(current_user)
+		DB.session.commit()
+		return jsonify(dietary_restrictions=current_user.dietary_restrictions, special_needs=current_user.special_needs)
+	else:
+		response = jsonify(error='Unable to communicate with MLH')
+		response.status_code = 503
+		return response
+
+@login_required
+def edit_resume():
+	if current_user.status == 'NEW':
+		return redirect(url_for('dashboard'))
+	if request.method == 'GET':
+		# render template for editing resume
+		return render_template('users/dashboard/update_resume.html', user=current_user)
+	else:
+		# Update your resume
+		if 'resume' in request.files:
+			resume = request.files['resume']
+			if is_pdf(resume.filename):  # if pdf upload to AWS
+				s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
+			else:
+				flash('Resume must be in PDF format', 'error')
+				return redirect(request.url)
+		else:
+			flash('Please upload your resume', 'error')
+			return redirect(request.url)
+		flash('You successfully updated your resume', 'success')
+		return redirect(request.url)
+
+@login_required
+def view_own_resume():
+	data_object = s3.Object(settings.S3_BUCKET_NAME,
+							'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).get()
+	response = make_response(data_object['Body'].read())
+	response.headers['Content-Type'] = 'application/pdf'
+	return response
 
 def is_pdf(filename):
 	return '.' in filename and filename.lower().rsplit('.', 1)[1] == 'pdf'

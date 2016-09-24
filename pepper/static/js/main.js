@@ -1,4 +1,4 @@
-const toastr = window.toastr
+const toastr = window.toastr;
 
 toastr.options = {positionClass: 'toast-top-center'}
 

@@ -18,18 +18,18 @@
 	<script type=text/javascript>
 		$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
 	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
+	<script>
+		/* turning flask flash messages into js popup notifications */
+		window.popupMessages = {{ get_flashed_messages(with_categories=True) | json | safe }};
+	</script>
+	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 	{% block imports %}
 	{% endblock %}
 </head>
 <body>
 {% block body %}
 {% endblock %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.1/toastr.min.js"></script>
-<script>
-	/* turning flask flash messages into js popup notifications */
-	window.popupMessages = {{ get_flashed_messages(with_categories=True) | json | safe }};
-</script>
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

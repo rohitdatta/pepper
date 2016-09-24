@@ -151,8 +151,8 @@ def corporate_search():
 def view_resume():
 	hashid = request.args.get('id')
 	user = User.get_with_hashid(hashid)
-	foo = s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(user.lname, user.fname, user.hashid)).get()
+	data_object = s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(user.lname, user.fname, user.hashid)).get()
 	User.get_with_hashid(hashid)
-	response = make_response(foo['Body'].read())
+	response = make_response(data_object['Body'].read())
 	response.headers['Content-Type'] = 'application/pdf'
 	return response
