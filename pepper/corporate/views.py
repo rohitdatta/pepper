@@ -133,9 +133,9 @@ def corporate_search():
 		majors = request.form.getlist('majors')
 		# if majors:
 		# 	majors = [major.strip() for major in majors.split(',')]
-		users = User.query.filter(User.status == 'CONFIRMED')
+		users = User.query.filter(User.status == 'PENDING')
 		if schools:
-			users = users.filter(User.school.in_(schools))
+			users = users.filter(User.school_name.in_(schools))
 			all_users = users.all()
 		if majors:
 			users = users.filter(User.major.in_(majors))
