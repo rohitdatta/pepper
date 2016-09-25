@@ -339,7 +339,7 @@ form {
   }
 
   input {
-	&[type=text], &[type=password], &[type=date] {
+	&[type=text], &[type=password], &[type=date], &[type=email] {
 	  -webkit-appearance: none;
 	  -moz-appearance: none;
 	  appearance: none;

@@ -20,7 +20,7 @@ def login():
 		user = User.query.filter_by(email=email).first()
 		if user is None:
 			flash("We couldn't find an account related with this email. Please verify the email entered.", "warning")
-			redirect(url_for('corp-login'))
+			return redirect(url_for('corp-login'))
 		elif user.password is None:
 			flash('This account has not been setup yet. Please click the login link in your setup email.')
 			return redirect(url_for('corp-login'))
@@ -116,7 +116,7 @@ def corporate_dash():
 @roles_required('admin', 'corp')
 def corporate_search():
 	if request.method == 'GET':
-		schools = DB.session.query(distinct(User.school)).all()
+		schools = DB.session.query(distinct(User.school_name)).all()
 		majors = DB.session.query(distinct(User.major)).all()
 		class_standings = DB.session.query(distinct(User.class_standing)).all()
 		schools, majors, class_standings = [filter(lambda x: x[0] is not None, filter_list) for filter_list in [schools, majors, class_standings]]
