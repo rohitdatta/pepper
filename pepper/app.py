@@ -73,7 +73,7 @@ def setup_error_handlers(app):
 	def internal_error(error):
 		g.log = g.log.bind(error=error)
 		g.log.error('New 500 Error: ')
-		return render_template('layouts/error.html', title='Internal Server Error', message='We appear to be under a heavy load right now and unable to process this request. Our tech team has been alerted to this error and is working hard to fix it. We appreciate your patience!'), 500
+		return render_template('layouts/error.html', title='Internal Server Error', message='Something went wrong and we are unable to process this request. Our tech team has been alerted to this error and is working hard to fix it. We appreciate your patience! If this error continues, please email {}'.format(settings.GENERAL_INFO_EMAIL)), 500
 
 
 def create_app():
