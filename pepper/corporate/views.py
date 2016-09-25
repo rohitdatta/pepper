@@ -121,6 +121,9 @@ def corporate_search():
 		class_standings = DB.session.query(distinct(User.class_standing)).all()
 		schools, majors, class_standings = [filter(lambda x: x[0] is not None, filter_list) for filter_list in [schools, majors, class_standings]]
 		schools, majors, class_standings = [map(lambda x: x[0], filter_list) for filter_list in [schools, majors, class_standings]]
+		schools.sort()
+		majors.sort()
+		class_standings.sort()
 		# [school for school in schools if school != None]
 		return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
 	else:
@@ -131,6 +134,7 @@ def corporate_search():
 		# if class_standings:
 		# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
 		majors = request.form.getlist('majors')
+		majors = ['Computer Science']
 		# if majors:
 		# 	majors = [major.strip() for major in majors.split(',')]
 		users = User.query.filter(User.status == 'PENDING')

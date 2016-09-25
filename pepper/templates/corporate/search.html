@@ -1,23 +1,31 @@
-<h1>Search Page</h1>
+{% extends 'layouts/base.html' %}
+{% block imports %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/corp-search.js') }}"></script>
+{% endblock %}
+{% block content %}
 
+<h1>Search Page</h1>
 <form method="POST" action="">
 	Schools
-	<select name="schools" multiple>
+	<select name="schools" multiple class="chosen-select">
 		{% for school in schools %}
 		<option value="{{ school }}">{{ school }}</option>
 		{% endfor %}
 	</select>
 Majors
-	<select name="majors" multiple>
+	<select name="majors" multiple class="chosen-select">
 		{% for major in majors %}
 		<option value="{{ major }}">{{ major }}</option>
 		{% endfor %}
 	</select>
 Class Standings
-	<select name="class_standings" multiple>
+	<select name="class_standings" multiple class="chosen-select">
 		{% for class_standing in class_standings %}
 		<option value="{{ class_standing }}">{{ class_standing }}</option>
 		{% endfor %}
 	</select>
 <button type="submit">Submit</button>
 </form>
+{% endblock %}
