@@ -265,7 +265,7 @@ def confirm_registration():
 		if 'resume' in request.files:
 			resume = request.files['resume']
 			if is_pdf(resume.filename):  # if pdf upload to AWS
-				s3.Object(settings.S3_BUCKET_NAME, 'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
+				s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).put(Body=resume)
 			else:
 				flash('Resume must be in PDF format', 'error')
 				return redirect(request.url)
