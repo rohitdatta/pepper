@@ -10,6 +10,9 @@ from pepper.utils import s3, send_email, s, roles_required, hs_client, ts, s3_cl
 from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
+from pytz import timezone
+
+cst = timezone('US/Central')
 
 def landing():
 	if current_user.is_authenticated:
@@ -480,7 +483,8 @@ def accept():
 				settings.HACKATHON_NAME),
 			None: "Corporate users cannot view this page."
 		}
-		flash(message[current_user.status], 'error')
+		if current_user.status in message:
+			flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
 			# for signature in med_signature_request.signatures:
@@ -522,32 +526,35 @@ def sign():
 		flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		if current_user.med_auth_signature_id is None: # Generate the medical authorization waiver
-			med_signature_request = hs_client.send_signature_request_embedded_with_template(
-				test_mode=settings.DEBUG,
-				client_id=settings.HELLO_SIGN_CLIENT_ID,
-				template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
-				subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
-				message='Please sign the medical authorization waiver for UT Austin',
-				signers=[
-					{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
-				]
-			)
-			current_user.med_auth_signature_id = med_signature_request.signatures[0].signature_id
-		if current_user.waiver_signature_id is None:
-			waiver_signature_request = hs_client.send_signature_request_embedded_with_template(
-				test_mode=settings.DEBUG,
-				client_id=settings.HELLO_SIGN_CLIENT_ID,
-				template_id=settings.HELLO_SIGN_WAIVER_TEMPLATE_ID,
-				subject='Release Waiver for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname,
-																		 current_user.lname),
-				message='Please sign the release waiver for UT Austin',
-				signers=[
-					{'role_name': 'Attendee', 'email_address': current_user.email,
-					 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
-				]
-			)
-			current_user.waiver_signature_id = waiver_signature_request.signatures[0].signature_id
+		today = datetime.now(cst).date()
+		return render_template('users/sign.html', user=current_user, date=today.strftime('%B %d, %Y'))
+
+		# if current_user.med_auth_signature_id is None: # Generate the medical authorization waiver
+		# 	med_signature_request = hs_client.send_signature_request_embedded_with_template(
+		# 		test_mode=settings.DEBUG,
+		# 		client_id=settings.HELLO_SIGN_CLIENT_ID,
+		# 		template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
+		# 		subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
+		# 		message='Please sign the medical authorization waiver for UT Austin',
+		# 		signers=[
+		# 			{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
+		# 		]
+		# 	)
+		# 	current_user.med_auth_signature_id = med_signature_request.signatures[0].signature_id
+		# if current_user.waiver_signature_id is None:
+		# 	waiver_signature_request = hs_client.send_signature_request_embedded_with_template(
+		# 		test_mode=settings.DEBUG,
+		# 		client_id=settings.HELLO_SIGN_CLIENT_ID,
+		# 		template_id=settings.HELLO_SIGN_WAIVER_TEMPLATE_ID,
+		# 		subject='Release Waiver for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname,
+		# 																 current_user.lname),
+		# 		message='Please sign the release waiver for UT Austin',
+		# 		signers=[
+		# 			{'role_name': 'Attendee', 'email_address': current_user.email,
+		# 			 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
+		# 		]
+		# 	)
+		# 	current_user.waiver_signature_id = waiver_signature_request.signatures[0].signature_id
 
 		DB.session.add(current_user)
 		DB.session.commit()

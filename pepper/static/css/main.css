@@ -1,4 +1,9 @@
 @import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
+.sign input[type=text], .sign form input[type=number], form .sign input[type=number], .sign form textarea, form .sign textarea, .sign input[type=email], .sign input[type=tel] {
+  width: 95%; }
+  .sign input[type=text]:focus, .sign form input[type=number]:focus, form .sign input[type=number]:focus, .sign form textarea:focus, form .sign textarea:focus, .sign input[type=email]:focus, .sign input[type=tel]:focus {
+    width: 100%; }
+
 .confirmation button, .update button {
   display: block; }
   .confirmation button.decision, .update button.decision {
@@ -232,7 +237,7 @@ form label {
   font-size: 12pt; }
   form label.title {
     font-size: 24pt; }
-form input[type=text], form input[type=number], form textarea, form input[type=password], form input[type=date], form input[type=email] {
+form input[type=text], form input[type=number], form textarea, form input[type=password], form input[type=date], form input[type=email], form input[type=tel] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -252,28 +257,28 @@ form input[type=text], form input[type=number], form textarea, form input[type=p
   font-weight: 300;
   transition-duration: 0.25s;
   font-weight: 300; }
-  form input[type=text].no-expand:focus, form input.no-expand[type=number]:focus, form textarea.no-expand:focus, form input[type=password].no-expand:focus, form input[type=date].no-expand:focus, form input[type=email].no-expand:focus {
+  form input[type=text].no-expand:focus, form input.no-expand[type=number]:focus, form textarea.no-expand:focus, form input[type=password].no-expand:focus, form input[type=date].no-expand:focus, form input[type=email].no-expand:focus, form input[type=tel].no-expand:focus {
     width: 250px; }
-  form input[type=text]::selection, form input[type=number]::selection, form textarea::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection {
+  form input[type=text]::selection, form input[type=number]::selection, form textarea::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection, form input[type=tel]::selection {
     color: white;
     background: rgba(9, 116, 137, 0.75);
     /* WebKit/Blink Browsers */ }
-  form input[type=text] ::-moz-selection, form input[type=number] ::-moz-selection, form textarea ::-moz-selection, form input[type=password] ::-moz-selection, form input[type=date] ::-moz-selection, form input[type=email] ::-moz-selection {
+  form input[type=text] ::-moz-selection, form input[type=number] ::-moz-selection, form textarea ::-moz-selection, form input[type=password] ::-moz-selection, form input[type=date] ::-moz-selection, form input[type=email] ::-moz-selection, form input[type=tel] ::-moz-selection {
     background: #000;
     /* Gecko Browsers */ }
   @media (min-width: 992px) {
-    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width {
+    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width, form input[type=tel].double-width {
       width: 525px; }
-      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus {
+      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus, form input[type=tel].double-width:focus {
         width: 525px; } }
   @media (max-width: 992px) {
-    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width {
+    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width, form input[type=tel].double-width {
       width: 250px; }
-      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus {
+      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus, form input[type=tel].double-width:focus {
         width: 250px; } }
-  form input[type=text]:hover, form input[type=number]:hover, form textarea:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover {
+  form input[type=text]:hover, form input[type=number]:hover, form textarea:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover, form input[type=tel]:hover {
     background-color: rgba(255, 255, 255, 0.4); }
-  form input[type=text]:focus, form input[type=number]:focus, form textarea:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus {
+  form input[type=text]:focus, form input[type=number]:focus, form textarea:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus, form input[type=tel]:focus {
     background-color: white;
     color: #124e78;
     width: 300px; }

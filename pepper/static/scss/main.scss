@@ -13,6 +13,25 @@ $hacktx-gray: #bfbfbf;
 
 //  Page-specific rules
 
+
+.sign {
+  input {
+	&[type=text], &[type=email], &[type=tel] {
+	width: 95%;
+	  &:focus {
+		width: 100%;
+	  }
+	}
+  }
+  //
+  //textarea {
+	//padding: 10px 15px;
+	//margin: 0 auto 10px auto;
+	//width: 95%;
+  //
+  //}
+}
+
 .confirmation, .update {
   button {
 	display: block;
@@ -339,7 +358,7 @@ form {
   }
 
   input {
-	&[type=text], &[type=password], &[type=date], &[type=email] {
+	&[type=text], &[type=password], &[type=date], &[type=email], &[type=tel] {
 	  -webkit-appearance: none;
 	  -moz-appearance: none;
 	  appearance: none;
