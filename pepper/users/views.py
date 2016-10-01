@@ -615,13 +615,16 @@ def create_corp_user():
 @roles_required('admin')
 def batch_modify():
 	if request.method == 'GET':
-		return 'Batch modify page'
+		users = User.query.filter_by(status='PENDING')
+		return render_template('users/admin/accept_users.html', users=users)
 	else:
 		modify_type = request.form.get('type')
+		num_to_accept = int(request.form.get('num_to_accept'))
 		if modify_type == 'fifo':
 			accepted_attendees = User.query.filter_by(status='PENDING')  # TODO: limit by x
-			# update users set status = 'ACCEPTED' where status = 'PENDING' limit x
+			# update users set status = 'ACCEPTED' where status = 'PENDING' limit x sort by time_applied
 			for attendee in accepted_attendees:
+				html = render_template('emails/application_decisions/accepted.html', user=attendee)
 				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation", attendee.email, )
 		else:  # randomly select n users out of x users
 			x = request.form.get('x') if request.form.get(
