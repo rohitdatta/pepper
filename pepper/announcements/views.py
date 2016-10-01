@@ -1,2 +1,12 @@
+from pepper.app import DB
+from flask import jsonify
+from models import Announcement
+
 def announcement_list():
-	return 'ANNOUNCEMENT LIST'
+	announcements = Announcement.query().all()
+	return jsonify(announcements)
+
+def create_announcement():
+	announcement = Announcement() #TODO: look at post data
+
+	return 'Created announcement'
