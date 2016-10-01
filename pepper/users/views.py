@@ -555,7 +555,6 @@ def sign():
 			flash('Must sign all fields', 'error')
 			return redirect(request.url)
 
-
 		signed_info = dict()
 		for key in ('relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs', 'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
 			signed_info[key] = locals()[key]
@@ -567,52 +566,16 @@ def sign():
 		DB.session.add(waiver_info)
 		DB.session.commit()
 
-		# signed_info['relative_name'] = relative_name
-		# signed_info['relative_email'] = relative_email
-		# signed_info['relative_num'] = relative_num
-		# signed_info['allergies'] = allergies
-
-
-
 		current_user.status = 'CONFIRMED'
 		DB.session.add(current_user)
 		DB.session.commit()
 
+		# send email saying that they are confirmed to attend
+		html = render_template('emails/application_decisions/confirmed_invite.html')
+		send_email(settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME), current_user.email, html_content=html)
+
+		flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
 		return redirect(url_for('dashboard'))
-
-
-		# if current_user.med_auth_signature_id is None: # Generate the medical authorization waiver
-		# 	med_signature_request = hs_client.send_signature_request_embedded_with_template(
-		# 		test_mode=settings.DEBUG,
-		# 		client_id=settings.HELLO_SIGN_CLIENT_ID,
-		# 		template_id=settings.HELLO_SIGN_MED_WAIVER_TEMPLATE_ID,
-		# 		subject='Medical Authorization for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname, current_user.lname),
-		# 		message='Please sign the medical authorization waiver for UT Austin',
-		# 		signers=[
-		# 			{'role_name': 'Attendee', 'email_address': current_user.email, 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
-		# 		]
-		# 	)
-		# 	current_user.med_auth_signature_id = med_signature_request.signatures[0].signature_id
-		# if current_user.waiver_signature_id is None:
-		# 	waiver_signature_request = hs_client.send_signature_request_embedded_with_template(
-		# 		test_mode=settings.DEBUG,
-		# 		client_id=settings.HELLO_SIGN_CLIENT_ID,
-		# 		template_id=settings.HELLO_SIGN_WAIVER_TEMPLATE_ID,
-		# 		subject='Release Waiver for {0} - {1} {2}'.format(settings.HACKATHON_NAME, current_user.fname,
-		# 																 current_user.lname),
-		# 		message='Please sign the release waiver for UT Austin',
-		# 		signers=[
-		# 			{'role_name': 'Attendee', 'email_address': current_user.email,
-		# 			 'name': '{0} {1}'.format(current_user.fname, current_user.lname)}
-		# 		]
-		# 	)
-		# 	current_user.waiver_signature_id = waiver_signature_request.signatures[0].signature_id
-
-		DB.session.add(current_user)
-		DB.session.commit()
-		med_waiver_url = hs_client.get_embedded_object(current_user.med_auth_signature_id).sign_url
-		release_waiver_url = hs_client.get_embedded_object(current_user.waiver_signature_id).sign_url
-		return render_template('users/sign.html', user=current_user, sign_url=med_waiver_url)
 
 @login_required
 @roles_required('admin')
@@ -657,10 +620,14 @@ def batch_modify():
 		modify_type = request.form.get('type')
 		if modify_type == 'fifo':
 			accepted_attendees = User.query.filter_by(status='PENDING')  # TODO: limit by x
+			# update users set status = 'ACCEPTED' where status = 'PENDING' limit x
+			for attendee in accepted_attendees:
+				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation", attendee.email, )
 		else:  # randomly select n users out of x users
 			x = request.form.get('x') if request.form.get(
 				'x') is not 0 else -1  # TODO it's the count of users who are pending
-			random_pool = User.query.filter
+			random_pool = User.query.filter_by(status='PENDING').all()
+			# accepted = # use random function here
 		# TODO: figure out how to find x random numbers
 
 
