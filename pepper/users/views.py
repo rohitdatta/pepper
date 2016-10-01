@@ -11,6 +11,7 @@ from helpers import send_status_change_notification, check_password, hash_pwd
 import keen
 from datetime import datetime
 from pytz import timezone
+from pepper.legal.models import Waiver
 
 cst = timezone('US/Central')
 
@@ -512,6 +513,7 @@ def accept():
 
 @login_required
 def sign():
+	date_fmt = '%B %d, %Y'
 	if current_user.status != 'SIGNING':  # they aren't allowed to accept their invitation
 		message = {
 			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(settings.HACKATHON_NAME),
@@ -523,11 +525,61 @@ def sign():
 				settings.HACKATHON_NAME),
 			None: "Corporate users cannot view this page."
 		}
-		flash(message[current_user.status], 'error')
+		if current_user.status in message:
+			flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
 		today = datetime.now(cst).date()
-		return render_template('users/sign.html', user=current_user, date=today.strftime('%B %d, %Y'))
+		return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
+	else:
+		relative_name = request.form.get('relative_name')
+		relative_email = request.form.get('relative_email')
+		relative_num = request.form.get('relative_num')
+
+		allergies = request.form.get('allergies')
+		medications = request.form.get('medications')
+		special_health_needs = request.form.get('special_health_needs')
+
+		medical_signature = request.form.get('medical_signature')
+		medical_date = request.form.get('medical_date')
+
+		indemnification_signature = request.form.get('indemnification_signature')
+		indemnification_date = request.form.get('indemnification_date')
+
+		photo_signature = request.form.get('photo_signature')
+		photo_date = request.form.get('photo_date')
+
+		ut_eid = request.form.get('ut_eid')
+
+		if None in (medical_signature, medical_date, indemnification_signature, indemnification_date, photo_signature, photo_date):
+			flash('Must sign all fields', 'error')
+			return redirect(request.url)
+
+
+		signed_info = dict()
+		for key in ('relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs', 'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
+			signed_info[key] = locals()[key]
+
+		for key in ('medical_date', 'indemnification_date', 'photo_date'):
+			signed_info[key] = datetime.strptime(locals()[key], date_fmt)
+		signed_info['user_id'] = current_user.id
+		waiver_info = Waiver(signed_info)
+		DB.session.add(waiver_info)
+		DB.session.commit()
+
+		# signed_info['relative_name'] = relative_name
+		# signed_info['relative_email'] = relative_email
+		# signed_info['relative_num'] = relative_num
+		# signed_info['allergies'] = allergies
+
+
+
+		current_user.status = 'CONFIRMED'
+		DB.session.add(current_user)
+		DB.session.commit()
+
+		return redirect(url_for('dashboard'))
+
 
 		# if current_user.med_auth_signature_id is None: # Generate the medical authorization waiver
 		# 	med_signature_request = hs_client.send_signature_request_embedded_with_template(
