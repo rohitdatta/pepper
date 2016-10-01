@@ -615,24 +615,28 @@ def create_corp_user():
 @roles_required('admin')
 def batch_modify():
 	if request.method == 'GET':
-		users = User.query.filter_by(status='PENDING')
+		users = User.query.filter_by(status='PENDING').all()
 		return render_template('users/admin/accept_users.html', users=users)
 	else:
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='PENDING')  # TODO: limit by x
+			accepted_attendees = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).limit(num_to_accept).all() # TODO: limit by x
 			# update users set status = 'ACCEPTED' where status = 'PENDING' limit x sort by time_applied
 			for attendee in accepted_attendees:
+				attendee.status = 'ACCEPTED'
+				DB.session.add(attendee)
+				DB.session.commit()
 				html = render_template('emails/application_decisions/accepted.html', user=attendee)
-				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation", attendee.email, )
+				print 'foo'
+				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
 		else:  # randomly select n users out of x users
 			x = request.form.get('x') if request.form.get(
 				'x') is not 0 else -1  # TODO it's the count of users who are pending
 			random_pool = User.query.filter_by(status='PENDING').all()
 			# accepted = # use random function here
 		# TODO: figure out how to find x random numbers
-
+		return 'Done'
 
 @login_required
 @roles_required('admin')
