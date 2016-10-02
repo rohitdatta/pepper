@@ -1,6 +1,6 @@
 from pepper.app import DB
 from datetime import datetime
-from helpers import hash_pwd
+from pepper.utils import hash_pwd
 from flask_user import UserMixin
 from pepper.utils import resume_hash, ts
 

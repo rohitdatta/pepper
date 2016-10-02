@@ -9,6 +9,8 @@ import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
 from hellosign_sdk import HSClient
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -80,3 +82,9 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 		mail.add_content(Content('text/html', transform(html_content)))
 	response = sg.client.mail.send.post(request_body=mail.get())
 	return response.status_code == 200
+
+def hash_pwd(password):
+	return generate_password_hash(password)
+
+def check_password(hashed, password):
+	return check_password_hash(hashed, password)

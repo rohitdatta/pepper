@@ -6,7 +6,7 @@ from pepper.utils import corp_login_required, roles_required, s3, ts, s, send_em
 from pepper import settings
 from sqlalchemy import distinct
 from pepper.app import DB
-from pepper.users.helpers import hash_pwd
+from pepper.utils import hash_pwd
 from pepper.users.models import UserRole
 
 def login():

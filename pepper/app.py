@@ -1,20 +1,31 @@
-import flask
 import json
-
-from flask import g, request, render_template
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, current_user
-from flask.ext.cdn import CDN
-from flask_sslify import SSLify
-from flask_redis import Redis
+import os
+import redis
+import flask
 import sendgrid
-import settings
 import structlog
+from flask import g, request, render_template
+from flask.ext.cdn import CDN
+from flask.ext.login import LoginManager, current_user
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask_redis import Redis
+from flask_sslify import SSLify
+from rq import Queue
+# from flask.ext.rq import RQ
+from flask_rq2 import RQ
+
+import settings
 
 DB = SQLAlchemy()
 redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+rq = RQ()
+
+conn = redis.from_url(redis_url)
+q = Queue(connection=conn)
+
 
 import routes
 from users.models import User
@@ -93,5 +104,8 @@ def create_app():
 	app.config['CDN_HTTPS'] = True
 	cdn.init_app(app)
 
+	rq.init_app(app)
+
 	SSLify(app)
+
 	return app

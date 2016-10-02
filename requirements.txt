@@ -23,3 +23,7 @@ hellosign-python-sdk
 flask-cdn
 structlog
 pytz
+rq
+flask-rq
+Flask-RQ2
+Flask-RQ2[script]
