@@ -32,17 +32,18 @@
 		<form method="POST" action="{{ url_for('sign') }}">
 			<div class="col-md-12">
 			<h2>Medical Information</h2>
+			<p><span class="required"></span>Required Fields</p>
 			<div class="col-md-12">
-			<h3>Emergency Contact</h3>
+			<h3 class="required">Emergency Contact</h3>
 			<div class="row">
 			<div class="col-md-4">
-				<input type="text" name="relative_name" placeholder="Relative Name" required>
+				<input type="text" name="relative_name" placeholder="Relative Name" class="required" required>
 			</div>
 			<div class="col-md-4">
-				<input type="email" name="relative_email" placeholder="Relative Email" required>
+				<input type="email" name="relative_email" placeholder="Relative Email" class="required" required>
 			</div>
 			<div class="col-md-4">
-				<input type="tel" name="relative_num" placeholder="Phone Number" required>
+				<input type="tel" name="relative_num" placeholder="Phone Number" class="required" required>
 			</div>
 			</div>
 			</div>
@@ -61,13 +62,13 @@
 				</div>
 			</div>
 			<div class="col-md-12">
-				<h3>Emergency Medical Authorization</h3>
+				<h3 class="required">Emergency Medical Authorization</h3>
 				<div class="col-md-12">
 				<p>I, {{ user.fname }} {{ user.lname }}, do hereby authorize The University of Texas at Austin and its agents or representatives to consent, on my behalf, to any medical/hospital care or treatment (including locations outside the U.S.) to be rendered upon the advice of any licensed physician. I agree to be responsible for all necessary charges incurred by any hospitalization or treatment rendered pursuant to this authorization.</p>
 					<p>The effective dates of this authorization are {{ date }} to October 26, 2016. I am eighteen years of age or older, have read the above authorization, and confirm that the information contained therein is true and accurate. I agree that my electronic signature is the legally binding equivalent to my handwritten signature. Whenever I execute an electronic signature, it has the same validity and meaning as my handwritten signature. I will not, at any time in the future, repudiate the meaning of my electronic signature or claim that my electronic signature is not legally binding.</p>
 					<p>By signing below, I accept the conditions of this agreement.</p>
 					<div class="col-md-6">
-						<input type="text" name="medical_signature" placeholder="Full Legal Name" required>
+						<input type="text" name="medical_signature" placeholder="Full Legal Name" class="required" required>
 					</div>
 					<div class="col-md-6">
 						<input type="text" value="{{ date }}" placeholder="Date" disabled>
@@ -76,7 +77,7 @@
 			</div>
 			</div>
 <div class="col-md-12">
-	<h2>Release and Indemnification Agreement</h2>
+	<h2 class="required">Release and Indemnification Agreement</h2>
 	<div class="col-md-12">
 		<p>Description of Activity or Trip: Hackathon during the weekend of October 22-23, 2016 hosted by Freetail Hackers</p>
 			<p>I, {{ user.fname }} {{ user.lname }}, am eighteen years of age or older and have voluntarily applied to participate in the above Activity or Trip. I acknowledge that the nature of the Activity or Trip may expose me to hazards or risks that may result in my illness, personal injury or death and I understand and appreciate the nature of such hazards and risks.</p>
@@ -88,7 +89,7 @@
 			<p>I agree that my electronic signature is the legally binding equivalent to my handwritten signature. Whenever I execute an electronic signature, it has the same validity and meaning as my handwritten signature. I will not, at any time in the future, repudiate the meaning of my electronic signature or claim that my electronic signature is not legally binding.</p>
 
 		<div class="col-md-6">
-						<input type="text" name="indemnification_signature" placeholder="Full Legal Name" required>
+						<input type="text" name="indemnification_signature" class="required" placeholder="Full Legal Name" required>
 					</div>
 					<div class="col-md-6">
 						<input type="text" name="indemnification_date" value="{{ date }}" placeholder="Date" disabled>
@@ -98,7 +99,7 @@
 </div>
 
 			<div class="col-md-12">
-				<h2>Photograph Release Form</h2>
+				<h2 class="required">Photograph Release Form</h2>
 				<div class="col-md-12">
 					<p>I hereby voluntarily permit and authorize The University of Texas System and its employees, agents, and personnel who are acting on behalf of The University of Texas System to post my photograph or video images of me. I understand that The University of Texas System and its employees, agents and personnel cannot warrant or guarantee that, on placement of my photograph or video image on a website, any further dissemination of my photograph or video image will be subject to University supervision or control. Accordingly, I release The University of Texas System, its employees, agents, personnel acting on its behalf, and Major League Hacking from any and all liability related to further dissemination of my photograph or video image.</p>
 <p>I agree that my electronic signature is the legally binding equivalent to my handwritten signature. Whenever I execute an electronic signature, it has the same validity and meaning as my handwritten signature. I will not, at any time in the future, repudiate the meaning of my electronic signature or claim that my electronic signature is not legally binding.</p>
@@ -106,7 +107,7 @@
 				</div>
 
 		<div class="col-md-6">
-						<input type="text" name="photo_signature" placeholder="Full Legal Name" required>
+						<input type="text" name="photo_signature" class="required" placeholder="Full Legal Name" required>
 					</div>
 					<div class="col-md-6">
 						<input type="text" name="photo_date" value="{{ date }}" placeholder="Date" disabled>
@@ -116,7 +117,7 @@
 			{% if user.school_id == 23 %}
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3">
-					<input type="text" name="ut_eid" placeholder="UT EID" required>
+					<input type="text" name="ut_eid" placeholder="UT EID" class="required" required>
 					</div>
 				</div>
 			{% endif %}

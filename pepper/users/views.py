@@ -544,10 +544,13 @@ def sign():
 
 		ut_eid = request.form.get('ut_eid')
 
-		if None in (medical_signature, medical_date, indemnification_signature, indemnification_date, photo_signature, photo_date):
-			flash('Must sign all fields', 'error')
+		if None in (relative_name, relative_email, relative_num, medical_signature, medical_date, indemnification_signature, indemnification_date, photo_signature, photo_date):
+			flash('Must fill all required fields', 'error')
 			return redirect(request.url)
-
+		if current_user.school_id == 23:
+			if ut_eid == None:
+				flash('Must fill out UT EID')
+				return redirect(request.url)
 		signed_info = dict()
 		for key in ('relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs', 'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
 			signed_info[key] = locals()[key]

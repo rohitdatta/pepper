@@ -1,4 +1,9 @@
 @import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
+.required::after {
+  content: "*";
+  color: #CB0922;
+  text-shadow: none; }
+
 .sign input[type=text], .sign form input[type=number], form .sign input[type=number], .sign form textarea, form .sign textarea, .sign input[type=email], .sign input[type=tel] {
   width: 95%; }
   .sign input[type=text]:focus, .sign form input[type=number]:focus, form .sign input[type=number]:focus, .sign form textarea:focus, form .sign textarea:focus, .sign input[type=email]:focus, .sign input[type=tel]:focus {

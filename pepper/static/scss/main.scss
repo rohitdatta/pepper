@@ -12,17 +12,21 @@ $desktop-width: 992px;
 $hacktx-gray: #bfbfbf;
 
 //  Page-specific rules
-
-
+.required::after {
+	content: "*";
+  color: $hacktx-red;
+  text-shadow: none;
+}
 .sign {
   input {
 	&[type=text], &[type=email], &[type=tel] {
-	width: 95%;
+	  width: 95%;
 	  &:focus {
 		width: 100%;
 	  }
 	}
   }
+}
   //
   //textarea {
 	//padding: 10px 15px;
@@ -30,7 +34,6 @@ $hacktx-gray: #bfbfbf;
 	//width: 95%;
   //
   //}
-}
 
 .confirmation, .update {
   button {
