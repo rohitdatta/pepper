@@ -12,6 +12,8 @@ import keen
 from datetime import datetime
 from pytz import timezone
 from pepper.legal.models import Waiver
+import random
+from sqlalchemy import or_
 
 cst = timezone('US/Central')
 
@@ -494,15 +496,6 @@ def accept():
 		return render_template('users/accept.html', user=current_user)
 	else:
 		if 'accept' in request.form: #User has accepted the invite
-			# if 'resume' in request.files:
-			# 	resume = request.files['resume']
-			# 	if is_pdf(resume.filename):  # if pdf upload to AWS
-			# 		s3.Object('hacktx-pepper', 'resumes/{0}-{1}-{2}.pdf'.format(current_user.id, current_user.lname,
-			# 																  current_user.fname)).put(Body=resume)
-			# 		current_user.resume_uploaded = True
-			# 	else:
-			# 		flash('Resume must be in PDF format')
-			# 		return redirect(url_for('accept-invite'))
 			current_user.status = 'SIGNING'
 			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
 		else:
@@ -615,28 +608,42 @@ def create_corp_user():
 @roles_required('admin')
 def batch_modify():
 	if request.method == 'GET':
-		users = User.query.filter_by(status='PENDING').all()
+		users = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).all()
 		return render_template('users/admin/accept_users.html', users=users)
 	else:
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).limit(num_to_accept).all() # TODO: limit by x
-			# update users set status = 'ACCEPTED' where status = 'PENDING' limit x sort by time_applied
+			accepted_attendees = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).limit(num_to_accept).all()
 			for attendee in accepted_attendees:
 				attendee.status = 'ACCEPTED'
-				DB.session.add(attendee)
 				DB.session.commit()
 				html = render_template('emails/application_decisions/accepted.html', user=attendee)
-				print 'foo'
 				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
 		else:  # randomly select n users out of x users
-			x = request.form.get('x') if request.form.get(
-				'x') is not 0 else -1  # TODO it's the count of users who are pending
-			random_pool = User.query.filter_by(status='PENDING').all()
-			# accepted = # use random function here
+			random_pool = User.query.filter(or_(User.status=='PENDING', User.status=='WAITLISTED')).all()
+			accepted = random.sample(set(random_pool), num_to_accept)
+			for attendee in accepted:
+				if attendee.status == 'PENDING':
+					html = render_template('emails/application_decisions/accepted.html', user=attendee)
+				else: # they got off waitlist
+					html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
+				attendee.status = 'ACCEPTED'
+				DB.session.commit()
+				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
+
+			# set everyone else to go from pending to waitlisted
+			pending_attendees = User.query.filter_by(status='PENDING').all()
+			for pending_attendee in pending_attendees:
+				pending_attendee.status = 'WAITLISTED'
+				html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
+				DB.session.commit()
+				send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
+		# x = request.form.get('x') if request.form.get(
+			# 	'x') is not 0 else -1  # TODO it's the count of users who are pending
 		# TODO: figure out how to find x random numbers
-		return 'Done'
+		flash('Finished acceptances', 'success')
+		return redirect(request.url)
 
 @login_required
 @roles_required('admin')

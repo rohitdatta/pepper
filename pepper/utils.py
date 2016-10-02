@@ -78,5 +78,5 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 		mail.add_content(Content('text/plain', txt_content))
 	if html_content:
 		mail.add_content(Content('text/html', transform(html_content)))
-	response = sg.client.mail.send.post(request_body=mail.get())
-	return response.status_code == 200
+	# response = sg.client.mail.send.post(request_body=mail.get())
+	# return response.status_code == 200
