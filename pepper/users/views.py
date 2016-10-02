@@ -620,6 +620,8 @@ def batch_modify():
 				DB.session.commit()
 				html = render_template('emails/application_decisions/accepted.html', user=attendee)
 				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
+				g.log = g.log.bind(email=attendee.email)
+				g.log.info('Sent email to')
 		else:  # randomly select n users out of x users
 			random_pool = User.query.filter(or_(User.status=='PENDING', User.status=='WAITLISTED')).all()
 			accepted = random.sample(set(random_pool), num_to_accept)
