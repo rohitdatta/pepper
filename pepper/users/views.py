@@ -611,6 +611,7 @@ def batch_modify():
 		users = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).all()
 		return render_template('users/admin/accept_users.html', users=users)
 	else:
+		g.log.info('Starting acceptances')
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
 		if modify_type == 'fifo':
@@ -645,6 +646,7 @@ def batch_modify():
 			# 	'x') is not 0 else -1  # TODO it's the count of users who are pending
 		# TODO: figure out how to find x random numbers
 		flash('Finished acceptances', 'success')
+		g.log.info('Finished acceptances')
 		return redirect(request.url)
 
 @login_required
