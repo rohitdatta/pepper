@@ -490,9 +490,6 @@ def accept():
 			flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-			# for signature in med_signature_request.signatures:
-			# 	embedded_obj = hs_client.get_embedded_object(signature.signature_id)
-			# 	sign_url = embedded_obj.sign_url
 		return render_template('users/accept.html', user=current_user)
 	else:
 		if 'accept' in request.form: #User has accepted the invite
@@ -502,6 +499,29 @@ def accept():
 			current_user.status = 'DECLINED'
 		DB.session.add(current_user)
 		DB.session.commit()
+		user_decision = 'confirmed' if current_user.status == 'SIGNING' else 'declined'
+		fmt = '%Y-%m-%dT%H:%M:%S.%f'
+		keen.add_event(user_decision, {
+			'date_of_birth': current_user.birthday.strftime(fmt),
+			'dietary_restrictions': current_user.dietary_restrictions,
+			'email': current_user.email,
+			'first_name': current_user.fname,
+			'last_name': current_user.lname,
+			'gender': current_user.gender,
+			'id': current_user.id,
+			'major': current_user.major,
+			'phone_number': current_user.phone_number,
+			'school': {
+				'id': current_user.school_id,
+				'name': current_user.school_name
+			},
+			'skill_level': current_user.skill_level,
+			'races': current_user.race.split(','),
+			'num_hackathons': current_user.num_hackathons,
+			'class_standing': current_user.class_standing,
+			'shirt_size': current_user.shirt_size,
+			'special_needs': current_user.special_needs
+		})
 		return redirect(url_for('dashboard'))
 
 @login_required
@@ -567,7 +587,7 @@ def sign():
 		DB.session.commit()
 
 		fmt = '%Y-%m-%dT%H:%M:%S.%f'
-		keen.add_event('confirmations', {
+		keen.add_event('waivers_signed', {
 			'date_of_birth': current_user.birthday.strftime(fmt),
 			'dietary_restrictions': current_user.dietary_restrictions,
 			'email': current_user.email,
@@ -580,9 +600,6 @@ def sign():
 			'school': {
 				'id': current_user.school_id,
 				'name': current_user.school_name
-			},
-			'keen': {
-				'timestamp': current_user.time_applied.strftime(fmt)
 			},
 			'skill_level': current_user.skill_level,
 			'races': current_user.race.split(','),
