@@ -567,7 +567,7 @@ def sign():
 		DB.session.commit()
 
 		# send email saying that they are confirmed to attend
-		html = render_template('emails/application_decisions/confirmed_invite.html')
+		html = render_template('emails/application_decisions/confirmed_invite.html', user=current_user)
 		send_email(settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME), current_user.email, html_content=html)
 
 		flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
