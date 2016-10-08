@@ -6,8 +6,8 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required, hs_client, ts, s3_client
-from helpers import send_status_change_notification, check_password, hash_pwd
+from pepper.utils import s3, send_email, s, roles_required, ts
+from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
 import keen
 from datetime import datetime
 from pytz import timezone
@@ -167,7 +167,7 @@ def callback():
 		json = resp.json()
 	except Exception as e:
 		g.log = g.log.bind(error=e, response=resp)
-		g.log.error('Error Decoding Jason')
+		g.log.error('Error Decoding JSON')
 	
 	if resp.status_code == 401: # MLH sent expired token
 		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
@@ -636,7 +636,8 @@ def sign():
 @roles_required('admin')
 def create_corp_user():
 	if request.method == 'GET':
-		return render_template('users/admin/create_user.html')
+		unverified_users = User.query.filter(and_(User.type == 'corporate', User.password == None)).all()
+		return render_template('users/admin/create_user.html', unverified=unverified_users)
 	else:
 		# Build a user based on the request form
 		user_data = {'fname': request.form['fname'],
@@ -647,23 +648,26 @@ def create_corp_user():
 		DB.session.add(user)
 		DB.session.commit()
 
-		# send invite to the recruiter
-		token = s.dumps(user.email)
-		url = url_for('new-user-setup', token=token, _external=True)
-		txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
-		html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)
-
 		try:
-			print txt
-			# if not send_email(from_email=settings.GENERAL_INFO_EMAIL,
-			# 				  subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME),
-			# 				  to_email=user.email, txt_content=txt, html_content=html):
-			# 	print 'Failed to send message'
-			# 	flash('Unable to send message to recruiter', 'error')
-		except ValueError as e:
-			print e
-		flash('You successfully create a new recruiter account.', 'success')
+			send_recruiter_invite(user)
+		except Exception:
+			flash('Unable to send recruiter invite', 'error')
 		return render_template('users/admin/create_user.html')
+
+
+@login_required
+@roles_required('admin')
+def resend_recruiter_invite():
+	#TODO Get the recruiter email
+	email = 'test@dhs2014.com'
+	user = User.query.filter_by(email=email).first()
+	try:
+		send_recruiter_invite(user)
+		return jsonify()
+	except Exception as e:
+		g.log = g.log.bind(error=e)
+		g.log.error('Unable to resend recruiter email: ')
+		return jsonify(), 501
 
 
 @login_required
