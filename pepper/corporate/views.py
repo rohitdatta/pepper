@@ -39,7 +39,7 @@ def new_user_setup(token):
 			flash('User has already been setup. If you need to change the password, please reset your password.')
 			return redirect(url_for('corp-dash'))
 	except:
-		return render_template('layouts/error.html', error="That's an invalid link"), 401
+		return render_template('layouts/error.html', title='Invalid Link', message="That's an invalid link"), 401
 
 	if request.method == 'GET':
 		return render_template('users/account_setup.html', user=user)

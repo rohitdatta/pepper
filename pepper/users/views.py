@@ -15,17 +15,21 @@ from pepper.legal.models import Waiver
 import random
 from sqlalchemy import or_, and_
 
+
 cst = timezone('US/Central')
+
 
 def landing():
 	if current_user.is_authenticated:
 		return redirect(url_for('dashboard'))
 	return render_template("static_pages/index.html")
 
+
 def login():
 	return redirect(
 		'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+
 
 def login_local():
 	if request.method == 'GET':
@@ -54,6 +58,7 @@ def login_local():
 		login_user(user, remember=True)
 		flash('Logged in successfully!', 'success')
 		return redirect(url_for('dashboard'))
+
 
 def register_local():
 	if not settings.REGISTRATION_OPEN:
@@ -105,6 +110,7 @@ def register_local():
 
 		return redirect(url_for('confirm-registration'))
 
+
 @login_required
 def edit_profile():
 	if request.method == 'GET':
@@ -140,10 +146,12 @@ def edit_profile():
 			flash('Profile updated!', 'success')
 			return redirect(url_for('dashboard'))
 
+
 @login_required
 def logout():
 	logout_user()
 	return redirect(url_for('landing'))
+
 
 def callback():
 	url = 'https://my.mlh.io/oauth/token'
@@ -216,6 +224,7 @@ def callback():
 		return redirect(url_for('dashboard'))
 	return redirect(url_for('confirm-registration'))
 
+
 def confirm_account(token):
 	try:
 		email = s.loads(token)
@@ -227,6 +236,7 @@ def confirm_account(token):
 		return redirect(url_for('confirm-registration'))
 	except:
 		return render_template('layouts/error.html', message="That's an invalid link. Please contact {} for help.".format(settings.GENERAL_INFO_EMAIL)), 401
+
 
 @login_required
 def confirm_registration():
@@ -335,6 +345,7 @@ def forgot_password():
 		flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
 		return redirect(url_for('login_local'))
 
+
 def reset_password(token):
 	try:
 		email = ts.loads(token, salt='recover-key', max_age=86400)
@@ -399,7 +410,6 @@ def update_user_data(type, local_updated_info=None):
 			DB.session.commit()
 
 
-
 @login_required
 def dashboard():
 	if request.method == 'GET':
@@ -425,6 +435,7 @@ def dashboard():
 			return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
 		return render_template('users/dashboard/pending.html', user=current_user)
 
+
 @login_required
 def refresh_from_MLH():
 	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
@@ -438,6 +449,7 @@ def refresh_from_MLH():
 		response = jsonify(error='Unable to communicate with MLH')
 		response.status_code = 503
 		return response
+
 
 @login_required
 def edit_resume():
@@ -461,6 +473,7 @@ def edit_resume():
 		flash('You successfully updated your resume', 'success')
 		return redirect(request.url)
 
+
 @login_required
 def view_own_resume():
 	data_object = s3.Object(settings.S3_BUCKET_NAME,
@@ -468,6 +481,7 @@ def view_own_resume():
 	response = make_response(data_object['Body'].read())
 	response.headers['Content-Type'] = 'application/pdf'
 	return response
+
 
 def is_pdf(filename):
 	return '.' in filename and filename.lower().rsplit('.', 1)[1] == 'pdf'
@@ -523,6 +537,7 @@ def accept():
 			'special_needs': current_user.special_needs
 		})
 		return redirect(url_for('dashboard'))
+
 
 @login_required
 def sign():
@@ -616,6 +631,7 @@ def sign():
 		flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
 		return redirect(url_for('dashboard'))
 
+
 @login_required
 @roles_required('admin')
 def create_corp_user():
@@ -625,8 +641,8 @@ def create_corp_user():
 		# Build a user based on the request form
 		user_data = {'fname': request.form['fname'],
 					 'lname': request.form['lname'],
-					 'email': request.form['email']}
-		user_data['type'] = 'corporate'
+					 'email': request.form['email'],
+					 'type': 'corporate'}
 		user = User(user_data)
 		DB.session.add(user)
 		DB.session.commit()
@@ -639,11 +655,11 @@ def create_corp_user():
 
 		try:
 			print txt
-			if not send_email(from_email=settings.GENERAL_INFO_EMAIL,
-							  subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME),
-							  to_email=user.email, txt_content=txt, html_content=html):
-				print 'Failed to send message'
-				flash('Unable to send message to recruiter', 'error')
+			# if not send_email(from_email=settings.GENERAL_INFO_EMAIL,
+			# 				  subject='Your invitation to join my{}'.format(settings.HACKATHON_NAME),
+			# 				  to_email=user.email, txt_content=txt, html_content=html):
+			# 	print 'Failed to send message'
+			# 	flash('Unable to send message to recruiter', 'error')
 		except ValueError as e:
 			print e
 		flash('You successfully create a new recruiter account.', 'success')
@@ -694,6 +710,7 @@ def batch_modify():
 		flash('Finished acceptances', 'success')
 		g.log.info('Finished acceptances')
 		return redirect(request.url)
+
 
 @login_required
 @roles_required('admin')
