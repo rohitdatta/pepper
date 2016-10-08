@@ -1,5 +1,5 @@
 from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response
+from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response, render_template_string
 import requests
 from models import User, UserRole
 from pepper.app import DB
@@ -13,7 +13,7 @@ from datetime import datetime
 from pytz import timezone
 from pepper.legal.models import Waiver
 import random
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 cst = timezone('US/Central')
 
@@ -694,6 +694,28 @@ def batch_modify():
 		flash('Finished acceptances', 'success')
 		g.log.info('Finished acceptances')
 		return redirect(request.url)
+
+@login_required
+@roles_required('admin')
+def send_email_to_users():
+	if request.method == 'GET':
+		return render_template('users/admin/send_email.html')
+	else:
+		statuses = request.form.getlist('status')
+		users = User.query.filter(and_(User.status.in_(statuses), User.school_id != 23))
+		foo = users.all()
+		content = request.form.get('content')
+		lines = content.split('\r\n')
+		msg_body = u""
+		for line in lines:
+			msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
+		for user in users:
+			html = render_template('emails/generic_message.html', content=msg_body)
+			html = render_template_string(html, user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
+		flash('Successfully sent', 'success')
+		return 'Done'
+
 
 @login_required
 @roles_required('admin')

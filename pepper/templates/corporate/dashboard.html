@@ -5,8 +5,11 @@
 <div class="center col-md-4 col-md-offset-4">
     <h1>Hi {{ user.fname }}!</h1>
 </div>
-<div class="center col-md-12">
-    <h3>We're super excited for you to join us at {{ config.HACKATHON_NAME }}! We're proud to have a diverse array of hackers who are eager to meet you. To get started, many of them have uploaded their resume to our portal. We've built a portal for you to either choose to download all attendee resumes or you can search for attendees by applying specific filters based on school, major, or class standing.</h3>
+<div class="center col-md-6 col-md-offset-3">
+<div class="large-text">
+    <p>We're super excited for you to join us at {{ config.HACKATHON_NAME }}! my{{ config.HACKATHON_NAME }} is designed to be the central location for you to find pertinent information.</p>
+	<p>We're proud to have a diverse array of hackers who are eager to meet you. To get started, we've built a portal containing all attendees info, for you to either choose to <a href="{{ url_for('all-resume-download') }}" class="decorate">download all attendee resumes</a> or you can <a href="{{ url_for('corp-search') }}" class="decorate">search</a> for attendees by applying specific filters based on school, major, or class standing.</p>
+	</div>
 </div>
 
 {% endblock %}

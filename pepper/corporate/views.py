@@ -160,3 +160,9 @@ def view_resume():
 	response = make_response(data_object['Body'].read())
 	response.headers['Content-Type'] = 'application/pdf'
 	return response
+
+@corp_login_required
+@roles_required('admin', 'corp')
+def download_all_resumes():
+	#TODO: Authorize S3 request and then have them download directly from S3
+	return 'TEMP'

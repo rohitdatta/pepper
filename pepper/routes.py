@@ -28,6 +28,7 @@ def configure_routes(app):
 	app.add_url_rule('/admin/debug', 'debug-user', view_func=users.views.debug_user, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/initial-create', 'initial-create', view_func=users.views.initial_create, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/batch', 'batch-modify', view_func=users.views.batch_modify, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/send-email', 'send-email', view_func=users.views.send_email_to_users, methods=['GET', 'POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
@@ -43,3 +44,5 @@ def configure_routes(app):
 	app.add_url_rule('/corp/dashboard', 'corp-dash', view_func=corporate.views.corporate_dash, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/search', 'corp-search', view_func=corporate.views.corporate_search, methods=['GET', 'POST'])
 	app.add_url_rule('/corp/view/resume', 'resume-view', view_func=corporate.views.view_resume, methods=['GET'])
+
+	app.add_url_rule('/corp/download/all-resumes', 'all-resume-download', view_func=corporate.views.download_all_resumes, methods=['GET'])
