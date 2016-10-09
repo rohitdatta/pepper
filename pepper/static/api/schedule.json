@@ -1,0 +1,191 @@
+[
+  {
+    "id": 0,
+    "name": "9:30 AM",
+    "eventsList": [
+      {
+        "id": 0,
+        "name": "Check In",
+        "type": "talk",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 9:30:00",
+        "endDate": "2015-10-22 11:45:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "1",
+          "room": "Atrium"
+        },
+        "description": "Check in to HackTX! Use the \"Check-In\" section of the app to get through the process more quickly.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "11 AM",
+    "eventsList": [
+      {
+        "id": 1,
+        "name": "Opening Ceremony",
+        "type": "talk",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 11:00:00",
+        "endDate": "2015-10-22 11:50:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "2",
+          "room": "Capital Ballroom"
+        },
+        "description": "The opening ceremony will kickoff HackTX!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "12 PM",
+    "eventsList": [
+      {
+        "id": 2,
+        "name": "Hacking Begins",
+        "type": "dev",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 12:00:00",
+        "endDate": "2015-10-23 12:00:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "2",
+          "room": ""
+        },
+        "description": "The hacking begins! Hacking will end Sunday at noon.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "12:30 PM",
+    "eventsList": [
+      {
+        "id": 3,
+        "name": "Lunch",
+        "type": "food",
+        "imageUrl": "http://hacktx.com/15/images/foodBanner.png",
+        "startDate": "2015-10-22 12:30:00",
+        "endDate": "2015-10-22 13:30:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "3",
+          "room": "Longhorn"
+        },
+        "description": "Lunch!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "1:30 PM",
+    "eventsList": [
+      {
+        "id": 4,
+        "name": "Workshop",
+        "type": "education",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 13:30:00",
+        "endDate": "2015-10-22 14:00:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "2",
+          "room": "Sentate"
+        },
+        "description": "Workshop!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "3:00 PM",
+    "eventsList": [
+      {
+        "id": 5,
+        "name": "Workshop",
+        "type": "education",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 15:00:00",
+        "endDate": "2015-10-22 15:30:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "2",
+          "room": "Sentate"
+        },
+        "description": "Workshop!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "6:30 PM",
+    "eventsList": [
+      {
+        "id": 6,
+        "name": "Dinner",
+        "type": "food",
+        "imageUrl": "http://hacktx.com/15/images/foodBanner.png",
+        "startDate": "2015-10-22 18:30:00",
+        "endDate": "2015-10-22 19:00:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "3",
+          "room": "Longhorn"
+        },
+        "description": "Dinner!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "6:30 PM",
+    "eventsList": [
+      {
+        "id": 6,
+        "name": "Late Night Snack",
+        "type": "food",
+        "imageUrl": "http://hacktx.com/15/images/foodBanner.png",
+        "startDate": "2015-10-22 23:30:00",
+        "endDate": "2015-10-22 24:00:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "3",
+          "room": "Longhorn"
+        },
+        "description": "Late night snack!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "11:30 PM",
+    "eventsList": [
+      {
+        "id": 7,
+        "name": "Midnight Activity",
+        "type": "talk",
+        "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
+        "startDate": "2015-10-22 24:00:00",
+        "endDate": "2015-10-23 01:00:00",
+        "location": {
+          "building": "Omni Austin",
+          "level": "2",
+          "room": "Capital"
+        },
+        "description": "Secret midnight activity!",
+        "speakerList": []
+      }
+    ]
+  }
+]

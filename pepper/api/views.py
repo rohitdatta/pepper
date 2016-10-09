@@ -8,16 +8,15 @@ from pepper.utils import calculate_age
 
 def schedule():
 	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
-	json_url = os.path.join(SITE_ROOT, "static/api", "partners.json")
+	json_url = os.path.join(SITE_ROOT, "../static/api", "schedule.json")
 	data = json.load(open(json_url))
 	return jsonify(data=data)
 
-
-	# json_data =	open(os.path.join(url_for('static', filename='api/', _external=True), "partners.json"), "r")
-	# return jsonify(json_data)
-
 def partner_list():
-	return '''Partners'''
+	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+	json_url = os.path.join(SITE_ROOT, "../static/api", "partners.json")
+	data = json.load(open(json_url))
+	return jsonify(data=data)
 
 def check_in():
 	# Check if secret token matches
