@@ -1,13 +1,20 @@
 from pepper.app import DB
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from models import Announcement
 from pepper import settings
 from datetime import datetime
 import requests
+import json
+
 
 def announcement_list():
-	announcements = Announcement.query().all()
-	return jsonify(announcements)
+	announcements = Announcement.query.all()
+	announcement_list = []
+	datetime_fmt = '%Y-%m-%d %H:%M:%S'
+	for announcement in announcements:
+		announcement_list.append({'text': announcement.text,
+								  'ts': datetime.strftime(announcement.timestamp, datetime_fmt)})
+	return Response(json.dumps(announcement_list),  mimetype='application/json')
 
 def create_announcement():
 	token = request.form.get('token')
