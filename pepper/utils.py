@@ -9,6 +9,7 @@ import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
 from hellosign_sdk import HSClient
+from datetime import date
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -79,5 +80,9 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 	if html_content:
 		mail.add_content(Content('text/html', transform(html_content)))
 	response = sg.client.mail.send.post(request_body=mail.get())
-	if response.status_code != 200:
-		raise EnvironmentError #TODO: Get a proper error on this
+	if response.status_code != 202:
+		raise RuntimeError #TODO: Get a proper error on this
+
+def calculate_age(dob):
+	today = date.today()
+	return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))

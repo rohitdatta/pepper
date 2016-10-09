@@ -9,4 +9,5 @@ def announcement_list():
 def create_announcement():
 	announcement = Announcement() #TODO: look at post data
 
+	# Create a POST to Firebase
 	return 'Created announcement'

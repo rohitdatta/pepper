@@ -723,7 +723,7 @@ def send_email_to_users():
 		return render_template('users/admin/send_email.html')
 	else:
 		statuses = request.form.getlist('status')
-		users = User.query.filter(and_(User.status.in_(statuses), User.school_id != 23))
+		users = User.query.filter(and_(User.status.in_(statuses)))
 		foo = users.all()
 		content = request.form.get('content')
 		lines = content.split('\r\n')

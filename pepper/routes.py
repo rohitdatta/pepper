@@ -1,4 +1,4 @@
-import announcements, users, corporate, static_pages
+import announcements, users, corporate, static_pages, api, volunteer
 
 def configure_routes(app):
 	app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
@@ -29,9 +29,14 @@ def configure_routes(app):
 	app.add_url_rule('/admin/initial-create', 'initial-create', view_func=users.views.initial_create, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/batch', 'batch-modify', view_func=users.views.batch_modify, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/send-email', 'send-email', view_func=users.views.send_email_to_users, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/volunteer-list', 'volunteer-list', view_func=volunteer.views.volunteer_list, methods=['GET'])
+	app.add_url_rule('/admin/add-volunteer', 'add-volunteer', view_func=volunteer.views.add_volunteer, methods=['POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
+	app.add_url_rule('/api/partners', 'partners', view_func=api.views.partner_list, methods=['GET'])
+	app.add_url_rule('/api/schedule', 'schedule', view_func=api.views.schedule, methods=['GET'])
+	app.add_url_rule('/api/check-in', 'check-in-api', view_func=api.views.check_in, methods=['GET', 'POST'])
 
 	app.add_url_rule('/.well-known/acme-challenge/<path>', view_func=static_pages.views.lets_encrypt_challenge, methods=['GET'])
 
