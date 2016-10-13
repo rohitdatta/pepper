@@ -31,16 +31,17 @@ def create_announcement():
 
 	if send_notification:
 		resp = requests.post('https://fcm.googleapis.com/fcm/send', headers={
-			'Authorization': 'key={}'.format(settings.FIREBASE_KEY)
-		}, data={
-			'to': "/topics/announcement",
-			'time_to_live': 0,
-			'data': {
-				'title': 'HackTX',
-				'text': text,
-				'vibrate': True
+			"Authorization": "key={}".format(settings.FIREBASE_KEY)
+		}, json={
+			"to": "/topics/announcements",
+			"time_to_live": 0,
+			"data": {
+				"title": "HackTX",
+				"text": text,
+				"vibrate": "true"
 			}
 		})
 		print resp.status_code
+
 	# Create a POST to Firebase
 	return 'Created announcement'

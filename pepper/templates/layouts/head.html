@@ -12,7 +12,6 @@
 	<script src="https://code.jquery.com/jquery-3.1.0.min.js"
 			integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s=" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.3.2/hint.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css">
 	<script type=text/javascript>
@@ -23,6 +22,17 @@
 		/* turning flask flash messages into js popup notifications */
 		window.popupMessages = {{ get_flashed_messages(with_categories=True) | json | safe }};
 	</script>
+
+{#Uncomment when working offline#}
+
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/hint.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/toastr.css') }}">
+
+{#End uncomment block#}
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
 	<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 	{% block imports %}
 	{% endblock %}

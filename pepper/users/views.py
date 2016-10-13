@@ -681,11 +681,11 @@ def batch_modify():
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).limit(num_to_accept).all()
+			accepted_attendees = User.query.filter_by(status='WAITLISTED').order_by(User.time_applied.asc()).limit(num_to_accept).all()
 			for attendee in accepted_attendees:
 				attendee.status = 'ACCEPTED'
 				DB.session.commit()
-				html = render_template('emails/application_decisions/accepted.html', user=attendee)
+				html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
 				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
 				g.log = g.log.bind(email=attendee.email)
 				g.log.info('Sent email to')
@@ -734,8 +734,27 @@ def send_email_to_users():
 			html = render_template('emails/generic_message.html', content=msg_body)
 			html = render_template_string(html, user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
+			print 'Sent Email'
 		flash('Successfully sent', 'success')
 		return 'Done'
+
+@login_required
+@roles_required('admin')
+def reject_users():
+	if request.method == 'GET':
+		return render_template('users/admin/reject_users.html')
+	else:
+		users = User.query.filter(or_(User.status == 'SIGNING', User.status == 'ACCEPTED')).all()
+		for user in users:
+			html = render_template('emails/application_decisions/withdrawn.html', user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, "Your HackTX Invitation Has Been Withdrawn", user.email, html_content=html)
+			user.status = 'DECLINED'
+			DB.session.add(user)
+			DB.session.commit()
+			print 'Rejected {}'.format(user.email)
+		flash('Finished rejecting', 'success')
+		return redirect(request.url)
+
 
 
 @login_required
