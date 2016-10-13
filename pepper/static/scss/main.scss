@@ -214,7 +214,27 @@ table {
 		border-bottom: none !important;
 	  }
 	}
+  }
 
+  &.results {
+	width: 100%;
+	margin-bottom: 10px;
+	//tr:nth-child(odd) {
+	//  background: rgba(255, 255, 255, 0.3);
+	//}
+
+	col:first-child {
+	  background: rgba(255, 255, 255, 0.3);
+	}
+	td {
+	  height: 35px;
+	  padding-left: 5px;
+	  border-bottom: 1pt solid white;
+	  min-width: 135px;
+	  &.no-border {
+		border-bottom: none !important;
+	  }
+	}
   }
 }
 

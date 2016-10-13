@@ -6,8 +6,9 @@
 {% endblock %}
 {% block content %}
 
-<h1>Search Page</h1>
-<form method="POST" action="">
+<h1>Search Attendees</h1>
+	<p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a filter? Leave the field blank and we'll return all options from that field.</p>
+<form method="POST" action="{{ url_for('search-results') }}">
 	Schools
 	<select name="schools" multiple class="chosen-select">
 		{% for school in schools %}

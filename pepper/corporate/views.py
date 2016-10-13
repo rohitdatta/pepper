@@ -126,29 +126,54 @@ def corporate_search():
 		class_standings.sort()
 		# [school for school in schools if school != None]
 		return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
-	else:
-		schools = request.form.getlist('schools')
-		# if schools:
-		# 	schools = [school.strip() for school in schools.split(',')]
-		class_standings = request.form.getlist('class_standings')
-		# if class_standings:
-		# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
-		majors = request.form.getlist('majors')
-		majors = ['Computer Science']
-		# if majors:
-		# 	majors = [major.strip() for major in majors.split(',')]
-		users = User.query.filter(User.status == 'PENDING')
-		if schools:
-			users = users.filter(User.school_name.in_(schools))
-			all_users = users.all()
-		if majors:
-			users = users.filter(User.major.in_(majors))
-			all_users = users.all()
-		if class_standings:
-			users = users.filter(User.class_standing.in_(class_standings))
-			all_users = users.all()
-		users = users.all()
-		return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings, majors=majors)
+	# else:
+	# 	schools = request.form.getlist('schools')
+	# 	# if schools:
+	# 	# 	schools = [school.strip() for school in schools.split(',')]
+	# 	class_standings = request.form.getlist('class_standings')
+	# 	# if class_standings:
+	# 	# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
+	# 	majors = request.form.getlist('majors')
+	# 	# if majors:
+	# 	# 	majors = [major.strip() for major in majors.split(',')]
+	# 	users = User.query.filter(User.status == 'CONFIRMED')
+	# 	if schools:
+	# 		users = users.filter(User.school_name.in_(schools))
+	# 		all_users = users.all()
+	# 	if majors:
+	# 		users = users.filter(User.major.in_(majors))
+	# 		all_users = users.all()
+	# 	if class_standings:
+	# 		users = users.filter(User.class_standing.in_(class_standings))
+	# 		all_users = users.all()
+	# 	users = users.all()
+	# 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings, majors=majors)
+
+@corp_login_required
+@roles_required('admin', 'corp')
+def search_results():
+	schools = request.form.getlist('schools')
+	# if schools:
+	# 	schools = [school.strip() for school in schools.split(',')]
+	class_standings = request.form.getlist('class_standings')
+	# if class_standings:
+	# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
+	majors = request.form.getlist('majors')
+	# if majors:
+	# 	majors = [major.strip() for major in majors.split(',')]
+	users = User.query.filter(User.status == 'CONFIRMED')
+	if schools:
+		users = users.filter(User.school_name.in_(schools))
+		all_users = users.all()
+	if majors:
+		users = users.filter(User.major.in_(majors))
+		all_users = users.all()
+	if class_standings:
+		users = users.filter(User.class_standing.in_(class_standings))
+		all_users = users.all()
+	users = users.all()
+	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
+						   majors=majors)
 
 @corp_login_required
 @roles_required('admin', 'corp')
