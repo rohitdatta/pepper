@@ -40,6 +40,7 @@ def configure_routes(app):
 	app.add_url_rule('/api/partners', 'partners', view_func=api.views.partner_list, methods=['GET'])
 	app.add_url_rule('/api/schedule', 'schedule', view_func=api.views.schedule, methods=['GET'])
 	app.add_url_rule('/api/check-in', 'check-in-api', view_func=api.views.check_in, methods=['GET', 'POST'])
+	app.add_url_rule('/api/passbook', 'passbook', view_func=api.views.passbook, methods=['POST'])
 
 	app.add_url_rule('/.well-known/acme-challenge/<path>', view_func=static_pages.views.lets_encrypt_challenge, methods=['GET'])
 

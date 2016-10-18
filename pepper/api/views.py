@@ -18,6 +18,14 @@ def partner_list():
 	data = json.load(open(json_url))
 	return jsonify(data=data)
 
+def passbook():
+	email = request.json['email']
+	user = User.query.filter_by(email=email).first()
+	data = {'email': user.email,
+			'name': '{0} {1}'.format(user.fname, user.lname),
+			'school': user.school_name}
+	return jsonify(data)
+
 def check_in():
 	# Check if secret token matches
 	if request.method == 'GET':
