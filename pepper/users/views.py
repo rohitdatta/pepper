@@ -759,15 +759,22 @@ def reject_users():
 
 @login_required
 @roles_required('admin')
-def modify_user(hashid):
+def modify_user():
+	if request.method == 'GET':
+		return render_template('users/admin/modify_user.html')
+	else:
 	# Send a post request that changes the user state to rejected or accepted
-	user = User.get_with_hashid(hashid)
-	user.status == request.form.get('status')
-	DB.session.add(user)
-	DB.session.commit()
+		id = int(request.form.get('id'))
+		user = User.query.filter_by(id=id).first()
+		if user.status == 'WAITLISTED':
+			user.status = request.form.get('status')
+			DB.session.add(user)
+			DB.session.commit()
 
-	send_status_change_notification(user)
-
+			html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, "Congrats! Your HackTX Invitation", user.email, html_content=html)
+			flash('Successfully accepted {0} {1}'.format(user.fname, user.lname), 'success')
+		return redirect(request.url)
 
 # Developers can use this portal to log into any particular user when debugging
 def debug_user():

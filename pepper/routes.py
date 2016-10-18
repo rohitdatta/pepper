@@ -32,6 +32,7 @@ def configure_routes(app):
 	app.add_url_rule('/admin/volunteer-list', 'volunteer-list', view_func=volunteer.views.volunteer_list, methods=['GET'])
 	app.add_url_rule('/admin/add-volunteer', 'add-volunteer', view_func=volunteer.views.add_volunteer, methods=['POST'])
 	app.add_url_rule('/admin/reject', 'reject-users', view_func=users.views.reject_users, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/modify-user', 'modify-user', view_func=users.views.modify_user, methods=['GET', 'POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
