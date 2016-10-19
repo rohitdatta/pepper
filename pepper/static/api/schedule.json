@@ -107,8 +107,8 @@
         "name": "Workshop",
         "type": "education",
         "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
-        "startDate": "2015-10-22 13:00:00",
-        "endDate": "2015-10-22 14:00:00",
+        "startDate": "2015-10-22 14:00:00",
+        "endDate": "2015-10-22 15:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -122,8 +122,8 @@
         "name": "Workshop",
         "type": "education",
         "imageUrl": "http://hacktx.com/15/images/hacktxBanner.png",
-        "startDate": "2015-10-22 13:00:00",
-        "endDate": "2015-10-22 14:00:00",
+        "startDate": "2015-10-22 14:00:00",
+        "endDate": "2015-10-22 15:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -283,7 +283,7 @@
   },
   {
     "id": 12,
-    "name": "1:00 AM",
+    "name": "7:30 AM",
     "eventsList": [
       {
         "id": 14,

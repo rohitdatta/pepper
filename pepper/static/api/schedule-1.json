@@ -107,8 +107,8 @@
         "name": "Workshop",
         "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 13:00:00",
-        "endDate": "2015-10-22 14:00:00",
+        "startDate": "2015-10-22 14:00:00",
+        "endDate": "2015-10-22 15:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -122,8 +122,8 @@
         "name": "Workshop",
         "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 13:00:00",
-        "endDate": "2015-10-22 14:00:00",
+        "startDate": "2015-10-22 14:00:00",
+        "endDate": "2015-10-22 15:00:00",
         "location": {
           "building": "Omni",
           "level": "",
