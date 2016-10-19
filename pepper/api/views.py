@@ -19,7 +19,7 @@ def partner_list():
 	return jsonify(data=data)
 
 def passbook():
-	email = request.json['email']
+	email = request.get_json()['email']
 	user = User.query.filter_by(email=email).first()
 	data = {'email': user.email,
 			'name': '{0} {1}'.format(user.fname, user.lname),
