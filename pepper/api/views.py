@@ -30,13 +30,13 @@ def partner_list():
 def passbook():
 	email = request.get_json()['email']
 	user = User.query.filter_by(email=email).first()
-	if user is not None:
+	if user is None or user.status != 'CONFIRMED':
+		data = {'success': False}
+	else:
 		data = {'success': True,
 				'email': user.email,
 				'name': '{0} {1}'.format(user.fname, user.lname),
 				'school': user.school_name}
-	else:
-		data = {'success': False}
 	return jsonify(data)
 
 def check_in():
