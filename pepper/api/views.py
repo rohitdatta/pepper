@@ -1,6 +1,6 @@
 from pepper.app import DB
 from pepper.users import User
-from flask import url_for, jsonify, request
+from flask import url_for, jsonify, request, Response
 import json
 import os
 from pepper import settings
@@ -10,13 +10,22 @@ def schedule():
 	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 	json_url = os.path.join(SITE_ROOT, "../static/api", "schedule.json")
 	data = json.load(open(json_url))
-	return jsonify(data=data)
+	return Response(json.dumps(data),  mimetype='application/json')
+
+def schedule_day(day):
+	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
+	if day == '1':
+		json_url = os.path.join(SITE_ROOT, "../static/api", "schedule-1.json")
+	else:
+		json_url = os.path.join(SITE_ROOT, "../static/api", "schedule-2.json")
+	data = json.load(open(json_url))
+	return Response(json.dumps(data), mimetype='application/json')
 
 def partner_list():
 	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
 	json_url = os.path.join(SITE_ROOT, "../static/api", "partners.json")
 	data = json.load(open(json_url))
-	return jsonify(data=data)
+	return Response(json.dumps(data),  mimetype='application/json')
 
 def passbook():
 	email = request.get_json()['email']

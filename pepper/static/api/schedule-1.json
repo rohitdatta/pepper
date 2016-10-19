@@ -1,0 +1,242 @@
+[
+  {
+    "id": 0,
+    "name": "9:30 AM",
+    "eventsList": [
+      {
+        "id": 0,
+        "name": "Check In",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 09:30:00",
+        "endDate": "2015-10-22 11:45:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Atrium"
+        },
+        "description": "Check in to HackTX! Use the \"Check-In\" section of the app to get through the process more quickly.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "11 AM",
+    "eventsList": [
+      {
+        "id": 1,
+        "name": "Opening Ceremony",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 11:00:00",
+        "endDate": "2015-10-22 11:50:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Capital Ballroom"
+        },
+        "description": "The opening ceremony will kickoff HackTX!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "12 PM",
+    "eventsList": [
+      {
+        "id": 2,
+        "name": "Hacking Begins",
+        "type": "dev",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 12:00:00",
+        "endDate": "2015-10-23 12:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Ballrooms"
+        },
+        "description": "The hacking begins! Hacking will end Sunday at noon.",
+        "speakerList": []
+      },
+      {
+        "id": 3,
+        "name": "Matchmaking Session",
+        "type": "education",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 12:00:00",
+        "endDate": "2015-10-23 12:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Workshop Rooms"
+        },
+        "description": "Come meet other hackers to join as a team!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "12:30 PM",
+    "eventsList": [
+      {
+        "id": 4,
+        "name": "Lunch",
+        "type": "food",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 12:30:00",
+        "endDate": "2015-10-22 13:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Austin Ballroom"
+        },
+        "description": "Lunch!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "2:00 PM",
+    "eventsList": [
+      {
+        "id": 5,
+        "name": "Workshop",
+        "type": "education",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 13:00:00",
+        "endDate": "2015-10-22 14:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Graffiti Park Lounge"
+        },
+        "description": "Workshop hosted by JPMorgan Chase & Co.",
+        "speakerList": []
+      },
+      {
+        "id": 6,
+        "name": "Workshop",
+        "type": "education",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 13:00:00",
+        "endDate": "2015-10-22 14:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Microsoft Lounge"
+        },
+        "description": "Workshop hosted by Microsoft.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "3:30 PM",
+    "eventsList": [
+      {
+        "id": 7,
+        "name": "Workshop",
+        "type": "education",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 15:30:00",
+        "endDate": "2015-10-22 17:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Graffiti Park Lounge"
+        },
+        "description": "Workshop hosted by Affirm and A16Z.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "5:00 PM",
+    "eventsList": [
+      {
+        "id": 8,
+        "name": "WiCS/MACS Meetup",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 17:00:00",
+        "endDate": "2015-10-22 17:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Workshop Rooms"
+        },
+        "description": "",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "6:30 PM",
+    "eventsList": [
+      {
+        "id": 9,
+        "name": "Dinner",
+        "type": "food",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 18:30:00",
+        "endDate": "2015-10-22 19:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Austin Ballroom"
+        },
+        "description": "Dinner!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "7:30 PM",
+    "eventsList": [
+      {
+        "id": 10,
+        "name": "Microsoft Fireside Chat",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 19:30:00",
+        "endDate": "2015-10-22 20:00:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Longhorn Ballroom"
+        },
+        "description": "Fireside chat with Microsoft.",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "9:00 PM",
+    "eventsList": [
+      {
+        "id": 11,
+        "name": "1517 Fireside Chat",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2015-10-22 21:00:00",
+        "endDate": "2015-10-22 21:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Longhorn Ballroom"
+        },
+        "description": "Fireside chat with 1517.",
+        "speakerList": []
+      }
+    ]
+  }
+]
