@@ -1,98 +1,218 @@
 [
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "UTCS",
+    "logoImage": "https://freetailhackers.com/img/logos/utcs.png",
+    "website": "https://cs.utexas.edu",
     "level": 0
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 1
+    "name": "MLH",
+    "logoImage": "https://hacktx.com/images/partners/mlh.png",
+    "website": "https://mlh.io/",
+    "level": 0
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 1
+    "name": "Microsoft",
+    "logoImage": "https://hacktx.com/images/partners/microsoft.png",
+    "website": "https://www.microsoft.com/",
+    "level": 0
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 1
-  },
-  {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 1
-  },
-  {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "JP Morgan Chase & Co.",
+    "logoImage": "https://hacktx.com/images/partners/jpmorgan.png",
+    "website": "https://www.jpmorgan.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "a16z",
+    "logoImage": "https://hacktx.com/images/partners/a16z.png",
+    "website": "https://a16z.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "Facebook",
+    "logoImage": "https://hacktx.com/images/partners/fb.png",
+    "website": "https://facebook.com",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "Bloomberg",
+    "logoImage": "https://hacktx.com/images/partners/bloomberg.png",
+    "website": "https://www.bloomberg.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "Quantlab Financial",
+    "logoImage": "https://hacktx.com/images/partners/quantlab-financial.png",
+    "website": "http://www.quantlab.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "Qualtrics",
+    "logoImage": "https://hacktx.com/images/partners/qualtrics.png",
+    "website": "https://www.qualtrics.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
+    "name": "Capital One",
+    "logoImage": "https://hacktx.com/images/partners/capital-one.png",
+    "website": "https://developer.capitalone.com/",
     "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 3
+    "name": "CDK Global",
+    "logoImage": "https://hacktx.com/images/partners/cdk.png",
+    "website": "http://www.cdkglobal.com/",
+    "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 3
+    "name": "Rackspace",
+    "logoImage": "https://hacktx.com/images/partners/rackspace.png",
+    "website": "https://www.rackspace.com/",
+    "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 3
+    "name": "Homeaway",
+    "logoImage": "http://logos-download.com/wp-content/uploads/2016/06/HomeAway_logo.png",
+    "website": "https://www.homeaway.com/",
+    "level": 2
   },
   {
-    "name": "HackTX",
-    "logoImage": "http://placehold.it/350x150",
-    "website": "http://hacktx.com/",
-    "level": 3
+    "name": "HBK",
+    "logoImage": "https://hacktx.com/images/partners/hbk.png",
+    "website": "https://www.hbk.com/",
+    "level": 2
+  },
+  {
+    "name": "MongoDB",
+    "logoImage": "https://hacktx.com/images/partners/mongodb.png",
+    "website": "https://www.mongodb.com/",
+    "level": 2
+  },
+  {
+    "name": "Goldman Sachs",
+    "logoImage": "https://hacktx.com/images/partners/goldman.png",
+    "website": "https://www.goldmansachs.com/",
+    "level": 2
+  },
+  {
+    "name": "Jane Street",
+    "logoImage": "https://hacktx.com/images/partners/janestreet.png",
+    "website": "https://www.janestreet.com/",
+    "level": 2
+  },
+  {
+    "name": "Square Root",
+    "logoImage": "https://hacktx.com/images/partners/squareroot.png",
+    "website": "https://www.square-root.com/",
+    "level": 2
+  },
+  {
+    "name": "Indeed",
+    "logoImage": "https://hacktx.com/images/partners/indeed.png",
+    "website": "https://www.indeed.com/",
+    "level": 2
+  },
+  {
+    "name": "BlueChasm",
+    "logoImage": "https://hacktx.com/images/partners/markiii.png",
+    "website": "https://www.bluechasm.com/",
+    "level": 2
+  },
+  {
+    "name": "Elastic",
+    "logoImage": "https://hacktx.com/images/partners/elastic.png",
+    "website": "https://www.elastic.co/",
+    "level": 2
+  },
+  {
+    "name": "uShip",
+    "logoImage": "https://hacktx.com/images/partners/uship.png",
+    "website": "https://www.uship.com/",
+    "level": 2
+  },
+  {
+    "name": "Square",
+    "logoImage": "https://hacktx.com/images/partners/square.png",
+    "website": "https://www.squareup.com/",
+    "level": 2
+  },
+  {
+    "name": "Fasten",
+    "logoImage": "https://hacktx.com/images/partners/fasten.png",
+    "website": "https://www.fasten.com/",
+    "level": 2
+  },
+  {
+    "name": "Enjoy Life",
+    "logoImage": "https://hacktx.com/images/partners/enjoylife.png",
+    "website": "https://www.enjoylifefoods.com/",
+    "level": 2
+  },
+  {
+    "name": "GoGo Squeeze",
+    "logoImage": "https://hacktx.com/images/partners/gogo-squeeze.png",
+    "website": "https://www.gogosqueeze.com/",
+    "level": 2
+  },
+  {
+    "name": "Justin's",
+    "logoImage": "https://hacktx.com/images/partners/justins.png",
+    "website": "https://www.justins.com/",
+    "level": 2
+  },
+  {
+    "name": "SimplyProtein",
+    "logoImage": "https://hacktx.com/images/partners/simplyprotein-logo.png",
+    "website": "https://www.simplyprotein.com/",
+    "level": 2
+  },
+  {
+    "name": "Tiff's Treats",
+    "logoImage": "https://hacktx.com/images/partners/tiff.png",
+    "website": "https://www.cookiedelivery.com/",
+    "level": 2
+  },
+  {
+    "name": "Zilks",
+    "logoImage": "https://hacktx.com/images/partners/zilks.png",
+    "website": "https://www.zilksfoods.com/",
+    "level": 2
+  },
+  {
+    "name": "XYIENCE",
+    "logoImage": "https://hacktx.com/images/partners/xyience.png",
+    "website": "https://www.xyience.com/",
+    "level": 2
+  },
+  {
+    "name": "1517",
+    "logoImage": "https://hacktx.com/images/partners/1517.png",
+    "website": "https://www.1517fund.com/",
+    "level": 2
+  },
+  {
+    "name": "Google",
+    "logoImage": "https://hacktx.com/images/partners/google.png",
+    "website": "https://www.google.com/",
+    "level": 2
+  },
+  {
+    "name": "DigitalOcean",
+    "logoImage": "https://hacktx.com/images/partners/digital-ocean.png",
+    "website": "https://www.digitalocean.com/",
+    "level": 2
+  },
+  {
+    "name": "Twilio",
+    "logoImage": "https://hacktx.com/images/partners/twilio.png",
+    "website": "https://www.twilio.com/",
+    "level": 2
+  },
+  {
+    "name": "Palantir",
+    "logoImage": "https://hacktx.com/images/partners/palantir.png",
+    "website": "https://www.palantir.com/",
+    "level": 2
   }
 ]
