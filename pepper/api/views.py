@@ -79,4 +79,4 @@ def check_in():
 		}
 		return jsonify(message=message, user=user_dict)
 	else:
-		return jsonify(message='User does not exist')
+		return jsonify(message='User does not exist'), 404
