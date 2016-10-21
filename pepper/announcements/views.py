@@ -47,14 +47,9 @@ def create_announcement():
 			"Authorization": "key={}".format(settings.FIREBASE_KEY)
 		}, json={
 			"to": "/topics/ios",
-			"time_to_live": 0,
-			"data": {
-				"title": "HackTX",
-				"text": text,
-				"vibrate": "true"
-			},
+			"priority": "high",
 			"notification": {
-				"title": "HackTX",
+				"title": "New Announcement!",
 				"body": text
 			}
 		})
