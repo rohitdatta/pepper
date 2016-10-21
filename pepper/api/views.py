@@ -77,6 +77,6 @@ def check_in():
 			'checked_in': user.checked_in,
 			'confirmed': user.status == 'CONFIRMED'
 		}
-		return jsonify(message=message, user=user_dict)
+		return jsonify(user=user_dict)
 	else:
 		return jsonify(message='User does not exist'), 404
