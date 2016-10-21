@@ -744,14 +744,17 @@ def reject_users():
 	if request.method == 'GET':
 		return render_template('users/admin/reject_users.html')
 	else:
-		users = User.query.filter(or_(User.status == 'SIGNING', User.status == 'ACCEPTED')).all()
+		users = User.query.filter(and_(or_(User.status == 'WAITLISTED'), User.school_id == 23)).all()
+		i = 0
 		for user in users:
-			html = render_template('emails/application_decisions/withdrawn.html', user=user)
-			send_email(settings.GENERAL_INFO_EMAIL, "Your HackTX Invitation Has Been Withdrawn", user.email, html_content=html)
-			user.status = 'DECLINED'
+			html = render_template('emails/application_decisions/rejected.html', user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
+			user.status = 'REJECTED'
 			DB.session.add(user)
 			DB.session.commit()
 			print 'Rejected {}'.format(user.email)
+			print i
+			i += 1
 		flash('Finished rejecting', 'success')
 		return redirect(request.url)
 

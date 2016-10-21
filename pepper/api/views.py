@@ -1,8 +1,7 @@
 from pepper.app import DB
 from pepper.users import User
 from flask import url_for, jsonify, request, Response
-import json
-import os
+import json, os, urllib
 from pepper import settings
 from pepper.utils import calculate_age
 
@@ -42,8 +41,8 @@ def passbook():
 def check_in():
 	# Check if secret token matches
 	if request.method == 'GET':
-		email = request.args.get('email')
-		volunteer_email = request.args.get('volunteer_email')
+		email = urllib.unquote(request.args.get('email'))
+		volunteer_email = urllib.unquote(request.args.get('volunteer_email'))
 	else:
 		data = request.json
 		email = data['email']
