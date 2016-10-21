@@ -1,7 +1,7 @@
 from pepper.app import DB
 from pepper.users import User
 from flask import url_for, jsonify, request, Response
-import json, os, urllib
+import json, os, urllib, datetime
 from pepper import settings
 from pepper.utils import calculate_age
 
@@ -70,6 +70,6 @@ def check_in():
 					message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
 			# return back success to the check in app
 
-		return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email, age=calculate_age(user.birthday), checked_in=user.checked_in, confirmed=user.status=='CONFIRMED', birthday=user.birthday)
+		return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email, age=calculate_age(user.birthday), checked_in=user.checked_in, confirmed=user.status=='CONFIRMED', birthday=datetime.date.strftime(user.birthday, '%m/%d/%Y'))
 	else:
 		return jsonify(message='User does not exist'), 404
