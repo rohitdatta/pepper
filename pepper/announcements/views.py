@@ -39,13 +39,26 @@ def create_announcement():
 				"title": "HackTX",
 				"text": text,
 				"vibrate": "true"
+			}
+		})
+
+		# Send iOS notification
+		resp = requests.post('https://fcm.googleapis.com/fcm/send', headers={
+			"Authorization": "key={}".format(settings.FIREBASE_KEY)
+		}, json={
+			"to": "/topics/ios",
+			"time_to_live": 0,
+			"data": {
+				"title": "HackTX",
+				"text": text,
+				"vibrate": "true"
 			},
 			"notification": {
 				"title": "HackTX",
 				"body": text
 			}
 		})
-		print resp.status_code
+		# print resp.status_code
 
 	# Create a POST to Firebase
 	return 'Created announcement'
