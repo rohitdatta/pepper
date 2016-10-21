@@ -70,6 +70,6 @@ def check_in():
 					message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
 			# return back success to the check in app
 
-		return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email, age=calculate_age(user.birthday), checked_in=user.checked_in, confirmed=user.status=='CONFIRMED')
+		return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email, age=calculate_age(user.birthday), checked_in=user.checked_in, confirmed=user.status=='CONFIRMED', birthday=user.birthday)
 	else:
 		return jsonify(message='User does not exist'), 404
