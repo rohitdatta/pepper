@@ -39,6 +39,10 @@ def create_announcement():
 				"title": "HackTX",
 				"text": text,
 				"vibrate": "true"
+			},
+			"notification": {
+				"title": "HackTX",
+				"body": text
 			}
 		})
 		print resp.status_code
