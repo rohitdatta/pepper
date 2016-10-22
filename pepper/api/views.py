@@ -42,11 +42,11 @@ def passbook():
 def check_in():
 	# Check if secret token matches
 	if request.method == 'GET':
-		email = urllib.unquote(request.args.get('email'))
+		email = urllib.unquote(request.args.get('email')).lower()
 		volunteer_email = urllib.unquote(request.args.get('volunteer_email'))
 	else:
 		data = request.json
-		email = data['email']
+		email = data['email'].lower()
 		volunteer_email = data['volunteer_email']
 
 	# if data['secret'] != settings.CHECK_IN_SECRET:
