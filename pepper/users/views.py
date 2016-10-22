@@ -731,8 +731,9 @@ def send_email_to_users():
 		for line in lines:
 			msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
 		for user in users:
-			html = render_template('emails/generic_message.html', content=msg_body)
-			html = render_template_string(html, user=user)
+			# html = render_template('emails/generic_message.html', content=msg_body)
+			# html = render_template_string(html, user=user)
+			html = render_template('emails/welcome.html', user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
 			print 'Sent Email'
 		flash('Successfully sent', 'success')
