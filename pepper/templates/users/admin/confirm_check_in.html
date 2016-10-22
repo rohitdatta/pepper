@@ -1,0 +1,84 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+
+	<h1>Confirm Check In</h1>
+	<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<table class="info">
+					<col>
+					<col>
+					<tr class="border_bottom">
+						<td>Name</td>
+						<td>{{ user.fname }} {{ user.lname }}</td>
+					</tr>
+					<tr class="border_bottom">
+						<td>Email</td>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr class="border_bottom">
+						<td>Age</td>
+						<td>{{ age }}</td>
+					</tr>
+{#					<tr>#}
+{#						<td>Class Standing</td>#}
+{#						<td>{{ user.class_standing }}</td>#}
+{#					</tr>#}
+					<tr>
+						<td>Major</td>
+						<td>{{ user.major }}</td>
+					</tr>
+					<tr>
+						<td>Shirt Size</td>
+						<td>{{ user.shirt_size }}</td>
+					</tr>
+					<tr>
+						<td>Dietary Restrictions</td>
+						<td>{{ user.dietary_restrictions }}</td>
+					</tr>
+					<tr>
+						<td>Birthday</td>
+						<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
+					</tr>
+					<tr>
+						<td>Gender</td>
+						<td>{{ user.gender }}</td>
+					</tr>
+					<tr>
+						<td>Phone Number</td>
+						<td>{{ user.phone_number }}</td>
+					</tr>
+					<tr>
+						<td>School</td>
+						<td>{{ user.school_name }}</td>
+					</tr>
+					<tr>
+						<td class="no-border">Special Needs</td>
+						<td class="no-border">{{ user.special_needs }}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	<form action="{{ url_for('manual-check-in-post') }}" method="POST">
+		<input type="email" name="email" value="{{ user.email }}" placeholder="User email">
+		<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+	</form>
+		<script>
+	$(function(){
+    $("#user-id").focus();
+});
+	</script>
+	<br>
+	<p>    List of pending users</p>
+
+    <ul>
+    </ul>
+    <ul>
+    {% for user in users %}
+		<div class="row">
+		<div class="col-md-6">
+        {{ user.fname }} {{ user.lname }}
+		</div>
+		</div>
+    {% endfor %}
+    </ul>
+{% endblock content %}

@@ -6,7 +6,7 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
-from pepper.utils import s3, send_email, s, roles_required, ts
+from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
 from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
 import keen
 from datetime import datetime
@@ -14,6 +14,7 @@ from pytz import timezone
 from pepper.legal.models import Waiver
 import random
 from sqlalchemy import or_, and_
+import urllib
 
 
 cst = timezone('US/Central')
@@ -328,6 +329,61 @@ def confirm_registration():
 		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
 
 		return redirect(url_for('dashboard'))
+
+
+@login_required
+@roles_required('admin')
+def check_in_manual():
+	if request.method == 'GET':
+		return render_template('users/admin/check_in.html')
+	else:
+		email = request.form.get('email')
+		user = User.query.filter_by(email=email).first()
+		age = calculate_age(user.birthday)
+		if age < 18 or user.status != 'CONFIRMED' or user.checked_in:
+			if age < 18:
+				flash('User under 18', 'error')
+			if user.status != 'CONFIRMED':
+				flash('User not confirmed', 'error')
+			if user.checked_in:
+				flash('User is already checked in', 'error')
+			return render_template('layouts/error.html',
+								   message="Unable to check in user"), 401
+		return render_template('users/admin/confirm_check_in.html', user=user, age=age)
+
+def check_in_post():
+	email = request.form.get('email')
+	user = User.query.filter_by(email=email).first()
+	user.checked_in = True
+	DB.session.commit()
+	fmt = '%Y-%m-%dT%H:%M:%S.%f'
+	keen.add_event('check_in', {
+		'date_of_birth': user.birthday.strftime(fmt),
+		'dietary_restrictions': user.dietary_restrictions,
+		'email': user.email,
+		'first_name': user.fname,
+		'last_name': user.lname,
+		'gender': user.gender,
+		'id': user.id,
+		'major': user.major,
+		'phone_number': user.phone_number,
+		'school': {
+			'id': user.school_id,
+			'name': user.school_name
+		},
+		'keen': {
+			'timestamp': user.time_applied.strftime(fmt)
+		},
+		'interests': user.interests,
+		'skill_level': user.skill_level,
+		'races': user.race,
+		'num_hackathons': user.num_hackathons,
+		'class_standing': user.class_standing,
+		'shirt_size': user.shirt_size,
+		'special_needs': user.special_needs
+	})
+	flash('Checked in {0} {1}'.format(user.fname, user.lname), 'success')
+	return redirect(url_for('manual-check-in'))
 
 
 def forgot_password():
