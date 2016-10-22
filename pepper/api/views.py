@@ -86,7 +86,7 @@ def check_in():
 						},
 						'interests': user.interests,
 						'skill_level': user.skill_level,
-						'races': user.race_list,
+						'races': user.race,
 						'num_hackathons': user.num_hackathons,
 						'class_standing': user.class_standing,
 						'shirt_size': user.shirt_size,
