@@ -8,7 +8,6 @@ from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
 import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
-from hellosign_sdk import HSClient
 from datetime import date
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
@@ -18,7 +17,6 @@ s3_client = boto3.client('s3')
 ts = URLSafeTimedSerializer(settings.SECRET_KEY)
 s = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
-hs_client = HSClient(api_key=settings.HELLO_SIGN_API_KEY)
 
 
 def validate_email(email):
