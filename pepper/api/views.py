@@ -4,6 +4,7 @@ from flask import url_for, jsonify, request, Response
 import json, os, urllib, datetime
 from pepper import settings
 from pepper.utils import calculate_age
+import keen
 
 def schedule():
 	SITE_ROOT = os.path.realpath(os.path.dirname(__file__))
@@ -65,6 +66,32 @@ def check_in():
 					user.checked_in = True
 					DB.session.add(user)
 					DB.session.commit()
+					fmt = '%Y-%m-%dT%H:%M:%S.%f'
+					keen.add_event('check_in', {
+						'date_of_birth': user.birthday.strftime(fmt),
+						'dietary_restrictions': user.dietary_restrictions,
+						'email': user.email,
+						'first_name': user.fname,
+						'last_name': user.lname,
+						'gender': user.gender,
+						'id': user.id,
+						'major': user.major,
+						'phone_number': user.phone_number,
+						'school': {
+							'id': user.school_id,
+							'name': user.school_name
+						},
+						'keen': {
+							'timestamp': user.time_applied.strftime(fmt)
+						},
+						'interests': user.interests,
+						'skill_level': user.skill_level,
+						'races': user.race_list,
+						'num_hackathons': user.num_hackathons,
+						'class_standing': user.class_standing,
+						'shirt_size': user.shirt_size,
+						'special_needs': user.special_needs
+					})
 					message = 'Attendee successfully checked in'
 				else:
 					message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
