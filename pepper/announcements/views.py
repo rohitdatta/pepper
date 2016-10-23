@@ -24,7 +24,7 @@ def create_announcement():
 		return 'Unauthorized', 401
 	send_notification = text.startswith('<!channel>')
 	if send_notification:
-		text = text[10:]
+		text = text[text.find(' ') + 1:]
 	announcement = Announcement(text, ts)
 	DB.session.add(announcement)
 	DB.session.commit()
