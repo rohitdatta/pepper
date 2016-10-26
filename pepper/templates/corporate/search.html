@@ -1,32 +1,41 @@
 {% extends 'layouts/base.html' %}
 {% block imports %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
 <script src="{{ url_for('static', filename='js/corp-search.js') }}"></script>
 {% endblock %}
 {% block content %}
 
-<h1>Search Attendees</h1>
-	<p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a filter? Leave the field blank and we'll return all options from that field.</p>
-<form method="POST" action="{{ url_for('search-results') }}">
-	Schools
-	<select name="schools" multiple class="chosen-select">
-		{% for school in schools %}
-		<option value="{{ school }}">{{ school }}</option>
-		{% endfor %}
-	</select>
-Majors
-	<select name="majors" multiple class="chosen-select">
-		{% for major in majors %}
-		<option value="{{ major }}">{{ major }}</option>
-		{% endfor %}
-	</select>
-Class Standings
-	<select name="class_standings" multiple class="chosen-select">
-		{% for class_standing in class_standings %}
-		<option value="{{ class_standing }}">{{ class_standing }}</option>
-		{% endfor %}
-	</select>
-<button type="submit">Submit</button>
-</form>
+
+<div class="center col-md-4 col-md-offset-4">
+	<h1>Search Attendees</h1>
+		<p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a filter? Leave the field blank and we'll return all options from that field.</p>
+</div>
+
+<div class="center col-md-4 col-md-offset-4">
+	<form method="POST" action="">
+		<h2>Schools</h2>
+		<select name="schools" class="school_select" multiple="multiple">
+			{% for school in schools %}
+			<option value="{{ school }}">{{ school }}</option>
+			{% endfor %}
+		</select>
+		<h2>Majors</h2>
+		<select name="majors" class="major_select" multiple="multiple">
+			{% for major in majors %}
+			<option value="{{ major }}">{{ major }}</option>
+			{% endfor %}
+		</select>
+		<h2>Class Standings</h2>
+		<select name="class_standings" class="class_select">
+			{% for class_standing in class_standings %}
+			<option value="{{ class_standing }}">{{ class_standing }}</option>
+			{% endfor %}
+		</select>
+		<h2></h2>
+		<div class="row">
+			<button type="submit">Submit</button>
+		</div>
+	</form>
+</div>
 {% endblock %}
