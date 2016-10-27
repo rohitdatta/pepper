@@ -171,7 +171,7 @@ def search_results():
 	if class_standings:
 		users = users.filter(User.class_standing.in_(class_standings))
 		all_users = users.all()
-	# users = users.all()
+	users = users.all()
 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
 						   majors=majors)
 
