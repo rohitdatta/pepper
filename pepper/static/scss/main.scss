@@ -13,10 +13,28 @@ $hacktx-gray: #bfbfbf;
 
 //  Page-specific rules
 .required::after {
-	content: "*";
+  content: "*";
   color: $hacktx-red;
   text-shadow: none;
 }
+
+.results {
+  .fa-times-circle {
+	color: $hacktx-red;
+  }
+  @media (min-width: 992px) {
+	.action-button {
+	  float: right;
+	}
+  }
+  @media (max-width: 992px) {
+	.action-button {
+	  float: left;
+	}
+	
+  }
+}
+
 .sign {
   input {
 	&[type=text], &[type=email], &[type=tel] {
@@ -27,13 +45,35 @@ $hacktx-gray: #bfbfbf;
 	}
   }
 }
-  //
-  //textarea {
-	//padding: 10px 15px;
-	//margin: 0 auto 10px auto;
-	//width: 95%;
-  //
-  //}
+
+.search {
+  input {
+	&[type=text] {
+	  text-align: left;
+	}
+  }
+  .select {
+	width: 100%;
+  }
+  .chosen-container {
+	width: 100% !important;
+  }
+  .row {
+	margin-bottom: 10px;
+  }
+
+  button {
+	display: block;
+  }
+}
+
+//
+//textarea {
+//padding: 10px 15px;
+//margin: 0 auto 10px auto;
+//width: 95%;
+//
+//}
 
 .confirmation, .update {
   button {
@@ -47,7 +87,6 @@ $hacktx-gray: #bfbfbf;
 .red {
   color: $hacktx-red;
 }
-
 
 .accept {
   button {
@@ -113,7 +152,7 @@ body {
 	font-weight: 700;
 	text-decoration: none;
 	&.decorate {
-	  	border-bottom: 1px dotted white;
+	  border-bottom: 1px dotted white;
 	}
 	&:hover {
 	  color: rgba(#FFF, 0.8);
@@ -235,6 +274,10 @@ table {
 		border-bottom: none !important;
 	  }
 	}
+	tr:last-child {
+	  border-bottom: none !important;
+	}
+
   }
 }
 
@@ -314,55 +357,55 @@ form {
   }
 
   .select {
-  position: relative;
-  display: inline-block;
-  margin-bottom: 15px;
-  width: 100%;
-}
-.select select {
-  display: inline-block;
-  width: 100%;
-  cursor: pointer;
-  padding: 10px 15px;
-  outline: 0;
-  border: 0;
-  border-radius: 0;
-  background: #e6e6e6;
-  color: #7b7b7b;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-.select select::-ms-expand {
-  display: none;
-}
-.select select:hover,
-.select select:focus {
-  color: #000;
-  background: #ccc;
-}
-.select select:disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
-.select__arrow {
-  position: absolute;
-  top: 16px;
-  right: 15px;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  border-style: solid;
-  border-width: 8px 5px 0 5px;
-  border-color: #7b7b7b transparent transparent transparent;
-}
-.select select:hover ~ .select__arrow,
-.select select:focus ~ .select__arrow {
-  border-top-color: #000;
-}
-.select select:disabled ~ .select__arrow {
-  border-top-color: #ccc;
-}
+	position: relative;
+	display: inline-block;
+	margin-bottom: 15px;
+	width: 100%;
+  }
+  .select select {
+	display: inline-block;
+	width: 100%;
+	cursor: pointer;
+	padding: 10px 15px;
+	outline: 0;
+	border: 0;
+	border-radius: 0;
+	background: #e6e6e6;
+	color: #7b7b7b;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+  }
+  .select select::-ms-expand {
+	display: none;
+  }
+  .select select:hover,
+  .select select:focus {
+	color: #000;
+	background: #ccc;
+  }
+  .select select:disabled {
+	opacity: 0.5;
+	pointer-events: none;
+  }
+  .select__arrow {
+	position: absolute;
+	top: 16px;
+	right: 15px;
+	width: 0;
+	height: 0;
+	pointer-events: none;
+	border-style: solid;
+	border-width: 8px 5px 0 5px;
+	border-color: #7b7b7b transparent transparent transparent;
+  }
+  .select select:hover ~ .select__arrow,
+  .select select:focus ~ .select__arrow {
+	border-top-color: #000;
+  }
+  .select select:disabled ~ .select__arrow {
+	border-top-color: #ccc;
+  }
 
   label {
 	display: block;
@@ -445,8 +488,8 @@ form {
 	}
 
 	&[type=number] {
-		@extend [type=text];
-		display: inline;
+	  @extend [type=text];
+	  display: inline;
 	  width: 100px;
 	  &:focus {
 		width: 150px;
@@ -466,20 +509,20 @@ form {
 	color: white;
   }
 
-	::-webkit-input-placeholder { /* Chrome */
-  color: $hacktx-gray;
-}
-:-ms-input-placeholder { /* IE 10+ */
-  color: $hacktx-gray;
-}
-::-moz-placeholder { /* Firefox 19+ */
-  color: $hacktx-gray;
-  opacity: 1;
-}
-:-moz-placeholder { /* Firefox 4 - 18 */
-  color: $hacktx-gray;
-  opacity: 1;
-}
+  ::-webkit-input-placeholder { /* Chrome */
+	color: $hacktx-gray;
+  }
+  :-ms-input-placeholder { /* IE 10+ */
+	color: $hacktx-gray;
+  }
+  ::-moz-placeholder { /* Firefox 19+ */
+	color: $hacktx-gray;
+	opacity: 1;
+  }
+  :-moz-placeholder { /* Firefox 4 - 18 */
+	color: $hacktx-gray;
+	opacity: 1;
+  }
 }
 
 html {

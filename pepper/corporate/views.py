@@ -4,7 +4,7 @@ from pepper.users import User
 from helpers import check_password
 from pepper.utils import corp_login_required, roles_required, s3, ts, s, send_email
 from pepper import settings
-from sqlalchemy import distinct
+from sqlalchemy import distinct, or_, and_
 from pepper.app import DB
 from pepper.users.helpers import hash_pwd
 from pepper.users.models import UserRole
@@ -161,7 +161,7 @@ def search_results():
 	majors = request.form.getlist('majors')
 	# if majors:
 	# 	majors = [major.strip() for major in majors.split(',')]
-	users = User.query.filter(User.status == 'CONFIRMED')
+	users = User.query.filter(and_(User.status != 'NEW', User.type == 'MLH'))
 	if schools:
 		users = users.filter(User.school_name.in_(schools))
 		all_users = users.all()
@@ -171,7 +171,7 @@ def search_results():
 	if class_standings:
 		users = users.filter(User.class_standing.in_(class_standings))
 		all_users = users.all()
-	users = users.all()
+	# users = users.all()
 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
 						   majors=majors)
 

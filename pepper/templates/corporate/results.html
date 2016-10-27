@@ -1,96 +1,38 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
-<h1>Results</h1>
+	<div class="results">
+	<div class="row">
+	<div class="col-md-6"><h1>Results</h1></div>
+		<div class="col-md-6">
+	<span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
+			</div>
+	</div>
 	{% if users %}
 	<p>Here's everyone who matches your search results! To protect our attendees' privacy, we won't display their email or phone number, but we have provided their resume which should have contact information.</p>
 	<table class="info">
-{#					<col>#}
-{#					<col>#}
 	<tr>
 		<td>Name</td>
 		<td>Class Standing</td>
-		<td>School</td>
 		<td>Major(s)</td>
+		<td>School</td>
 		<td>Resume Link</td>
+		<td style="text-align: center;">Attended</td>
 	</tr>
 	<col>
 		{% for user in users %}
 					<tr class="border_bottom">
-{#						<td>Name</td>#}
-						<td>{{ user.fname }} {{ user.lname }}</td>
+						<td width="15%">{{ user.fname }} {{ user.lname }}</td>
 						<td>{{ user.class_standing }}</td>
-						<td>{{ user.school_name }}</td>
-						<td>{{ user.major }}</td>
-						<td><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate">View Resume</a></td>
+						<td width="25%">{{ user.major }}</td>
+						<td width="25%">{{ user.school_name }}</td>
+						<td><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate" target="_blank">View Resume</a></td>
+						<td style="text-align: center;">{% if user.checked_in %}<i class="fa fa-check-circle" aria-hidden="true"></i>{% else %}<i class="fa fa-times-circle" aria-hidden="true"></i>{% endif %}</td>
+
 					</tr>
 		{% endfor %}
-
-{#					<tr class="border_bottom">#}
-{#						<td>Email</td>#}
-{#						<td>{{ user.email }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Class Standing</td>#}
-{#						<td>{{ user.class_standing }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Major</td>#}
-{#						<td>{{ user.major }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Shirt Size</td>#}
-{#						<td>{{ user.shirt_size }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Dietary Restrictions</td>#}
-{#						<td>{{ user.dietary_restrictions }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Birthday</td>#}
-{#						<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Gender</td>#}
-{#						<td>{{ user.gender }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>Phone Number</td>#}
-{#						<td>{{ user.phone_number }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>School</td>#}
-{#						<td>{{ user.school_name }}</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td class="no-border">Special Needs</td>#}
-{#						<td class="no-border">{{ user.special_needs }}</td>#}
-{#					</tr>#}
 				</table>
 		{% else %}
 		<p>Darn! We weren't able to find anyone who matches your criteria. Perhaps you can try a <a href="{{ url_for('corp-search') }}" class="decorate">new search</a>?</p>
 	{% endif %}
-{#{% for user in users %}#}
-{#<p>#}
-{#{{ user.fname }} {{ user.lname }} {% if user.resume_uploaded %}<a href="{{ url_for('resume-view') }}?id={{ user.hashid }}">View Resume</a>{% endif %}#}
-{#</p>#}
-{#{% if config.DEBUG %}#}
-{#<h1>Debugging Info</h1>#}
-{#{% if schools %}#}
-{#    {% for school in schools %}#}
-{#		<p>{{ school }}</p>#}
-{#	{% endfor %}#}
-{#{% endif %}#}
-{#Major#}
-{#{% if majors %}#}
-{#    {% for major in majors %}#}
-{#		<p>{{ major }}</p>#}
-{#	{% endfor %}#}
-{#{% endif %}#}
-{#Class Stand#}
-{#{% if class_standings %}#}
-{#    {% for class_standing in class_standings %}#}
-{#		<p>{{ class_standing }}</p>#}
-{#	{% endfor %}#}
-{#{% endif %}#}
-{#	{% endif %}#}
+	</div>
 {% endblock %}
