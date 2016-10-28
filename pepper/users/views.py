@@ -430,6 +430,24 @@ def reset_password(token):
 			return redirect(url_for('forgot-password'))
 
 
+def set_mlh_id():
+	if request.method == 'GET':
+		return render_template('users/admin/set_mlh_id.html')
+	else:
+		mlh_users = User.query.filter_by(type='MLH')
+		i = 0
+		for user in mlh_users:
+			if user.access_token is not None:
+				user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(user.access_token)).json()
+				if 'data' in user_info:
+					user.mlh_id = user_info['data']['id']
+					DB.session.add(user)
+					DB.session.commit()
+			i+=1
+			print i
+
+		return 'Finished updating ids'
+
 def update_user_data(type, local_updated_info=None):
 	if type == 'MLH':
 		user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()

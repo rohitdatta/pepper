@@ -60,7 +60,7 @@ def new_user_setup(token):
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
-				return redirect(url_for('new-user-setup'), token=token)
+				return redirect(url_for('new-user-setup', token=token))
 		else:
 			flash('Failed to setup your account. Please double check the link in your email. If this problem persists, please reach out to us to investigate', 'error')
 			return redirect(url_for('landing'))
