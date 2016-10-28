@@ -190,4 +190,4 @@ def view_resume():
 @roles_required('admin', 'corp')
 def download_all_resumes():
 	#TODO: Authorize S3 request and then have them download directly from S3
-	return 'TEMP'
+	return redirect(settings.RESUMES_LINK, code=200)
