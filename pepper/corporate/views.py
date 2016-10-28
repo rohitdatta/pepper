@@ -60,7 +60,7 @@ def new_user_setup(token):
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
-				return redirect(url_for('new-user-setup'), token=token)
+				return redirect(url_for('new-user-setup', token=token))
 		else:
 			flash('Failed to setup your account. Please double check the link in your email. If this problem persists, please reach out to us to investigate', 'error')
 			return redirect(url_for('landing'))
@@ -171,7 +171,7 @@ def search_results():
 	if class_standings:
 		users = users.filter(User.class_standing.in_(class_standings))
 		all_users = users.all()
-	# users = users.all()
+	users = users.all()
 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
 						   majors=majors)
 
@@ -190,4 +190,4 @@ def view_resume():
 @roles_required('admin', 'corp')
 def download_all_resumes():
 	#TODO: Authorize S3 request and then have them download directly from S3
-	return 'TEMP'
+	return redirect(settings.RESUMES_LINK, code=200)

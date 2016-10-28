@@ -7,7 +7,7 @@
 	<span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
 			</div>
 	</div>
-	{% if users %}
+	{% if users|length > 0 %}
 	<p>Here's everyone who matches your search results! To protect our attendees' privacy, we won't display their email or phone number, but we have provided their resume which should have contact information.</p>
 	<table class="info">
 	<tr>
@@ -32,7 +32,9 @@
 		{% endfor %}
 				</table>
 		{% else %}
-		<p>Darn! We weren't able to find anyone who matches your criteria. Perhaps you can try a <a href="{{ url_for('corp-search') }}" class="decorate">new search</a>?</p>
+		<div class="large-text">
+		<p>Oops! We weren't able to find anyone who matches your criteria. We have a pretty diverse hacker list, but looks like you might've been a bit too specific. Perhaps you can try a <a href="{{ url_for('corp-search') }}" class="decorate">new search</a>?</p>
+		</div>
 	{% endif %}
 	</div>
 {% endblock %}

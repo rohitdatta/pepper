@@ -35,6 +35,7 @@ def configure_routes(app):
 	app.add_url_rule('/admin/modify-user', 'modify-user', view_func=users.views.modify_user, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/check-in', 'manual-check-in', view_func=users.views.check_in_manual, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/check-in-post', 'manual-check-in-post', view_func=users.views.check_in_post, methods=['POST'])
+	app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.views.set_mlh_id, methods=['GET', 'POST'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
