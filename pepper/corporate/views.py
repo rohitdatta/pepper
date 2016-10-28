@@ -176,6 +176,8 @@ def search_results():
 	users = users.all()
 	end = time.time()
 	search_time = end - start
+	g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
+	g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2} by'.format(schools, majors, class_standings))
 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
 						   majors=majors, time=search_time)
 
