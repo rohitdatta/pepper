@@ -8,6 +8,7 @@ from sqlalchemy import distinct, or_, and_
 from pepper.app import DB
 from pepper.users.helpers import hash_pwd
 from pepper.users.models import UserRole
+import time
 
 def login():
 	if request.method == 'GET':
@@ -152,6 +153,7 @@ def corporate_search():
 @corp_login_required
 @roles_required('admin', 'corp')
 def search_results():
+	start = time.time()
 	schools = request.form.getlist('schools')
 	# if schools:
 	# 	schools = [school.strip() for school in schools.split(',')]
@@ -172,8 +174,10 @@ def search_results():
 		users = users.filter(User.class_standing.in_(class_standings))
 		all_users = users.all()
 	users = users.all()
+	end = time.time()
+	search_time = end - start
 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
-						   majors=majors)
+						   majors=majors, time=search_time)
 
 @corp_login_required
 @roles_required('admin', 'corp')

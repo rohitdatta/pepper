@@ -7,8 +7,8 @@
 	<span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
 			</div>
 	</div>
+	About {{ users|length }} results ({{ time|round(5) }} seconds)
 	{% if users|length > 0 %}
-	<p>Here's everyone who matches your search results! To protect our attendees' privacy, we won't display their email or phone number, but we have provided their resume which should have contact information.</p>
 	<table class="info">
 	<tr>
 		<td>Name</td>
