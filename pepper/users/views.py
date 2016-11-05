@@ -2,12 +2,12 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response, render_template_string
 import requests
 from models import User, UserRole
-from pepper.app import DB
+from pepper.app import DB, q
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 import urllib2
 from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
-from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
+from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite, sleep
 import keen
 from datetime import datetime
 from pytz import timezone
@@ -815,6 +815,10 @@ def send_email_to_users():
 			i += 1
 		flash('Successfully sent', 'success')
 		return 'Done'
+
+def q_test():
+	job = q.enqueue(sleep)
+	return jsonify({'job_id': job.get_id()})
 
 @login_required
 @roles_required('admin')
