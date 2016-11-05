@@ -12,3 +12,7 @@ def send_batch_email(content, subject, users):
 		html = render_template_string(html, user=user)
 		send_email(settings.GENERAL_INFO_EMAIL, subject, user.email, html_content=html)
 		print 'Sent email'
+
+def accept_fifo():
+
+def random_accept():
