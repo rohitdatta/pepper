@@ -37,7 +37,7 @@ def new_user_setup(token):
 		email = s.loads(token)
 		user = User.query.filter_by(email=email).first()
 		if user.password is not None:
-			flash('User has already been setup. If you need to change the password, please reset your password.')
+			flash('User has already been setup. If you need to change the password, please reset your password.', 'error')
 			return redirect(url_for('corp-dash'))
 	except:
 		return render_template('layouts/error.html', title='Invalid Link', message="That's an invalid link"), 401
@@ -57,6 +57,9 @@ def new_user_setup(token):
 				DB.session.commit()
 
 				login_user(user, remember=True)
+
+				g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
+				g.log.info('Successfully set up account for ')
 				flash('Successfully setup account!', 'success')
 				return redirect(url_for('corp-dash'))
 			else:
