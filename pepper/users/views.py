@@ -15,6 +15,9 @@ from pepper.legal.models import Waiver
 import random
 from sqlalchemy import or_, and_
 import urllib
+from batch import send_batch_email
+from rq.job import Job
+import redis
 
 
 cst = timezone('US/Central')
@@ -799,26 +802,17 @@ def send_email_to_users():
 		return render_template('users/admin/send_email.html')
 	else:
 		statuses = request.form.getlist('status')
-		users = User.query.filter(and_(User.status.in_(statuses), User.checked_in == 'true'))
-		foo = users.all()
-		content = request.form.get('content')
-		lines = content.split('\r\n')
-		msg_body = u""
-		i = 0
-		for line in lines:
-			msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
-		for user in users:
-			html = render_template('emails/generic_message.html', content=msg_body)
-			html = render_template_string(html, user=user)
-			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
-			print 'Sent Email' + str(i)
-			i += 1
+		users = User.query.filter(and_(User.status.in_(statuses)))
+		q.enqueue(send_batch_email, request.form.get('content'), request.form.get('subject'), users.all())
 		flash('Successfully sent', 'success')
 		return 'Done'
 
-def q_test():
-	job = q.enqueue(sleep)
-	return jsonify({'job_id': job.get_id()})
+def job_view(job_key):
+	job = Job.fetch(job_key, connection=redis.from_url(settings.REDIS_URL))
+	if job.is_finished:
+		return 'Finished'
+	else:
+		return 'Nope'
 
 @login_required
 @roles_required('admin')
@@ -827,7 +821,6 @@ def reject_users():
 		return render_template('users/admin/reject_users.html')
 	else:
 		users = User.query.filter(and_(or_(User.status == 'WAITLISTED'), User.school_id == 23)).all()
-		i = 0
 		for user in users:
 			html = render_template('emails/application_decisions/rejected.html', user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
@@ -835,11 +828,8 @@ def reject_users():
 			DB.session.add(user)
 			DB.session.commit()
 			print 'Rejected {}'.format(user.email)
-			print i
-			i += 1
 		flash('Finished rejecting', 'success')
 		return redirect(request.url)
-
 
 
 @login_required
