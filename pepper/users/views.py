@@ -1,26 +1,25 @@
-from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response, render_template_string
-import requests
-from models import User, UserRole
-from pepper.app import DB, q
-from sqlalchemy.exc import IntegrityError
-from pepper import settings
-import urllib2
-from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
-from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
-import keen
 from datetime import datetime
 from pytz import timezone
-from pepper.legal.models import Waiver
-import random
-from sqlalchemy import or_, and_
-import urllib
-import batch
-from rq.job import Job
+import urllib2
+
 import redis
+import keen
+import requests
+from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response
+from flask.ext.login import login_user, logout_user, current_user, login_required
+from rq.job import Job
+from sqlalchemy.exc import IntegrityError
 
+from models import User, UserRole
+from pepper.app import DB, q
+from pepper import settings
+from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
+from helpers import check_password, hash_pwd, send_recruiter_invite
+from pepper.legal.models import Waiver
+from sqlalchemy import or_, and_
+import batch
 
-cst = timezone('US/Central')
+tz = timezone('US/Central')
 
 
 def landing():
@@ -648,7 +647,7 @@ def sign():
 			flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		today = datetime.now(cst).date()
+		today = datetime.now(tz).date()
 		return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
 	else:
 		relative_name = request.form.get('relative_name')
@@ -775,38 +774,13 @@ def batch_modify():
 		g.log.info('Starting acceptances')
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
+		include_waitlist = request.form.get('include_waitlist', True) == 'true'
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='WAITLISTED').order_by(User.time_applied.asc()).limit(num_to_accept).all()
-			for attendee in accepted_attendees:
-				attendee.status = 'ACCEPTED'
-				DB.session.commit()
-				html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
-				g.log = g.log.bind(email=attendee.email)
-				g.log.info('Sent email to')
+			q.enqueue(batch.accept_fifo, num_to_accept, include_waitlist)
 		else:  # randomly select n users out of x users
-			random_pool = User.query.filter(or_(User.status == 'PENDING', User.status == 'WAITLISTED')).all()
-			accepted = random.sample(set(random_pool), num_to_accept)
-			for attendee in accepted:
-				if attendee.status == 'PENDING':
-					html = render_template('emails/application_decisions/accepted.html', user=attendee)
-				else:  # they got off waitlist
-					html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-				attendee.status = 'ACCEPTED'
-				DB.session.commit()
-				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
-
-			# set everyone else to go from pending to waitlisted
-			pending_attendees = User.query.filter_by(status='PENDING').all()
-			for pending_attendee in pending_attendees:
-				pending_attendee.status = 'WAITLISTED'
-				html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
-				DB.session.commit()
-				send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
-		# x = request.form.get('x') if request.form.get(
-			# 	'x') is not 0 else -1  # TODO it's the count of users who are pending
-		flash('Finished acceptances', 'success')
-		g.log.info('Finished acceptances')
+			q.enqueue(batch.random_accept, num_to_accept, include_waitlist)
+		flash('Worker is running acceptances', 'success')
+		g.log.info('Acceptances have been queued')
 		return redirect(request.url)
 
 
