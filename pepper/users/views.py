@@ -455,7 +455,6 @@ def update_user_data(type, local_updated_info=None):
 			current_user.email = user_info['data']['email']
 			current_user.fname = user_info['data']['first_name']
 			current_user.lname = user_info['data']['last_name']
-			# current_user.class_standing = DB.Column(DB.String(255))
 			current_user.major = user_info['data']['major']
 			current_user.shirt_size = user_info['data']['shirt_size']
 			current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
@@ -509,7 +508,7 @@ def dashboard():
 			return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
 		return render_template('users/dashboard/pending.html', user=current_user)
 
-
+# Refresh the MyMLH profile info
 @login_required
 def refresh_from_MLH():
 	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
@@ -524,7 +523,7 @@ def refresh_from_MLH():
 		response.status_code = 503
 		return response
 
-
+# Editing of the attendee profile info after applying
 @login_required
 def edit_resume():
 	if current_user.status == 'NEW':
@@ -547,7 +546,7 @@ def edit_resume():
 		flash('You successfully updated your resume', 'success')
 		return redirect(request.url)
 
-
+# allow attendee to view their own resume
 @login_required
 def view_own_resume():
 	data_object = s3.Object(settings.S3_BUCKET_NAME,
@@ -556,7 +555,7 @@ def view_own_resume():
 	response.headers['Content-Type'] = 'application/pdf'
 	return response
 
-
+# Check if a filename is a pdf
 def is_pdf(filename):
 	return '.' in filename and filename.lower().rsplit('.', 1)[1] == 'pdf'
 
@@ -612,7 +611,7 @@ def accept():
 		})
 		return redirect(url_for('dashboard'))
 
-
+#TODO: Break this up into smaller methods
 @login_required
 def sign():
 	date_fmt = '%B %d, %Y'
@@ -726,6 +725,7 @@ def create_corp_user():
 		g.log.info('Created new corporate account')
 		try:
 			send_recruiter_invite(user)
+			flash('Successfully invited {0} {1}'.format(user_data['fname'], user_data['lname']), 'success')
 		except Exception:
 			flash('Unable to send recruiter invite', 'error')
 		return render_template('users/admin/create_user.html')
@@ -810,7 +810,6 @@ def send_email_to_users():
 		for user in users:
 			html = render_template('emails/generic_message.html', content=msg_body)
 			html = render_template_string(html, user=user)
-			# html = render_template('emails/welcome.html', user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
 			print 'Sent Email' + str(i)
 			i += 1

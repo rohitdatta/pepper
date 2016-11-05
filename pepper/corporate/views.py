@@ -161,6 +161,8 @@ def search_results():
 def view_resume():
 	hashid = request.args.get('id')
 	user = User.get_with_hashid(hashid)
+	g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
+	g.log.info('Resume for {0} {1} <{2}> viewed by'.format(user.fname, user.lname, user.email))
 	data_object = s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'.format(user.lname, user.fname, user.hashid)).get()
 	User.get_with_hashid(hashid)
 	response = make_response(data_object['Body'].read())

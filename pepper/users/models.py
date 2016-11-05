@@ -54,6 +54,7 @@ class User(DB.Model, UserMixin):
 			self.phone_number = dict['data']['phone_number']
 			self.special_needs = dict['data']['special_needs']
 			self.checked_in = False
+			self.mlh_id = dict['data']['id']
 			self.type = 'MLH'
 			self.access_token = dict['access_token']
 			self.resume_uploaded = False
