@@ -16,7 +16,7 @@ def login():
 			return redirect(url_for('corp-dash'))
 		return render_template('corporate/login.html')
 	else:
-		email = request.form['email']
+		email = request.form['email'].lower()
 		password = request.form['password']
 		user = User.query.filter_by(email=email).first()
 		if user is None:

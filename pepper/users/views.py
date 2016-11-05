@@ -716,7 +716,7 @@ def create_corp_user():
 		# Build a user based on the request form
 		user_data = {'fname': request.form['fname'],
 					 'lname': request.form['lname'],
-					 'email': request.form['email'],
+					 'email': request.form['email'].lower(),
 					 'type': 'corporate'}
 		user = User(user_data)
 		DB.session.add(user)
