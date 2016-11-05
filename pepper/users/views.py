@@ -721,7 +721,9 @@ def create_corp_user():
 		user = User(user_data)
 		DB.session.add(user)
 		DB.session.commit()
-
+		g.log = g.log.bind(corp_user='{0} {1} <{2}>'.format(user_data['fname'], user_data['lname'], user_data['email']))
+		g.log = g.log.bind(admin='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
+		g.log.info('Created new corporate account')
 		try:
 			send_recruiter_invite(user)
 		except Exception:
@@ -797,19 +799,21 @@ def send_email_to_users():
 		return render_template('users/admin/send_email.html')
 	else:
 		statuses = request.form.getlist('status')
-		users = User.query.filter(and_(User.status.in_(statuses)))
+		users = User.query.filter(and_(User.status.in_(statuses), User.checked_in == 'true'))
 		foo = users.all()
 		content = request.form.get('content')
 		lines = content.split('\r\n')
 		msg_body = u""
+		i = 0
 		for line in lines:
 			msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
 		for user in users:
-			# html = render_template('emails/generic_message.html', content=msg_body)
-			# html = render_template_string(html, user=user)
-			html = render_template('emails/welcome.html', user=user)
+			html = render_template('emails/generic_message.html', content=msg_body)
+			html = render_template_string(html, user=user)
+			# html = render_template('emails/welcome.html', user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
-			print 'Sent Email'
+			print 'Sent Email' + str(i)
+			i += 1
 		flash('Successfully sent', 'success')
 		return 'Done'
 

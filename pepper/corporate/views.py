@@ -4,7 +4,7 @@ from pepper.users import User
 from helpers import check_password
 from pepper.utils import corp_login_required, roles_required, s3, ts, s, send_email
 from pepper import settings
-from sqlalchemy import distinct, or_, and_
+from sqlalchemy import distinct, and_
 from pepper.app import DB
 from pepper.users.helpers import hash_pwd
 from pepper.users.models import UserRole
@@ -50,14 +50,14 @@ def new_user_setup(token):
 				user.password = hash_pwd(request.form['password'])
 				DB.session.add(user)
 				DB.session.commit()
-				# add admin role to the user
+				# add corp role to the user
 				role = UserRole(user.id)
 				role.name = 'corp'
 				DB.session.add(role)
 				DB.session.commit()
 
 				login_user(user, remember=True)
-				flash('Succesfully setup account!', 'success')
+				flash('Successfully setup account!', 'success')
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
@@ -103,7 +103,7 @@ def reset_password(token):
 				return redirect(url_for('corp-dash'))
 			else:
 				flash('You need to enter the same password in both fields!', 'error')
-				return redirect(url_for('corp-reset-password'), token=token)
+				return redirect(url_for('corp-reset-password', token=token))
 		else:
 			flash('Failed to reset password. This is an invalid link. Please contact us if this error persists', 'error')
 			return redirect(url_for('corp-forgot-password'))
@@ -125,54 +125,26 @@ def corporate_search():
 		schools.sort()
 		majors.sort()
 		class_standings.sort()
-		# [school for school in schools if school != None]
 		return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
-	# else:
-	# 	schools = request.form.getlist('schools')
-	# 	# if schools:
-	# 	# 	schools = [school.strip() for school in schools.split(',')]
-	# 	class_standings = request.form.getlist('class_standings')
-	# 	# if class_standings:
-	# 	# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
-	# 	majors = request.form.getlist('majors')
-	# 	# if majors:
-	# 	# 	majors = [major.strip() for major in majors.split(',')]
-	# 	users = User.query.filter(User.status == 'CONFIRMED')
-	# 	if schools:
-	# 		users = users.filter(User.school_name.in_(schools))
-	# 		all_users = users.all()
-	# 	if majors:
-	# 		users = users.filter(User.major.in_(majors))
-	# 		all_users = users.all()
-	# 	if class_standings:
-	# 		users = users.filter(User.class_standing.in_(class_standings))
-	# 		all_users = users.all()
-	# 	users = users.all()
-	# 	return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings, majors=majors)
+
 
 @corp_login_required
 @roles_required('admin', 'corp')
 def search_results():
 	start = time.time()
 	schools = request.form.getlist('schools')
-	# if schools:
-	# 	schools = [school.strip() for school in schools.split(',')]
 	class_standings = request.form.getlist('class_standings')
-	# if class_standings:
-	# 	class_standings = [class_standing.strip() for class_standing in class_standings.split(',')]
 	majors = request.form.getlist('majors')
-	# if majors:
-	# 	majors = [major.strip() for major in majors.split(',')]
+	attended = request.form.get('attended')
 	users = User.query.filter(and_(User.status != 'NEW', User.type == 'MLH'))
 	if schools:
 		users = users.filter(User.school_name.in_(schools))
-		all_users = users.all()
 	if majors:
 		users = users.filter(User.major.in_(majors))
-		all_users = users.all()
 	if class_standings:
 		users = users.filter(User.class_standing.in_(class_standings))
-		all_users = users.all()
+	if attended:
+		users = users.filter(User.checked_in)
 	users = users.all()
 	end = time.time()
 	search_time = end - start
@@ -195,5 +167,4 @@ def view_resume():
 @corp_login_required
 @roles_required('admin', 'corp')
 def download_all_resumes():
-	#TODO: Authorize S3 request and then have them download directly from S3
 	return redirect(settings.RESUMES_LINK, code=200)
