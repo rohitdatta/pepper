@@ -8,7 +8,6 @@ from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
 import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
-from hellosign_sdk import HSClient
 from datetime import date
 
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
@@ -18,7 +17,6 @@ s3_client = boto3.client('s3')
 ts = URLSafeTimedSerializer(settings.SECRET_KEY)
 s = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
-hs_client = HSClient(api_key=settings.HELLO_SIGN_API_KEY)
 
 
 def validate_email(email):
@@ -61,7 +59,6 @@ def corp_login_required(f):
 		if not g.user.is_authenticated:
 			return redirect(url_for('corp-login'))
 		return f(*args, **kwargs)
-
 	return decorated_view
 
 
@@ -72,7 +69,7 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 	personalization.add_to(Email(to_email))
 	personalization.set_subject(subject)
 	mail.add_personalization(personalization)
-	foo = transform(html_content)
+	transform(html_content)
 	if txt_content is None and html_content is None:
 		raise ValueError('Must send some type of content')
 	if txt_content:
