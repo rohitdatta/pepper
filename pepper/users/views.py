@@ -201,11 +201,11 @@ def callback():
 	if user is None:  # create the user
 		try:
 			g.log.info('Creating a user')
-			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
+			user_info = requests.get('https://my.mlh.io/api/v2/user.json?access_token={0}'.format(access_token)).json()
 			user_info['type'] = 'MLH'
 			user_info['access_token'] = access_token
 			g.log = g.log.bind(email=user_info['data']['email'])
-			user = User.query.filter_by(email=user_info['data']['email']).first()
+			user = User.query.filter_by(mlh_id=user_info['data']['id']).first()
 			if user is None:
 				if settings.REGISTRATION_OPEN:
 					g.log.info('Creating a new user from MLH info')
