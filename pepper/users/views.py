@@ -5,9 +5,8 @@ from models import User, UserRole
 from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
-import urllib2
 from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
-from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
+from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite, mlh_oauth_url, get_mlh_user_data
 import keen
 from datetime import datetime
 from pytz import timezone
@@ -26,9 +25,7 @@ def landing():
 
 
 def login():
-    return redirect(
-        'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
-            settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL)))
+    return redirect(mlh_oauth_url())
 
 
 def login_local():
@@ -162,7 +159,7 @@ def callback():
         'grant_type': 'authorization_code',
         'redirect_uri': settings.BASE_URL + "callback"
     }
-    resp = requests.post(url, json=body)
+    resp = requests.post(url, params=body)
     try:
         json = resp.json()
     except Exception as e:
@@ -170,8 +167,7 @@ def callback():
         g.log.error('Error Decoding JSON')
 
     if resp.status_code == 401:  # MLH sent expired token
-        redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
-            settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
+        redirect_url = mlh_oauth_url()
 
         g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text,
                            redirect_url=redirect_url)
@@ -196,7 +192,7 @@ def callback():
     if user is None:  # create the user
         try:
             g.log.info('Creating a user')
-            user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
+            user_info = get_mlh_user_data(access_token)
             user_info['type'] = 'MLH'
             user_info['access_token'] = access_token
             g.log = g.log.bind(email=user_info['data']['email'])
@@ -219,7 +215,8 @@ def callback():
             DB.session.rollback()
             flash('A fatal error occurred. Please contact us for help', 'error')
             return render_template('static_pages/index.html')
-        except Exception:
+        except Exception as e:
+            g.log.error('{}: {}'.format(type(e), e))
             g.log.error('Unable to create the user')
     else:
         login_user(user, remember=True)
@@ -302,6 +299,7 @@ def confirm_registration():
         DB.session.commit()
         g.log = g.log.bind(email=current_user.email)
         g.log.info('User successfully applied')
+
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
         keen.add_event('sign_ups', {
             'date_of_birth': current_user.birthday.strftime(fmt),
@@ -451,8 +449,7 @@ def set_mlh_id():
         i = 0
         for user in mlh_users:
             if user.access_token is not None:
-                user_info = requests.get(
-                    'https://my.mlh.io/api/v1/user?access_token={0}'.format(user.access_token)).json()
+                user_info = get_mlh_user_data(user.access_token)
                 if 'data' in user_info:
                     user.mlh_id = user_info['data']['id']
                     DB.session.add(user)
@@ -465,8 +462,7 @@ def set_mlh_id():
 
 def update_user_data(type, local_updated_info=None):
     if type == 'MLH':
-        user_info = requests.get(
-            'https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+        user_info = get_mlh_user_data(current_user.access_token)
         if 'data' in user_info:
             current_user.email = user_info['data']['email']
             current_user.fname = user_info['data']['first_name']
@@ -528,7 +524,7 @@ def dashboard():
 # Refresh the MyMLH profile info
 @login_required
 def refresh_from_MLH():
-    user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
+    user_info = get_mlh_user_data(current_user.access_token)
     if 'data' in user_info:
         current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
         current_user.special_needs = user_info['data']['special_needs']

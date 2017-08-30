@@ -29,6 +29,7 @@ def configure_routes(app):
     app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
 
     # Admin Pages
+    app.add_url_rule('/admin', 'admin-dash', view_func=users.views.admin_dashboard, methods=['GET'])
     app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.views.create_corp_user,
                      methods=['GET', 'POST'])
     app.add_url_rule('/admin/debug', 'debug-user', view_func=users.views.debug_user, methods=['GET', 'POST'])

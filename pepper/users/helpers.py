@@ -1,9 +1,12 @@
+import urllib2
+
+from flask import render_template, url_for, flash
+import requests
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
-from pepper.utils import send_email, s
-from pepper import settings
-from flask import render_template, url_for, flash
 
+from pepper import settings
+from pepper.utils import s, send_email
 
 def hash_pwd(password):
     return generate_password_hash(password)
@@ -41,3 +44,16 @@ def send_recruiter_invite(user):
     except Exception as e:
         g.log = g.log.bind(error=e)
         g.log.error('Unable to send recruiter email: ')
+
+
+def mlh_oauth_url():
+    return ('https://my.mlh.io/oauth/authorize?'
+            'client_id={0}&'
+            'redirect_uri={1}callback&'
+            'response_type=code&'
+            'scope=email+phone_number+demographics+birthday+education+event').format(
+                    settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
+
+
+def get_mlh_user_data(access_token):
+    return requests.get('https://my.mlh.io/api/v2/user.json', params={'access_token': access_token}).json()
