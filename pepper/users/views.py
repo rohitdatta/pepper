@@ -930,7 +930,13 @@ def initial_create():
             role.name = 'admin'
             DB.session.add(role)
             DB.session.commit()
-
-            return 'Successfully created initial admin user'
+            login_user(user, remember=True)
+            return redirect(url_for('admin-dash'))
     else:
         return 'Cannot create new admin'
+
+
+@login_required
+@roles_required('admin')
+def admin_dashboard():
+    return render_template('users/admin/dashboard.html')

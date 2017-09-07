@@ -31,6 +31,8 @@ def login():
             return redirect(url_for('corp-login'))
         login_user(user, remember=True)
         flash('Logged in successfully!', 'success')
+        if 'ADMIN' in user.roles:
+            return redirect(url_for('admin-dash'))
         return redirect(url_for('corp-dash'))
 
 
