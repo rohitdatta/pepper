@@ -143,6 +143,131 @@ def edit_profile():
             flash('Profile updated!', 'success')
             return redirect(url_for('dashboard'))
 
+#TODO: Finish this Method.
+@login_required
+def join_team():
+    # GET requests
+    if request.method == 'GET':
+        team = Team.query.filter_by(id=current_user.team_id).first()
+        if team is None:
+            return render_template('users/manage_team.html')
+        else:
+            return render_template('users/team.html', team=team)
+    # POST requests
+    else:
+        team = Team.query.filter_by(tname=request.form.get('join_tname')).first()
+        # Team doesn't exist so can't join
+        if team is None:
+            flash('Team does not exist. Try another team name.')
+        # Team does exist - check if joinable
+        else:
+            if team.team_count < 5:
+                g.log.info('Joining a team')
+                g.log = g.log.bind(tname=team_info['tname'])
+                g.log.info('Joining team from local information')
+                team.team_count += 1
+                # TODO: Check if this adds users to team?
+                team.users += current_user
+                DB.session.add(team)
+                DB.session.commit()
+                g.log.info('Successfully created team')
+
+                # TODO: Update user info
+                g.log.info('Updating user')
+                current_user.team_id = team.id
+                DB.session.add(current_user)
+                DB.session.commit()
+                g.log.info('Successfully updated user with team data')
+
+                return render_template('users/team.html', team=team)
+            else:
+                flash('Team size has reached capacity.')
+        return redirect(url_for('join-team'))
+
+#TODO: Finish this Method.
+@login_required
+def create_team():
+    # Create team
+    team_info = {
+        'tname': request.form.get('create_tname'),
+        'team_count': 1,
+        'users': list(current_user)
+    }
+    team = Team.query.filter_by(tname=team_info['tname']).first()
+    # Team can be created
+    if team is None:
+        g.log.info('Creating a team')
+        g.log = g.log.bind(tname=team_info['tname'])
+        g.log.info('Creating a new team from local information')
+        team = Team(team_info)
+        DB.session.add(team)
+        DB.session.commit()
+        g.log.info('Successfully created team')
+
+        # TODO: How to update user info?
+        g.log.info('Updating user')
+        current_user.team_id = team.id
+        DB.session.add(current_user)
+        DB.session.commit()
+        g.log.info('Successfully updated user with team data')
+
+        return render_template('users/team.html', team=team)
+    # Team cannot be created
+    else:
+        flash('Team name not valid',)
+        return redirect(url_for('join-team'))
+
+#TODO: Finish this Method.
+@login_required
+def leave_team():
+    team = Team.query.filter_by(id=current_user.team_id).first()
+    # There is valid team to leave.
+    if !(team is None):
+        # Delete user data on team
+        g.log.info('Leaving team')
+        g.log = g.log.bind(tname=team.tname)
+        team.team_count -= 1
+        g.log.info('Decrement team count')
+        # If teamcount is equal to 0, delete team data
+        if team.team_count == 0:
+            # delete team
+            DB.session.delete(team)
+            DB.session.commit()
+            g.log.info('Successfully deleted team')
+        # else update team info
+        else:
+            team.users.remove(current_user)
+            DB.session.add(team)
+            DB.session.commit()
+            g.log.info('Successfully left team')
+
+        # Update user
+        g.log.info('Updating user')
+        current_user.team_id = None
+        DB.session.add(current_user)
+        DB.session.commit()
+        g.log.info('Successfully updated user with no team data')
+    return render_template('users/manage_team.html')
+
+
+@login_required
+def rename_team():
+    team = Team.query.filter_by(id=current_user.team_id).first()
+    # Team is available
+    if team is None:
+        g.log.info('Renaming team')
+        g.log = g.log.bind(tname=request.form.get('rename_tname'))
+        g.log.info('Renaming team from local information')
+        team.tname = request.form.get('rename_tname')
+        DB.session.add(team)
+        DB.session.commit()
+        g.log.info('Successfully renamed team')
+    # Team is NOT available
+    else:
+        flash('Team name not valid')
+    return redirect(url_for('join-team'))
+
+
 
 @login_required
 def logout():

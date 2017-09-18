@@ -26,7 +26,15 @@ def configure_routes(app):
     app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
     app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_MLH, methods=['GET'])
     app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
-    app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
+    app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])    app.add_url_rule('/team', 'join_team', view_func=users.views.manage_team, methods=['GET', 'POST'])
+    
+    # Team action pages
+    app.add_url_rule('/team', 'join-team', view_func=users.views.join_team, methods=['GET', 'POST'])
+    app.add_url_rule('/team', 'create-team', view_func=users.views.create_team, methods=['POST'])
+    app.add_url_rule('/team', 'leave-team', view_func=users.views.leave_team, methods=['POST'])
+    app.add_url_rule('/team', 'rename-team', view_func=users.views.leave_team, methods=['POST'])
+
+
 
     # Admin Pages
     app.add_url_rule('/admin', 'admin-dash', view_func=users.views.admin_dashboard, methods=['GET'])
