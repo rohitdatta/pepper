@@ -6,7 +6,7 @@ from pepper.app import DB
 from sqlalchemy.exc import IntegrityError
 from pepper import settings
 from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
-from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite, mlh_oauth_url, get_mlh_user_data
+import helpers
 import keen
 from datetime import datetime
 from pytz import timezone
@@ -18,15 +18,65 @@ import urllib
 cst = timezone('US/Central')
 
 
+@helpers.redirect_to_dashboard_if_authed
 def landing():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
     return render_template("static_pages/index.html")
 
 
+@helpers.check_registration_opened
+@helpers.redirect_to_dashboard_if_authed
 def login():
-    return redirect(mlh_oauth_url())
+    if request.method == 'GET':
+        return render_template('users/login.html')
 
+    # handle login POST logic
+    email = request.form['email']
+    password = request.form['password']
+    user = User.query.filter_by(email=email).first()
+    if user is None:
+        flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
+        return redirect(url_for('login'))
+    elif not helpers.check_password(user.password, password):
+        flash('Invalid password. Please try again.', 'warning')
+        return redirect(url_for('login'))
+    login_user(user, remember=True)
+    flash('Logged in successfully!', 'success')
+    return redirect(url_for(helpers.get_default_dashboard_for_role()))
+
+
+@helpers.check_registration_opened
+@helpers.redirect_to_dashboard_if_authed
+def create_account():
+    if request.method == 'GET':
+        return render_template('users/sign_up.html')
+    # create account post logic 
+    fname = request.form['fname']
+    lname = request.form['lname']
+    email = request.form['email']
+    password = request.form['password']
+    user = User.query.filter_by(email=email).first()
+    if user is not None:
+        flash('An account with this email has already been made! Please log in.')
+        return redirect(url_for('login'))
+    user_info = {
+        'type': 'local',
+        'fname': fname,
+        'lname': lname,
+        'email': email,
+        'password': password,
+    }
+    user = User(user_info)
+    DB.session.add(user)
+    DB.session.commit()
+    g.log.info('Successfully created user')
+
+    token = s.dumps(user.email)
+    url = url_for('confirm-account', token=token, _external=True)
+    html = render_template('emails/confirm_account.html', link=url, user=user)
+    send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
+    login_user(user, remember=True)
+    return redirect(url_for('confirm-registration'))
+    
 
 def login_local():
     if request.method == 'GET':
@@ -43,7 +93,7 @@ def login_local():
         elif user.password is None:
             flash('This account has not been setup yet. Please click the login link in your setup email.')
             return redirect(url_for('login_local'))
-        elif not check_password(user.password, password):
+        elif not helpers.check_password(user.password, password):
             flash("Invalid Password. Please verify the password entered.", 'warning')
             return redirect(url_for('login_local'))
 
@@ -133,7 +183,7 @@ def edit_profile():
         }
         if request.form.get('new_password') == '':
             updated_user_info['password'] = request.form.get('old_password')
-        if not check_password(current_user.password, request.form.get('old_password')):
+        if not helpers.check_password(current_user.password, request.form.get('old_password')):
             flash('Profile update failed because of invalid Password. Please verify the password entered.', 'warning')
             return render_template('users/confirm.html', user=current_user)
         else:
@@ -167,7 +217,7 @@ def callback():
         g.log.error('Error Decoding JSON')
 
     if resp.status_code == 401:  # MLH sent expired token
-        redirect_url = mlh_oauth_url()
+        redirect_url = helpers.mlh_oauth_url()
 
         g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text,
                            redirect_url=redirect_url)
@@ -192,7 +242,7 @@ def callback():
     if user is None:  # create the user
         try:
             g.log.info('Creating a user')
-            user_info = get_mlh_user_data(access_token)
+            user_info = helpers.get_mlh_user_data(access_token)
             user_info['type'] = 'MLH'
             user_info['access_token'] = access_token
             g.log = g.log.bind(email=user_info['data']['email'])
@@ -426,7 +476,7 @@ def reset_password(token):
         # take the password they've submitted and change it accordingly
         if user:
             if request.form.get('password') == request.form.get('password-check'):
-                user.password = hash_pwd(request.form['password'])
+                user.password = helpers.hash_pwd(request.form['password'])
                 DB.session.add(user)
                 DB.session.commit()
                 login_user(user, remember=True)
@@ -449,7 +499,7 @@ def set_mlh_id():
         i = 0
         for user in mlh_users:
             if user.access_token is not None:
-                user_info = get_mlh_user_data(user.access_token)
+                user_info = helpers.get_mlh_user_data(user.access_token)
                 if 'data' in user_info:
                     user.mlh_id = user_info['data']['id']
                     DB.session.add(user)
@@ -462,7 +512,7 @@ def set_mlh_id():
 
 def update_user_data(type, local_updated_info=None):
     if type == 'MLH':
-        user_info = get_mlh_user_data(current_user.access_token)
+        user_info = helpers.get_mlh_user_data(current_user.access_token)
         if 'data' in user_info:
             current_user.email = user_info['data']['email']
             current_user.fname = user_info['data']['first_name']
@@ -490,7 +540,7 @@ def update_user_data(type, local_updated_info=None):
         current_user.phone_number = local_updated_info['phone_number']
         current_user.school_name = local_updated_info['school_name']
         current_user.special_needs = local_updated_info['special_needs']
-        current_user.password = hash_pwd(local_updated_info['password'])
+        current_user.password = helpers.hash_pwd(local_updated_info['password'])
         DB.session.add(current_user)
         DB.session.commit()
 
@@ -524,7 +574,7 @@ def dashboard():
 # Refresh the MyMLH profile info
 @login_required
 def refresh_from_MLH():
-    user_info = get_mlh_user_data(current_user.access_token)
+    user_info = helpers.get_mlh_user_data(current_user.access_token)
     if 'data' in user_info:
         current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
         current_user.special_needs = user_info['data']['special_needs']
@@ -751,7 +801,7 @@ def create_corp_user():
         g.log = g.log.bind(admin='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
         g.log.info('Created new corporate account')
         try:
-            send_recruiter_invite(user)
+            helpers.send_recruiter_invite(user)
             flash('Successfully invited {0} {1}'.format(user_data['fname'], user_data['lname']), 'success')
         except Exception:
             flash('Unable to send recruiter invite', 'error')
@@ -765,7 +815,7 @@ def resend_recruiter_invite():
     email = 'test@dhs2014.com'
     user = User.query.filter_by(email=email).first()
     try:
-        send_recruiter_invite(user)
+        helpers.send_recruiter_invite(user)
         return jsonify()
     except Exception as e:
         g.log = g.log.bind(error=e)

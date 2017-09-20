@@ -4,3 +4,7 @@ venv/
 .env
 .DS_Store
 *.dump
+
+# sass watch artifacts
+.sass-cache/
+*.css.map

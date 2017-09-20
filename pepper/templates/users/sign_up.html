@@ -5,15 +5,16 @@
   <div class="login-logo">
     <img src="{{ url_for('static', filename='branding/logo.png') }}" height=80>
   </div>
-  <h2>{{ config.HACKATHON_NAME }} Sign-in</h2>
+  <h2>Sign up for {{ config.HACKATHON_NAME }}!</h2>
   <form action="" method="post">
+    <input type="text" placeholder="First Name" name="fname" required>
+    <input type="text" placeholder="Last Name" name="lname" required>
     <input type="email" placeholder="Email" name="email" required>
     <input type="password" placeholder="Password" name="password" required>
     <div class="form-group">
-      <button type="submit">Sign in</button>
+      <button type="submit">Sign up</button>
     </div>
   </form>
-  <a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
-  <a href="{{ url_for('create_account') }}"><p>Don't have an account?</p></a>
+  <a href="{{ url_for('login') }}"><p>Already have an account?</p></a>
 </div>
 {% endblock %}

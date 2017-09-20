@@ -5,7 +5,8 @@ def configure_routes(app):
     app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
 
     # Logging in
-    app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
+    app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET', 'POST'])
+    app.add_url_rule('/create_account', 'create_account', view_func=users.views.create_account, methods=['GET', 'POST'])
     app.add_url_rule('/alt/login', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
     app.add_url_rule('/alt/login/reset', 'forgot-password', view_func=users.views.forgot_password,
                      methods=['GET', 'POST'])
