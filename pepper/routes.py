@@ -1,4 +1,4 @@
-import announcements, users, corporate, static_pages, api, volunteer
+import announcements, users, corporate, static_pages, api, volunteer, teams
 
 
 def configure_routes(app):
