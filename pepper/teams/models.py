@@ -8,7 +8,7 @@ class Team(DB.Model):
 	id = DB.Column(DB.Integer, primary_key=True)
 	tname = DB.Column(DB.String(255))
 	team_count = DB.Column(DB.Integer)
-	users = DB.relationship('User', backref='users', lazy='dynamic')
+	users = DB.relationship("User", back_populates="team")
 
 	def __init__(self, dict):
 		self.tname = dict['tname']

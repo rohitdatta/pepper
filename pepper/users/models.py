@@ -26,6 +26,7 @@ class User(DB.Model, UserMixin):
     special_needs = DB.Column(DB.Text)
     checked_in = DB.Column(DB.Boolean)
     roles = DB.relationship('UserRole', backref='users', lazy='dynamic')
+    team = DB.relationship("Team", back_populates="users")
     team_id = DB.Column(DB.Integer, DB.ForeignKey('teams.id', ondelete='CASCADE'))
     mlh_id = DB.Column(DB.Integer)
     access_token = DB.Column(DB.String(255))
