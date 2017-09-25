@@ -26,6 +26,8 @@ class User(DB.Model, UserMixin):
     special_needs = DB.Column(DB.Text)
     checked_in = DB.Column(DB.Boolean)
     roles = DB.relationship('UserRole', backref='users', lazy='dynamic')
+    team = DB.relationship("Team", back_populates="users")
+    team_id = DB.Column(DB.Integer, DB.ForeignKey('teams.id', ondelete='CASCADE'))
     mlh_id = DB.Column(DB.Integer)
     access_token = DB.Column(DB.String(255))
     password = DB.Column(DB.String(100))
@@ -83,10 +85,10 @@ class User(DB.Model, UserMixin):
             email = dict['email'].lower().strip()
             # email_validation = validate_email(email) #TODO: Email validation
             # if not email_validation['is_valid']:
-            # 	if email_validation['did_you_mean']:
-            # 		raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
-            # 	else:
-            # 		raise ValueError('%s is an invalid address' % email)
+            #   if email_validation['did_you_mean']:
+            #       raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
+            #   else:
+            #       raise ValueError('%s is an invalid address' % email)
 
             self.email = email
             self.fname = dict['fname']
