@@ -85,17 +85,10 @@ class User(DB.Model, UserMixin):
             email = dict['email'].lower().strip()
             # email_validation = validate_email(email) #TODO: Email validation
             # if not email_validation['is_valid']:
-<<<<<<< HEAD
-            #   if email_validation['did_you_mean']:
-            #       raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
-            #   else:
-            #       raise ValueError('%s is an invalid address' % email)
-=======
             # 	if email_validation['did_you_mean']:
             # 		raise ValueError('%s is an invalid address. Perhaps you meant %s' % (email, email_validation['did_you_mean']))
             # 	else:
             # 		raise ValueError('%s is an invalid address' % email)
->>>>>>> 24adb014fe9c7bca3fe6ed842bd7ceeeeb054184
 
             self.email = email
             self.fname = dict['fname']
