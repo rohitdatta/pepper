@@ -1,0 +1,24 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+<!-- team.html -->
+<script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/validate.js') }}"></script>
+
+<!-- Show information for people who already have a team -->
+<h2>Team</h2>
+<p>{{ team.tname }}</p>
+<h2>Teammates</h2>
+{% for user in team.users %}
+<p>{{ user.fname }} {{ user.lname }}</p>
+{% endfor %}
+
+<!-- Contains rename and leave team buttons -->
+<form method="POST" action="team" id="rename">
+	<input type="text" placeholder="Rename team" name="rename_tname">
+	<button type="submit" name="button" value="rename">Rename</button>
+</form>
+
+<form method="POST" action="team" id="leave">
+	<button type="submit" name="button" value="leave">Leave Team</button>
+	</form>
+{% endblock %}
