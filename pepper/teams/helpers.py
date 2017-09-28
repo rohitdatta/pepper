@@ -127,7 +127,7 @@ def rename_team(request):
         # DB.session.add(current_user)
         # DB.session.commit()
         # g.log.info('Successfully updated user with team data')
-        flash('Team has successfully been renamed to {{new_tname}}.','success')
+        flash('Team has successfully been renamed to ' + new_tname + '.','success')
         return render_template('teams/team.html', team=current_user.team, user=current_user)
     # Team is NOT available
     else:
