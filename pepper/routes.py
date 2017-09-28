@@ -1,6 +1,7 @@
 import announcements, users, corporate, static_pages, api, volunteer, teams
 
 
+
 def configure_routes(app):
     app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
 
