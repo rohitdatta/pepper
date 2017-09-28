@@ -28,20 +28,8 @@ def configure_routes(app):
     app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
     app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
     
-    # Team action pages
-    app.add_url_rule('/team', 'join-team', view_func=teams.views.join_team, methods=['GET', 'POST'])
-    app.add_url_rule('/team', 'create-team', view_func=teams.views.create_team, methods=['POST'])
-    app.add_url_rule('/team', 'leave-team', view_func=teams.views.leave_team, methods=['POST'])
-    app.add_url_rule('/team', 'rename-team', view_func=teams.views.leave_team, methods=['POST'])
-
-
-
-    # Team action pages
-    app.add_url_rule('/team/join-team', 'join-team', view_func=teams.views.join_team, methods=['GET', 'POST'])
-    app.add_url_rule('/team/create-team', 'create-team', view_func=teams.views.create_team, methods=['POST'])
-    app.add_url_rule('/team/leave-team', 'leave-team', view_func=teams.views.leave_team, methods=['POST'])
-    app.add_url_rule('/team/rename-team', 'rename-team', view_func=teams.views.leave_team, methods=['POST'])
-
+    # Team action
+    app.add_url_rule('/team', 'team', view_func=teams.views.team, methods=['GET', 'POST'])
 
     # Admin Pages
     app.add_url_rule('/admin', 'admin-dash', view_func=users.views.admin_dashboard, methods=['GET'])
