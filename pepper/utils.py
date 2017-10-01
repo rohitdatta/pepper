@@ -33,7 +33,7 @@ def roles_required(*role_names):
         def decorated_view(*args, **kwargs):
             if not g.user.is_authenticated:
                 return redirect(url_for('corp-login'))
-            user_roles = [role.name for role in get_current_user_roles()]
+            user_roles = get_current_user_roles()
             authorized = False
             for role in role_names:
                 if role in user_roles:
@@ -49,7 +49,7 @@ def roles_required(*role_names):
 
 
 def get_current_user_roles():
-    return g.user.roles
+    return set(role.name for role in g.user.roles)
 
 
 # Require user to be logged in and redirect unauthenticated users to corporate login screen

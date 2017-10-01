@@ -1,22 +1,14 @@
-$('input[type=checkbox]').mousedown(function (event) {
-    // Toggle checkstate logic
-	alert('Hello');
-    event.preventDefault(); // this would stop mousedown from continuing and would not focus
-});
-
 $(document).ready(function() {
-	$('input.no-race').on('change', function() {
-    	$('input.other-race').not(this).prop('checked', false);
+    $('input.no-race').on('change', function() {
+        $('input.other-race').not(this).prop('checked', false);
 	});
-	$('input.other-race').on('change', function() {
-    	$('input.no-race').not(this).prop('checked', false);
-	});
-});
+    $('input.other-race').on('change', function() {
+        $('input.no-race').not(this).prop('checked', false);
+    });
 
-$(document).ready(function() {
     $(".number").keydown(function (e) {
-        // Allow: backspace, delete, tab, escape, enter and .
-        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) !== -1 ||
+        // Allow: backspace, delete, tab, escape, and enter
+        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
              // Allow: Ctrl+A
             (e.keyCode == 65 && e.ctrlKey === true) ||
              // Allow: Ctrl+C
@@ -33,4 +25,11 @@ $(document).ready(function() {
             e.preventDefault();
         }
     });
+
+    function toggleCampusAmbassador() {
+        $(".campus-ambassador-fields").toggle($(".campus-ambassador-checkbox").is(":checked"));
+    }
+    toggleCampusAmbassador();
+
+    $(".campus-ambassador-checkbox").on("change", toggleCampusAmbassador);
 });

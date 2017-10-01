@@ -14,6 +14,11 @@
     </div>
   </form>
   <a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
-  <a href="{{ url_for('create_account') }}"><p>Don't have an account?</p></a>
+  <a href="{{ url_for('sign-up') }}"><p>Don't have an account?</p></a>
+  <hr>
+  <p>Or sign in with</p>
+  <a href="{{ mlh_oauth_url }}" class="my-mlh-link">
+    <button type="submit">Sign in with MyMLH</button>
+  </a>
 </div>
 {% endblock %}

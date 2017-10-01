@@ -1,9 +1,4 @@
 @import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
-.required::after {
-  content: "*";
-  color: #CB0922;
-  text-shadow: none; }
-
 .results .fa-times-circle {
   color: #CB0922; }
 @media (min-width: 992px) {
@@ -20,8 +15,6 @@
 
 .search input[type=text], .search form input[type=number], form .search input[type=number], .search form textarea, form .search textarea {
   text-align: left; }
-.search .select {
-  width: 100%; }
 .search .chosen-container {
   width: 100% !important; }
 .search .row {
@@ -90,6 +83,8 @@ body {
       text-decoration: none; }
     body a:active {
       color: white; }
+    body a:visited {
+      color: #bbb9ea; }
   body h1, body h2, body h3 {
     color: #EAF0CE;
     text-shadow: 1.5px 1.5px 1.5px #CB0922; }
@@ -179,7 +174,7 @@ form .control {
   padding-left: 30px;
   margin-bottom: 15px;
   cursor: pointer;
-  font-size: 18px; }
+  font-size: 16px; }
 form .control input {
   position: absolute;
   z-index: -1;
@@ -231,11 +226,12 @@ form .control--radio input:disabled ~ .control__indicator:after {
 form .select {
   position: relative;
   display: inline-block;
-  margin-bottom: 15px;
   width: 100%; }
 form .select select {
   display: inline-block;
+  text-align: center;
   width: 100%;
+  margin: 0 auto 10px auto;
   cursor: pointer;
   padding: 10px 15px;
   outline: 0;
@@ -276,51 +272,44 @@ form label {
   font-size: 12pt; }
   form label.title {
     font-size: 24pt; }
+form p {
+  font-size: 16px; }
+form .info-field, form input[type=text].info-field, form input.info-field[type=number], form textarea.info-field, form input[type=date].info-field {
+  width: 100%;
+  margin: 0 10px 10px 0;
+  font-size: 16px;
+  text-align: left; }
+form .required::after {
+  content: " *";
+  color: #CB0922;
+  text-shadow: none; }
 form input[type=text], form input[type=number], form textarea, form input[type=password], form input[type=date], form input[type=email], form input[type=tel] {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   outline: 0;
+  width: 250px;
+  margin: 0 auto 10px auto;
+  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.4);
   background-color: rgba(255, 255, 255, 0.2);
-  width: 250px;
   border-radius: 3px;
   padding: 10px 15px;
-  margin: 0 auto 10px auto;
+  margin-bottom: 10px;
   display: block;
-  text-align: center;
-  font-size: 18px;
   color: #FFF;
   -webkit-transition-duration: 0.25s;
   transition-duration: 0.25s;
-  font-weight: 300;
-  transition-duration: 0.25s;
   font-weight: 300; }
-  form input[type=text].no-expand:focus, form input.no-expand[type=number]:focus, form textarea.no-expand:focus, form input[type=password].no-expand:focus, form input[type=date].no-expand:focus, form input[type=email].no-expand:focus, form input[type=tel].no-expand:focus {
-    width: 250px; }
   form input[type=text]::selection, form input[type=number]::selection, form textarea::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection, form input[type=tel]::selection {
     color: white;
     background: rgba(9, 116, 137, 0.75);
     /* WebKit/Blink Browsers */ }
-  form input[type=text] ::-moz-selection, form input[type=number] ::-moz-selection, form textarea ::-moz-selection, form input[type=password] ::-moz-selection, form input[type=date] ::-moz-selection, form input[type=email] ::-moz-selection, form input[type=tel] ::-moz-selection {
-    background: #000;
-    /* Gecko Browsers */ }
-  @media (min-width: 992px) {
-    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width, form input[type=tel].double-width {
-      width: 525px; }
-      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus, form input[type=tel].double-width:focus {
-        width: 525px; } }
-  @media (max-width: 992px) {
-    form input[type=text].double-width, form input.double-width[type=number], form textarea.double-width, form input[type=password].double-width, form input[type=date].double-width, form input[type=email].double-width, form input[type=tel].double-width {
-      width: 250px; }
-      form input[type=text].double-width:focus, form input.double-width[type=number]:focus, form textarea.double-width:focus, form input[type=password].double-width:focus, form input[type=date].double-width:focus, form input[type=email].double-width:focus, form input[type=tel].double-width:focus {
-        width: 250px; } }
   form input[type=text]:hover, form input[type=number]:hover, form textarea:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover, form input[type=tel]:hover {
     background-color: rgba(255, 255, 255, 0.4); }
   form input[type=text]:focus, form input[type=number]:focus, form textarea:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus, form input[type=tel]:focus {
     background-color: white;
-    color: #124e78;
-    width: 300px; }
+    color: #124e78; }
 form input[type=number] {
   display: inline;
   width: 100px; }
@@ -330,6 +319,7 @@ form textarea {
   display: inline;
   width: 100%;
   text-align: left;
+  resize: none;
   color: white; }
   form textarea:focus {
     width: 100%;
@@ -381,5 +371,11 @@ body {
 
 .login-logo {
   margin: 20px; }
+
+input[type=text].fullwidth, form input.fullwidth[type=number], form textarea.fullwidth {
+  width: 100%;
+  text-align: left; }
+  input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus, form textarea.fullwidth:focus {
+    width: 100%; }
 
 /*# sourceMappingURL=main.css.map */

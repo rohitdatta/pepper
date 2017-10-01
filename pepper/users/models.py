@@ -34,6 +34,14 @@ class User(DB.Model, UserMixin):
     num_hackathons = DB.Column(DB.Integer)
     interests = DB.Column(DB.Text)
     race = DB.Column(DB.String(255))
+    needs_travel_reimbursement = DB.Column(DB.Boolean)
+    most_nervous = DB.Column(DB.Text)
+    most_excited = DB.Column(DB.Text)
+    expectations = DB.Column(DB.Text)
+    workshops = DB.Column(DB.Text)
+    campus_ambassador = DB.Column(DB.Boolean)
+    facebook_account = DB.Column(DB.String(100))
+    campus_ambassadors_application = DB.Column(DB.Text)
     med_auth_signature_id = DB.Column(DB.String(255))
     waiver_signature_id = DB.Column(DB.String(255))
     time_applied = DB.Column(DB.DateTime)
@@ -57,22 +65,19 @@ class User(DB.Model, UserMixin):
             self.mlh_id = info['data']['id']
             self.type = 'MLH'
             self.access_token = info['access_token']
-            self.resume_uploaded = False
             self.school_id = info['data']['school']['id']
             self.school_name = info['data']['school']['name']
         elif info['type'] == 'local':  # if creating an user through local sign up
             self.email = info['email']
-            self.fname = info['fname']
-            self.lname = info['lname']
             self.password = hash_pwd(info['password'])
             self.created = datetime.utcnow()
             self.type = 'local'
             self.status = 'NEW'
             self.checked_in = False
-            self.resume_uploaded = False
             self.confirmed = False
 
             # TODO: defer to application page
+            """
             self.birthday = info['date_of_birth']
             self.major = info['major']
             self.shirt_size = info['shirt_size']
@@ -81,6 +86,7 @@ class User(DB.Model, UserMixin):
             self.phone_number = info['phone_number']
             self.special_needs = info['special_needs']
             self.school_name = info['school_name']
+            """
         else:  # creating a non-OAuth user
             email = info['email'].lower().strip()
             # email_validation = validate_email(email) #TODO: Email validation
