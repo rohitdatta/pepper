@@ -1,14 +1,12 @@
 from datetime import datetime
-import urllib2
 
 import batch
 import helpers
-from helpers import check_password, hash_pwd, send_recruiter_invite
-from models import User, UserRole
+from models import User
 from pepper import settings
 from pepper.app import DB, q
 from pepper.legal.models import Waiver
-from pepper.utils import calculate_age, get_current_user_roles, roles_required, s, s3, send_email, ts
+from pepper.utils import calculate_age, get_current_user_roles, roles_required, s3, serializer, timed_serializer
 
 from flask import flash, g, jsonify, make_response, redirect, render_template, request, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
@@ -16,8 +14,6 @@ import keen
 from pytz import timezone
 import redis
 import requests
-from rq.job import Job
-from sqlalchemy import or_, and_
 from sqlalchemy.exc import IntegrityError
 
 cst = timezone('US/Central')
@@ -53,12 +49,8 @@ def sign_up():
     DB.session.add(user)
     DB.session.commit()
     g.log.info('Successfully created user from sign-up flow')
+    q.enqueue(batch.send_confirmation_email, user.id)
 
-    # TODO: put in worker queue
-    token = s.dumps(user.email)
-    url = url_for('confirm-account', token=token, _external=True)
-    html = render_template('emails/confirm_account.html', link=url, user=user)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
     login_user(user, remember=True)
     return redirect(url_for('complete-registration'))
 
@@ -242,13 +234,7 @@ def complete_user_sign_up():
             'special_needs': current_user.special_needs
         })
 
-    # send a confirmation email
-    html = render_template('emails/applied.html', user=current_user)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
-               .format(settings.HACKATHON_NAME), current_user.email,
-               txt_content=None, html_content=html)
-    g.log.info('Successfully sent a confirmation email')
-
+    q.enqueue(batch.send_applied_email, current_user.id)
     flash(
         'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
         settings.HACKATHON_NAME), 'success')
@@ -360,20 +346,18 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = ts.dumps(user.email, salt='recover-key')
-            url = url_for('reset-password', token=token, _external=True)
-            html = render_template('emails/reset_password.html', user=user, link=url)
-            txt = render_template('emails/reset_password.txt', user=user, link=url)
-            send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
+            token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
+            q.enqueue(batch.send_forgot_password_email, user.id, token)
         flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
-        return redirect(url_for('login_local'))
+        return redirect(url_for('login'))
 
 
 def reset_password(token):
     try:
-        email = ts.loads(token, salt='recover-key', max_age=86400)
+        email = timed_serializer.loads(token, salt=settings.RECOVER_SALT, max_age=86400)
         user = User.query.filter_by(email=email).first()
-    except:
+    except Exception as e:
+        g.log.error('error: {}'.format(e))
         return render_template('layouts/error.html', error="That's an invalid link"), 401
 
     if request.method == 'GET':
@@ -400,7 +384,7 @@ def reset_password(token):
 
 def confirm_account(token):
     try:
-        email = s.loads(token)
+        email = serializer.loads(token)
         user = User.query.filter_by(email=email).first()
         user.confirmed = True
         DB.session.add(user)
@@ -513,7 +497,7 @@ def accept():
 						"you cannot change your response."
 				.format(settings.HACKATHON_NAME),
 			None: "Corporate users cannot view this page."
-		}
+        }
         if current_user.status in message:
             flash(message[current_user.status], 'error')
         return redirect(url_for('dashboard'))
@@ -643,12 +627,8 @@ def sign():
             'special_needs': current_user.special_needs
         })
 
-        # send email saying that they are confirmed to attend
-        html = render_template('emails/application_decisions/confirmed_invite.html', user=current_user)
-        send_email(settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME),
-                   current_user.email, html_content=html)
+        q.enqueue(batch.send_attending_email, current_user.id)
 
         flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
         return redirect(url_for('dashboard'))
-
 """

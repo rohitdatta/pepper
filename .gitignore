@@ -8,3 +8,6 @@ venv/
 # sass watch artifacts
 .sass-cache/
 *.css.map
+
+# redis queue artifact
+*.rdb

@@ -56,7 +56,8 @@ def configure_routes(app):
                      view_func=users.admin_views.check_in_post, methods=['POST'])
     app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.admin_views.set_mlh_id,
                      methods=['GET', 'POST'])
-	app.add_url_rule('/admin/job/<job_key>', view_func=users.views.job_view, methods=['GET'])
+    app.add_url_rule('/admin/job/<job_key>', 'worker-jobs', view_func=users.admin_views.job_view,
+                     methods=['GET'])
 
     # API
     """

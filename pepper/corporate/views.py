@@ -2,7 +2,7 @@ from flask import request, render_template, flash, redirect, url_for, g, make_re
 from flask.ext.login import login_user, current_user
 from pepper.users import User
 from helpers import check_password
-from pepper.utils import corp_login_required, roles_required, s3, ts, s, send_email
+from pepper.utils import corp_login_required, roles_required, s3, serializer, timed_serializer, send_email
 from pepper import settings
 from sqlalchemy import distinct, and_
 from pepper.app import DB
@@ -38,7 +38,7 @@ def login():
 
 def new_user_setup(token):
     try:
-        email = s.loads(token)
+        email = serializer.loads(token)
         user = User.query.filter_by(email=email).first()
         if user.password is not None:
             flash('User has already been setup. If you need to change the password, please reset your password.',
@@ -85,7 +85,7 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = ts.dumps(user.email, salt='recover-key')
+            token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
             url = url_for('corp-reset-password', token=token, _external=True)
             html = render_template('emails/reset_password.html', user=user, link=url)
             txt = render_template('emails/reset_password.txt', user=user, link=url)
@@ -96,7 +96,7 @@ def forgot_password():
 
 def reset_password(token):
     try:
-        email = ts.loads(token, salt='recover-key', max_age=86400)
+        email = timed_serializer.loads(token, salt=settings.RECOVER_SALT, max_age=86400)
         user = User.query.filter_by(email=email).first()
     except:
         return render_template('layouts/error.html', error="That's an invalid link"), 401

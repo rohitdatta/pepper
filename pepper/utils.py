@@ -14,8 +14,8 @@ resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
                     aws_secret_access_key=settings.AWS_SECRET_KEY)
 s3_client = boto3.client('s3')
-ts = URLSafeTimedSerializer(settings.SECRET_KEY)
-s = URLSafeSerializer(settings.SECRET_KEY)
+timed_serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
+serializer = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 
 
@@ -64,6 +64,12 @@ def corp_login_required(f):
 
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
+    # TODO: get rid of debug path
+    if settings.DEBUG:
+        print u'Sending an email with subject {} to email {}'.format(subject, to_email)
+        print u'Email content is:\n{}'.format((txt_content or '') + (html_content or ''))
+        return
+
     mail = Mail()
     mail.set_from(Email(from_email, settings.HACKATHON_NAME))
     personalization = Personalization()
