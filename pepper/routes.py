@@ -5,55 +5,66 @@ import announcements, users, corporate, static_pages, api, volunteer, teams
 def configure_routes(app):
     app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
 
-    # Logging in
-    app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET'])
-    app.add_url_rule('/alt/login', 'login_local', view_func=users.views.login_local, methods=['GET', 'POST'])
-    app.add_url_rule('/alt/login/reset', 'forgot-password', view_func=users.views.forgot_password,
+    # Signing Up/Registration
+    app.add_url_rule('/register', 'sign-up', view_func=users.views.sign_up, methods=['GET', 'POST'])
+    app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
+    app.add_url_rule('/complete_mlh_registration', 'complete-mlh-registration', view_func=users.views.complete_mlh_registration, methods=['GET', 'POST'])
+    app.add_url_rule('/complete_registration', 'complete-registration', view_func=users.views.complete_registration, methods=['GET', 'POST'])
+    app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET', 'POST'])
+    app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
+    app.add_url_rule('/login/reset', 'forgot-password', view_func=users.views.forgot_password,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/alt/login/reset/<token>', 'reset-password', view_func=users.views.reset_password,
+    app.add_url_rule('/login/reset/<token>', 'reset-password', view_func=users.views.reset_password,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/register', 'register_local', view_func=users.views.register_local, methods=['GET', 'POST'])
     app.add_url_rule('/register/confirm/<token>', 'confirm-account', view_func=users.views.confirm_account,
                      methods=['GET'])
-    app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
-    app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
 
     # User action pages
-    app.add_url_rule('/edit_profile', 'edit_profile', view_func=users.views.edit_profile, methods=['GET', 'POST'])
-    app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
-    app.add_url_rule('/confirm', 'confirm-registration', view_func=users.views.confirm_registration,
+    app.add_url_rule('/edit_profile', 'edit-profile', view_func=users.views.edit_profile,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/profile', 'update-profile', view_func=users.views.edit_resume, methods=['GET', 'POST'])
+    app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
+    """
     app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
-    app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_MLH, methods=['GET'])
+    app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_mlh, methods=['GET'])
     app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
     app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
-    
-    # Team action
+    """
+
+    # Team actions
     app.add_url_rule('/team', 'team', view_func=teams.views.team, methods=['GET', 'POST'])
 
     # Admin Pages
-    app.add_url_rule('/admin', 'admin-dash', view_func=users.views.admin_dashboard, methods=['GET'])
-    app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.views.create_corp_user,
+    app.add_url_rule('/admin', 'admin-dash', view_func=users.admin_views.admin_dashboard,
+                     methods=['GET'])
+    app.add_url_rule('/admin/create-corp-user', 'create-corp', view_func=users.admin_views.create_corp_user,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/admin/debug', 'debug-user', view_func=users.views.debug_user, methods=['GET', 'POST'])
-    app.add_url_rule('/admin/initial-create', 'initial-create', view_func=users.views.initial_create,
+    app.add_url_rule('/admin/debug', 'debug-user', view_func=users.admin_views.debug_user,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/admin/batch', 'batch-modify', view_func=users.views.batch_modify, methods=['GET', 'POST'])
-    app.add_url_rule('/admin/send-email', 'send-email', view_func=users.views.send_email_to_users,
+    app.add_url_rule('/admin/initial-create', 'initial-create',
+                     view_func=users.admin_views.initial_create, methods=['GET', 'POST'])
+    app.add_url_rule('/admin/batch', 'batch-modify', view_func=users.admin_views.batch_modify,
                      methods=['GET', 'POST'])
+    app.add_url_rule('/admin/send-email', 'send-email',
+                     view_func=users.admin_views.send_email_to_users, methods=['GET', 'POST'])
     app.add_url_rule('/admin/volunteer-list', 'volunteer-list', view_func=volunteer.views.volunteer_list,
                      methods=['GET'])
-    app.add_url_rule('/admin/add-volunteer', 'add-volunteer', view_func=volunteer.views.add_volunteer, methods=['POST'])
-    app.add_url_rule('/admin/reject', 'reject-users', view_func=users.views.reject_users, methods=['GET', 'POST'])
-    app.add_url_rule('/admin/modify-user', 'modify-user', view_func=users.views.modify_user, methods=['GET', 'POST'])
-    app.add_url_rule('/admin/check-in', 'manual-check-in', view_func=users.views.check_in_manual,
+    app.add_url_rule('/admin/add-volunteer', 'add-volunteer',
+                     view_func=volunteer.views.add_volunteer, methods=['POST'])
+    app.add_url_rule('/admin/reject', 'reject-users', view_func=users.admin_views.reject_users,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/admin/check-in-post', 'manual-check-in-post', view_func=users.views.check_in_post,
-                     methods=['POST'])
-    app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.views.set_mlh_id, methods=['GET', 'POST'])
+    app.add_url_rule('/admin/modify-user', 'modify-user', view_func=users.admin_views.modify_user,
+                     methods=['GET', 'POST'])
+    app.add_url_rule('/admin/check-in', 'manual-check-in',
+                     view_func=users.admin_views.check_in_manual, methods=['GET', 'POST'])
+    app.add_url_rule('/admin/check-in-post', 'manual-check-in-post',
+                     view_func=users.admin_views.check_in_post, methods=['POST'])
+    app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.admin_views.set_mlh_id,
+                     methods=['GET', 'POST'])
+    app.add_url_rule('/admin/job/<job_key>', 'worker-jobs', view_func=users.admin_views.job_view,
+                     methods=['GET'])
 
     # API
+    """
     app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list,
                      methods=['GET'])
     app.add_url_rule('/api/announcements/create', 'create-announcement',
@@ -84,3 +95,4 @@ def configure_routes(app):
 
     app.add_url_rule('/corp/download/all-resumes', 'all-resume-download',
                      view_func=corporate.views.download_all_resumes, methods=['GET'])
+    """

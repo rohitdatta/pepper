@@ -5,20 +5,20 @@
   <div class="login-logo">
     <img src="{{ url_for('static', filename='branding/logo.png') }}" height=80>
   </div>
-  <h2>{{ config.HACKATHON_NAME }} Sign-in</h2>
+  <h2>Create an Account</h2>
   <form action="" method="post">
     <input type="email" placeholder="Email" name="email" required>
     <input type="password" placeholder="Password" name="password" required>
+    <input type="password" placeholder="Confirm Password" name="password-check" required>
     <div class="form-group">
-      <button type="submit">Sign in</button>
+      <button type="submit">Sign up</button>
     </div>
   </form>
-  <a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
-  <a href="{{ url_for('sign-up') }}"><p>Don't have an account?</p></a>
+  <p>Already have an account? Log in <a href="{{ url_for('login') }}">here</a>.</p>
   <hr>
-  <p>Or sign in with</p>
+  <p>Or connect with</p>
   <a href="{{ mlh_oauth_url }}" class="my-mlh-link">
-    <button type="submit">Sign in with MyMLH</button>
+    <button type="submit">Sign up with MyMLH</button>
   </a>
 </div>
 {% endblock %}
