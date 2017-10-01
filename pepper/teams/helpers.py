@@ -20,8 +20,13 @@ def join_team(request):
         g.log = g.log.bind(tname=request.form.get('join_tname'))
         g.log.info('Joining team from local information')
         team.users.append(current_user)
-        DB.session.add(team)
-        DB.session.commit()
+        try:
+            DB.session.add(team)
+            DB.session.commit()
+        except Exception as e:
+            g.log.error('error occurred while joining team: {}'.format(e))
+            flash('The team you were trying to join either does not exist or is full. If this error occurs multiple times, please contact us', 'error')
+            return redirect(request.url)
         g.log.info('Successfully created team')
 
         flash('Successfully joined team.','success')
@@ -47,8 +52,13 @@ def create_team(request):
         g.log = g.log.bind(tname=tname)
         g.log.info('Creating a new team from local information')
         team = Team(tname, current_user)
-        DB.session.add(team)
-        DB.session.commit()
+        try:
+            DB.session.add(team)
+            DB.session.commit()
+        except Exception as e:
+            g.log.error('error occurred while creating team: {}'.format(e))
+            flash('The team you were trying to create already exists. If this error occurs multiple times, please contact us', 'error')
+            return redirect(request.url)
         g.log.info('Successfully created team')
 
         flash('Successfully created team!','success')
@@ -76,8 +86,13 @@ def leave_team(request):
             g.log.info('Successfully left team')
         else:
             # delete an empty team
-            DB.session.delete(team)
-            DB.session.commit()
+            try:
+                DB.session.delete(team)
+                DB.session.commit()
+            except Exception as e:
+                g.log.error('error leaving team: {}'.format(e))
+                flash('An error occurred. Please try again.', 'error')
+                return redirect(request.url)
             g.log.info('Successfully deleted team')
         g.log.info('current user team: {}'.format(current_user.team_id))
         flash('You have left the team.','success')

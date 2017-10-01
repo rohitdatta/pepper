@@ -9,7 +9,7 @@ class User(DB.Model, UserMixin):
     __tablename__ = 'users'
 
     id = DB.Column(DB.Integer, primary_key=True)
-    email = DB.Column(DB.String(128))
+    email = DB.Column(DB.String(128), unique=True)
     fname = DB.Column(DB.String(128))
     lname = DB.Column(DB.String(128))
     status = DB.Column(DB.String(255))
