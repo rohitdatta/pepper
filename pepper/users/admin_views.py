@@ -52,7 +52,8 @@ def admin_dashboard():
 @roles_required('admin')
 def create_corp_user():
     if request.method == 'GET':
-        unverified_users = User.query.filter(and_(User.type == 'corporate', User.password == None)).all()
+		unverified_users = User.query.filter(and_(User.type == 'corporate',
+                                                  User.password is None)).all()
         return render_template('users/admin/create_user.html', unverified=unverified_users)
     else:
         # Build a user based on the request form
@@ -93,97 +94,61 @@ def debug_user():
 @login_required
 @roles_required('admin')
 def batch_modify():
-    if request.method == 'GET':
-        users = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).all()
-        return render_template('users/admin/accept_users.html', users=users)
-    else:
-        g.log.info('Starting acceptances')
-        modify_type = request.form.get('type')
-        num_to_accept = int(request.form.get('num_to_accept'))
-        if modify_type == 'fifo':
-            accepted_attendees = User.query.filter_by(status='WAITLISTED').order_by(User.time_applied.asc()).limit(
-                num_to_accept).all()
-            for attendee in accepted_attendees:
-                attendee.status = 'ACCEPTED'
-                DB.session.commit()
-                html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-                send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                           attendee.email, html_content=html)
-                g.log = g.log.bind(email=attendee.email)
-                g.log.info('Sent email to')
-        else:  # randomly select n users out of x users
-            random_pool = User.query.filter(or_(User.status == 'PENDING', User.status == 'WAITLISTED')).all()
-            accepted = random.sample(set(random_pool), num_to_accept)
-            for attendee in accepted:
-                if attendee.status == 'PENDING':
-                    html = render_template('emails/application_decisions/accepted.html', user=attendee)
-                else:  # they got off waitlist
-                    html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-                attendee.status = 'ACCEPTED'
-                DB.session.commit()
-                send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                           attendee.email, html_content=html)
-
-            # set everyone else to go from pending to waitlisted
-            pending_attendees = User.query.filter_by(status='PENDING').all()
-            for pending_attendee in pending_attendees:
-                pending_attendee.status = 'WAITLISTED'
-                html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
-                DB.session.commit()
-                send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME),
-                           pending_attendee.email, html_content=html)
-            # x = request.form.get('x') if request.form.get(
-            # 	'x') is not 0 else -1  # TODO it's the count of users who are pending
-        # TODO: figure out how to find x random numbers
-        flash('Finished acceptances', 'success')
-        g.log.info('Finished acceptances')
-        return redirect(request.url)
+	if request.method == 'GET':
+		users = User.query.filter_by(status='PENDING').order_by(User.time_applied.asc()).all()
+		return render_template('users/admin/accept_users.html', users=users)
+	else:
+		g.log.info('Starting acceptances')
+		modify_type = request.form.get('type')
+		num_to_accept = int(request.form.get('num_to_accept'))
+		include_waitlist = request.form.get('include_waitlist', True) == 'true'
+		if modify_type == 'fifo':
+			q.enqueue(batch.accept_fifo, num_to_accept, include_waitlist)
+		else:  # randomly select n users out of x users
+			q.enqueue(batch.random_accept, num_to_accept, include_waitlist)
+		flash('Worker is running acceptances', 'success')
+		g.log.info('Acceptances have been queued')
+		return redirect(request.url)
 
 
 @login_required
 @roles_required('admin')
 def send_email_to_users():
-    if request.method == 'GET':
-        return render_template('users/admin/send_email.html')
-    else:
-        statuses = request.form.getlist('status')
-        users = User.query.filter(and_(User.status.in_(statuses), User.checked_in == 'true'))
-        foo = users.all()
-        content = request.form.get('content')
-        lines = content.split('\r\n')
-        msg_body = u""
-        i = 0
-        for line in lines:
-            msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
-        for user in users:
-            html = render_template('emails/generic_message.html', content=msg_body)
-            html = render_template_string(html, user=user)
-            send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
-            print 'Sent Email' + str(i)
-            i += 1
-        flash('Successfully sent', 'success')
-        return 'Done'
+	if request.method == 'GET':
+		return render_template('users/admin/send_email.html')
+	else:
+		statuses = request.form.getlist('status')
+		users = User.query.filter(and_(User.status.in_(statuses)))
+		q.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'), users.all())
+		flash('Successfully sent', 'success')
+		return 'Done'
+
+
+# TODO: Needs auth annotations?
+def job_view(job_key):
+	job = Job.fetch(job_key, connection=redis.from_url(settings.REDIS_URL))
+	if job.is_finished:
+		return 'Finished'
+	else:
+		return 'Nope'
 
 
 @login_required
 @roles_required('admin')
 def reject_users():
-    if request.method == 'GET':
-        return render_template('users/admin/reject_users.html')
-    else:
-        users = User.query.filter(and_(or_(User.status == 'WAITLISTED'), User.school_id == 23)).all()
-        i = 0
-        for user in users:
-            html = render_template('emails/application_decisions/rejected.html', user=user)
-            send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
-            user.status = 'REJECTED'
-            DB.session.add(user)
-            DB.session.commit()
-            print 'Rejected {}'.format(user.email)
-            print i
-            i += 1
-        flash('Finished rejecting', 'success')
-        return redirect(request.url)
+	if request.method == 'GET':
+		return render_template('users/admin/reject_users.html')
+	else:
+		users = User.query.filter(and_(or_(User.status == 'WAITLISTED'), User.school_id == 23)).all()
+		for user in users:
+			html = render_template('emails/application_decisions/rejected.html', user=user)
+			send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
+			user.status = 'REJECTED'
+			DB.session.add(user)
+			DB.session.commit()
+			print 'Rejected {}'.format(user.email)
+		flash('Finished rejecting', 'success')
+		return redirect(request.url)
 
 
 @login_required

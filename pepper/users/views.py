@@ -1,20 +1,27 @@
 from datetime import datetime
+import urllib2
 
+import batch
 import helpers
-from models import User
+from helpers import check_password, hash_pwd, send_recruiter_invite
+from models import User, UserRole
 from pepper import settings
-from pepper.app import DB
+from pepper.app import DB, q
 from pepper.legal.models import Waiver
-from pepper.utils import s3, send_email, s, ts, get_current_user_roles
+from pepper.utils import calculate_age, get_current_user_roles, roles_required, s, s3, send_email, ts
 
-from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response
-from flask.ext.login import login_user, logout_user, current_user, login_required
+from flask import flash, g, jsonify, make_response, redirect, render_template, request, url_for
+from flask.ext.login import current_user, login_required, login_user, logout_user
 import keen
 from pytz import timezone
+import redis
 import requests
+from rq.job import Job
+from sqlalchemy import or_, and_
 from sqlalchemy.exc import IntegrityError
 
 cst = timezone('US/Central')
+tz = timezone('US/Central')
 
 
 @helpers.redirect_to_dashboard_if_authed
@@ -97,7 +104,7 @@ def callback():
             user_info['type'] = 'MLH'
             user_info['access_token'] = access_token
             g.log = g.log.bind(email=user_info['data']['email'])
-            user = User.query.filter_by(email=user_info['data']['email']).first()
+            user = User.query.filter_by(mlh_id=user_info['data']['id']).first()
             if user is None:
                 if settings.REGISTRATION_OPEN:
                     g.log.info('Creating a new user from MLH info')
@@ -237,8 +244,9 @@ def complete_user_sign_up():
 
     # send a confirmation email
     html = render_template('emails/applied.html', user=current_user)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME),
-               current_user.email, txt_content=None, html_content=html)
+    send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
+               .format(settings.HACKATHON_NAME), current_user.email,
+               txt_content=None, html_content=html)
     g.log.info('Successfully sent a confirmation email')
 
     flash(
@@ -340,8 +348,8 @@ def edit_profile():
             return redirect(request.url)
 
         helpers.update_user_info(current_user, user_info, commit=True)
-
         flash('Successfully updated profile!', 'success')
+
     return render_template('users/edit_information.html', required=False, user=current_user)
 
 
@@ -434,9 +442,10 @@ def dashboard():
     return render_template('users/dashboard/pending.html', user=current_user)
 
 
-# Refresh the MyMLH profile info
+
+#  Refresh the MyMLH profile info
 @login_required
-def refresh_from_MLH():
+def refresh_from_mlh():
     user_info = helpers.get_mlh_user_data(current_user.access_token)
     if 'data' in user_info:
         current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
@@ -448,7 +457,6 @@ def refresh_from_MLH():
         response = jsonify(error='Unable to communicate with MLH')
         response.status_code = 503
         return response
-
 
 # Editing of the attendee profile info after applying
 @login_required
@@ -476,31 +484,36 @@ def edit_resume():
         return redirect(request.url)
 
 
-# allow attendee to view their own resume
+#  allow attendee to view their own resume
 @login_required
 def view_own_resume():
-    data_object = s3.Object(settings.S3_BUCKET_NAME,
-                            'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname,
-                                                                current_user.hashid)).get()
-    response = make_response(data_object['Body'].read())
-    response.headers['Content-Type'] = 'application/pdf'
-    return response
+	data_object = s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'
+							.format(current_user.lname, current_user.fname,
+									current_user.hashid)).get()
+	response = make_response(data_object['Body'].read())
+	response.headers['Content-Type'] = 'application/pdf'
+	return response
 
 
 @login_required
 def accept():
     if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
         message = {
-            'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(
-                settings.HACKATHON_NAME),
-            'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
-                settings.HACKATHON_NAME),
-            'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
-                settings.HACKATHON_NAME),
-            'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
-                settings.HACKATHON_NAME),
-            None: "Corporate users cannot view this page."
-        }
+			'NEW': "You haven't completed your application for {0}! "
+				   "Please submit your application before visiting this page!"
+				.format(settings.HACKATHON_NAME),
+			'PENDING': "You haven't been accepted to {0}! "
+					"Please wait for your invitation before visiting this page!"
+				.format(settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! "
+						"We look forward to seeing you here!"
+				.format(settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. "
+						"Unfortunately, for space considerations "
+						"you cannot change your response."
+				.format(settings.HACKATHON_NAME),
+			None: "Corporate users cannot view this page."
+		}
         if current_user.status in message:
             flash(message[current_user.status], 'error')
         return redirect(url_for('dashboard'))
@@ -560,7 +573,7 @@ def sign():
             flash(message[current_user.status], 'error')
         return redirect(url_for('dashboard'))
     if request.method == 'GET':
-        today = datetime.now(cst).date()
+        today = datetime.now(tz).date()
         return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
     else:
         relative_name = request.form.get('relative_name')
@@ -582,9 +595,8 @@ def sign():
 
         ut_eid = request.form.get('ut_eid')
 
-        if None in (
-        relative_name, relative_email, relative_num, medical_signature, medical_date, indemnification_signature,
-        indemnification_date, photo_signature, photo_date):
+        if None in (relative_name, relative_email, relative_num, medical_signature, medical_date,
+                    indemnification_signature, indemnification_date, photo_signature, photo_date):
             flash('Must fill all required fields', 'error')
             return redirect(request.url)
         if current_user.school_id == 23:
