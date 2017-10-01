@@ -1,6 +1,6 @@
 import requests
 import settings
-from functools import wraps
+import functools
 from flask import g, redirect, url_for
 from hashids import Hashids
 import boto3
@@ -29,7 +29,7 @@ def validate_email(email):
 # A user who has any of these roles will be permitted to view this page
 def roles_required(*role_names):
     def wrapper(func):
-        @wraps(func)
+        @functools.wraps(func)
         def decorated_view(*args, **kwargs):
             if not g.user.is_authenticated:
                 return redirect(url_for('corp-login'))
@@ -54,13 +54,35 @@ def get_current_user_roles():
 
 # Require user to be logged in and redirect unauthenticated users to corporate login screen
 def corp_login_required(f):
-    @wraps(f)
+    @functools.wraps(f)
     def decorated_view(*args, **kwargs):
         if not g.user.is_authenticated:
             return redirect(url_for('corp-login'))
         return f(*args, **kwargs)
 
     return decorated_view
+
+
+def user_status_whitelist(*statuses):
+    def wrapper(func):
+        @functools.wraps(func)
+        def decorated_view(*args, **kwargs):
+            if 'admin' not in get_current_user_roles() and g.user.status not in statuses:
+                return redirect(url_for(get_default_dashboard_for_role()))
+            return func(*args, **kwargs)
+        return decorated_view
+    return wrapper
+
+
+def user_status_blacklist(*statuses):
+    def wrapper(func):
+        @functools.wraps(func)
+        def decorated_view(*args, **kwargs):
+            if 'admin' not in get_current_user_roles() and g.user.status in statuses:
+                return redirect(url_for(get_default_dashboard_for_role()))
+            return func(*args, **kwargs)
+        return decorated_view
+    return wrapper
 
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):

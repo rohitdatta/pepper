@@ -84,28 +84,6 @@ def redirect_to_dashboard_if_authed(func):
     return decorated_view
 
 
-def user_status_whitelist(*statuses):
-    def wrapper(func):
-        @functools.wraps(func)
-        def decorated_view(*args, **kwargs):
-            if 'admin' not in utils.get_current_user_roles() and current_user.status not in statuses:
-                return redirect(url_for(get_default_dashboard_for_role()))
-            return func(*args, **kwargs)
-        return decorated_view
-    return wrapper
-
-
-def user_status_blacklist(*statuses):
-    def wrapper(func):
-        @functools.wraps(func)
-        def decorated_view(*args, **kwargs):
-            if 'admin' not in utils.get_current_user_roles() and current_user.status in statuses:
-                return redirect(url_for(get_default_dashboard_for_role()))
-            return func(*args, **kwargs)
-        return decorated_view
-    return wrapper
-
-
 def check_registration_opened(func):
     @functools.wraps(func)
     def decorated_view(*args, **kwargs):

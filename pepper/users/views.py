@@ -6,7 +6,7 @@ from models import User
 from pepper import settings
 from pepper.app import DB, q
 from pepper.legal.models import Waiver
-from pepper.utils import calculate_age, get_current_user_roles, roles_required, s3, serializer, timed_serializer
+from pepper.utils import calculate_age, get_current_user_roles, roles_required, s3, serializer, timed_serializer, user_status_blacklist, user_status_whitelist
 
 from flask import flash, g, jsonify, make_response, redirect, render_template, request, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
@@ -16,7 +16,6 @@ import redis
 import requests
 from sqlalchemy.exc import IntegrityError
 
-cst = timezone('US/Central')
 tz = timezone('US/Central')
 
 
@@ -125,7 +124,7 @@ def callback():
 
 
 @login_required
-@helpers.user_status_whitelist('NEW')
+@user_status_whitelist('NEW')
 def complete_mlh_registration():
     if request.method == 'GET':
         return render_template("users/complete_mlh_registration.html", required=True, user=current_user)
@@ -243,7 +242,7 @@ def complete_user_sign_up():
 
 
 @login_required
-@helpers.user_status_whitelist('NEW')
+@user_status_whitelist('NEW')
 def complete_registration():
     if request.method == 'GET':
         return render_template('users/edit_information.html', required=True, user=current_user)
@@ -325,7 +324,7 @@ def logout():
 
 
 @login_required
-@helpers.user_status_blacklist('NEW')
+@user_status_blacklist('NEW')
 def edit_profile():
     if request.method == 'POST':
         user_info = extract_user_info(ignore_resume=True)
