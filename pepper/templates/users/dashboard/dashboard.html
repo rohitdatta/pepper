@@ -1,12 +1,10 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-<div class="jumbotron">
-  <h1 class="center">Dashboard</h1>
-  <div class="welcome">Welcome {{ user.fname }}!</div>
-  <div class="app-status">Your application status is: <span class="user-status">{{ user.status }}</span>.</div>
-  {% if next_steps %}
-  <div class="next-steps">You still need to {{ next_steps.description }}. Please continue your application by clicking on the link below.</div>
-  <a href="{{ next_steps.link }}" class="next-steps-button">{{ next_steps.link_text }}</a>
-</div>
+<h1 class="center">Dashboard</h1>
+<div class="welcome">Welcome {{ user.fname }}!</div>
+<div class="app-status">Your application status is: <span class="user-status">{{ user.status }}</span>.</div>
+{% if next_steps %}
+<div class="next-steps">You still need to {{ next_steps.description }}. Please continue your application by clicking on the link below.</div>
+<a href="{{ next_steps.link }}" class="next-steps-button">{{ next_steps.link_text }}</a>
 {% endif %}
 {% endblock %}
