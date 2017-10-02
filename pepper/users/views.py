@@ -14,7 +14,7 @@ import keen
 from pytz import timezone
 import redis
 import requests
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DataError, IntegrityError
 
 tz = timezone('US/Central')
 
@@ -51,9 +51,11 @@ def sign_up():
     q.enqueue(batch.send_confirmation_email, user.id)
 
     login_user(user, remember=True)
+    flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
     return redirect(url_for('complete-registration'))
 
 
+@redirect_to_dashboard_if_authed
 def callback():
     url = 'https://my.mlh.io/oauth/token'
     body = {
@@ -69,12 +71,14 @@ def callback():
     except Exception as e:
         g.log = g.log.bind(error=e, response=resp)
         g.log.error('Error Decoding JSON')
+        flash('MyMLH had an error, please sign up here.', 'error')
+        return redirect(url_for('sign-up'))
 
     if resp.status_code == 401:  # MLH sent expired token
         redirect_url = helpers.mlh_oauth_url
 
         g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text,
-                           redirect_url=redirect_url)
+                           redirect_url=redirect_url, request_url=resp.url)
         g.log.error('Got expired auth code, redirecting: ')
         flash('MyMLH had an error, please sign up here.', 'error')
         return redirect(url_for('sign-up'))
@@ -107,8 +111,11 @@ def callback():
                 user.access_token = access_token
             DB.session.add(user)
             DB.session.commit()
+            q.enqueue(batch.send_confirmation_email, user.id)
             g.log.info('Successfully created user')
             login_user(user, remember=True)
+            flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
+            return redirect(url_for('complete-mlh-registration'))
         except IntegrityError:
             # a unique value already exists this should never happen
             DB.session.rollback()
@@ -120,7 +127,7 @@ def callback():
             flash('A fatal error occurred. Please contact us for help', 'error')
             return redirect(url_for('landing'))
     login_user(user, remember=True)
-    return redirect(url_for('complete-mlh-registration'))
+    return redirect(url_for('dashboard'))
 
 
 @login_required
@@ -136,12 +143,16 @@ def complete_mlh_registration():
     if 'error' in user_info:
         flash(user_info['error'], 'error')
         return redirect(request.url)
+    user_info.update(extract_resume(current_user.fname, current_user.lname, resume_required=True))
+    if 'error' in user_info:
+        flash(user_info['error'], 'error')
+        return redirect(request.url)
     helpers.update_user_info(current_user, user_info)
 
     return complete_user_sign_up()
 
 
-def extract_mlh_info(ignore_resume=False):
+def extract_mlh_info():
     num_hackathons = request.form.get('num_hackathons')
     try:
         if int(num_hackathons) > 9223372036854775807:
@@ -169,6 +180,18 @@ def extract_mlh_info(ignore_resume=False):
         missing_fields = (helpers.display_field_name(key) for key, value in user_info.iteritems() if value is None)
         message = 'You must fill out the required fields:\n' + 's, '.join(missing_fields)
         return {'error': message}
+    optional_user_info = {
+        'interests': request.form.get('interests'),
+        'most_nervous': request.form.get('most_nervous'),
+        'most_excited': request.form.get('most_excited'),
+        'expectations': request.form.get('expectations'),
+        'workshops': request.form.get('workshops'),
+    }
+    user_info.update((key, value) for key, value in user_info.iteritems() if value is not None)
+    return user_info
+
+
+def extract_resume(first_name, last_name, resume_required=True):
     resume = request.files.get('resume')
     if resume:
         if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
@@ -182,61 +205,37 @@ def extract_mlh_info(ignore_resume=False):
         else:
             # resume was uploaded but wrong file format
             return {'error': 'Resume must be in PDF format'}
-    elif not ignore_resume:
+    elif resume_required:
         return {'error': 'Please upload your resume'}
-
-    optional_user_info = {
-        'interests': request.form.get('interests'),
-        'most_nervous': request.form.get('most_nervous'),
-        'most_excited': request.form.get('most_excited'),
-        'expectations': request.form.get('expectations'),
-        'workshops': request.form.get('workshops'),
-    }
-    user_info.update((key, value) for key, value in user_info.iteritems() if value is not None)
-    return user_info
+    return {}
 
 
 def complete_user_sign_up():
     current_user.status = 'PENDING'
     current_user.time_applied = datetime.utcnow()
-    DB.session.add(current_user)
-    DB.session.commit()
+    try:
+        DB.session.add(current_user)
+        DB.session.commit()
+    except DataError as e:
+        flash('There was an error with your registration information. Please try again.', 'error')
+        return redirect(request.url)
     g.log = g.log.bind(email=current_user.email)
     g.log.info('User successfully applied')
 
     # TODO: get rid of DEBUG check
     if not settings.DEBUG:
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        keen.add_event('sign_ups', {
-            'date_of_birth': current_user.birthday.strftime(fmt),
-            'dietary_restrictions': current_user.dietary_restrictions,
-            'email': current_user.email,
-            'first_name': current_user.fname,
-            'last_name': current_user.lname,
-            'gender': current_user.gender,
-            'id': current_user.id,
-            'major': current_user.major,
-            'phone_number': current_user.phone_number,
-            'school': {
-                'id': current_user.school_id,
-                'name': current_user.school_name
-            },
-            'keen': {
-                'timestamp': current_user.time_applied.strftime(fmt)
-            },
-            'interests': interests,
-            'skill_level': skill_level,
-            'races': race_list,
-            'num_hackathons': num_hackathons,
-            'class_standing': class_standing,
-            'shirt_size': current_user.shirt_size,
-            'special_needs': current_user.special_needs
-        })
+        batch.keen_add_event(current_user.id)
 
-    q.enqueue(batch.send_applied_email, current_user.id)
-    flash(
-        'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
-        settings.HACKATHON_NAME), 'success')
+    if current_user.confirmed:
+        q.enqueue(batch.send_applied_email, current_user.id)
+        flash(
+            'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
+            settings.HACKATHON_NAME), 'success')
+    else:
+        flash(
+            'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
+            settings.HACKATHON_NAME), 'success')
 
     return redirect(url_for('dashboard'))
 
@@ -250,7 +249,7 @@ def complete_registration():
     if request.form.get('mlh') != 'TRUE':
         flash('You must agree to the MLH Code of Conduct', 'error')
         return redirect(request.url)
-    user_info = extract_user_info()
+    user_info = extract_user_info(resume_required=True)
     if 'error' in user_info:
         flash(user_info['error'], 'error')
         return redirect(request.url)
@@ -260,7 +259,7 @@ def complete_registration():
     return complete_user_sign_up()
 
 
-def extract_user_info(ignore_resume=False):
+def extract_user_info(resume_required=False):
     user_info = {
         'type': 'local',
         'fname': request.form.get('first_name'),
@@ -283,7 +282,10 @@ def extract_user_info(ignore_resume=False):
         message = 'You must fill out the required fields:\n' + ', '.join(missing_fields)
         return {'error': message}
 
-    user_info.update(extract_mlh_info(ignore_resume=ignore_resume))
+    user_info.update(extract_mlh_info())
+    if 'error' in user_info:
+        return user_info
+    user_info.update(extract_resume(user_info['fname'], user_info['lname'], resume_required=resume_required))
     return user_info
 
 @login_required
@@ -292,6 +294,8 @@ def dashboard():
         if current_user.type == 'local':
             return redirect(url_for('complete-registration'))
         return redirect(url_for('complete-mlh-registration'))
+    if current_user.status == 'PENDING':
+        return render_template('users/dashboard/pending.html', user=current_user)
     if 'corp' in get_current_user_roles():
         return redirect(url_for('corp-dash'))
     return render_template('users/dashboard/dashboard.html', user=current_user)
@@ -327,7 +331,7 @@ def logout():
 @user_status_blacklist('NEW')
 def edit_profile():
     if request.method == 'POST':
-        user_info = extract_user_info(ignore_resume=True)
+        user_info = extract_user_info(resume_required=False)
         if 'error' in user_info:
             flash(user_info['error'], 'error')
             return redirect(request.url)
@@ -346,7 +350,8 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         if user:
             token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
-            q.enqueue(batch.send_forgot_password_email, user.id, token)
+            #q.enqueue(batch.send_forgot_password_email, user.id, token)
+            batch.send_forgot_password_email(user.id, token)
         flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
         return redirect(url_for('login'))
 
@@ -381,13 +386,38 @@ def reset_password(token):
             return redirect(url_for('forgot-password'))
 
 
+@login_required
+@user_status_whitelist('NEW', 'PENDING')
+def resend_confirmation():
+    if current_user.confirmed:
+        flash('Your email is already confirmed', 'warning')
+        return redirect(url_for('dashboard'))
+    q.enqueue(batch.send_confirmation_email, current_user.id)
+    flash("We sent another confirmation email to you! If you don't see it in a few minutes, check your spam or contact us", 'success')
+    return redirect(url_for('dashboard'))
+
 def confirm_account(token):
     try:
         email = serializer.loads(token)
         user = User.query.filter_by(email=email).first()
+        if user is None:
+            flash('Invalid link', 'error')
+            return redirect(url_for('landing'))
+        if current_user.is_authenticated:
+            if current_user.email != email:
+                flash('This link is not for you!', 'error')
+                return redirect(url_for(get_default_dashboard_for_role()))
+            if current_user.confirmed:
+                flash('You are already confirmed', 'success')
+                return redirect(url_for(get_default_dashboard_for_role()))
+        if user.confirmed:
+            flash('This user is already confirmed', 'error')
+            return redirect(url_for('login'))
         user.confirmed = True
         DB.session.add(user)
         DB.session.commit()
+        if user.status == 'PENDING':
+            q.enqueue(batch.send_applied_email, user.id)
         flash('Successfully confirmed account', 'success')
         return redirect(url_for('complete-registration'))
     except:

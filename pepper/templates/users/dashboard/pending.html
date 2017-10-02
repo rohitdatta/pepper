@@ -1,12 +1,22 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/user_base.html' %}
 {% block content %}
-	<script src="{{ url_for('static', filename='js/pending.js') }}"></script>
-	<div class="text-center col-md-8 col-md-offset-2">
-		<h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
-		<div class="large-text">
-		<p>We will accept the majority of our applicants on a first-come, first-serve basis. In case you weren't one of the first ones to register, we also have reserved spots that will be given out by random lottery. May the odds ever be in your favor. If you need to update your profile, please do so <a href="{{ url_for('update-profile') }}" class="decorate">here</a>.</p>
-		<p>You should receive an email that confirms your registration. Email <a href="mailto:hello@hacktx.com" class="decorate">hello@hacktx.com</a> if you have any questions and here's a cute GIF just because.</p>
-			</div>
-		<img src="{{ url_for('static', filename='img/puppy.gif') }}" class="puppy">
-	</div>
+{% if not user.confirmed %}
+<p class="red">Your email has not been confirmed yet. You cannot be accepted until you click the link in your confirmation email. If you can't find the email, you can resend it by clicking <a href="{{ url_for('resend-confirmation-email') }}">here</a>.</p>
+{% endif %}
+<script src="{{ url_for('static', filename='js/pending.js') }}"></script>
+<div class="text-center col-md-8 col-md-offset-2">
+  <h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
+  <div class="large-text">
+    <p>There are two ways to get accepted into HackTX. One way is to be on one of the earliest created teams in the <a href="{{ url_for('team') }}">Manage Team</a> tab in the first round of acceptances. The second way is to get in as an individual through the lottery afterwards. Teams must have at least two members to be considered for the first round.</p>
+    {% if user.team_id is none %}
+    <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we decide to send acceptances, you will only be eligible to get in through the lottery!</p>
+    {% endif %}
+  {% if not user.confirmed %}
+  </div>
+  {% else %}
+    <p>You should receive an email that confirms your registration. Email <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}" class="decorate">{{ config.GENERAL_INFO_EMAIL }}</a> if you have any questions and here's a cute GIF just because.</p>
+  </div>
+  <img src="{{ url_for('static', filename='img/puppy.gif') }}" class="puppy">
+  {% endif %}
+</div>
 {% endblock %}

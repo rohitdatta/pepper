@@ -1,12 +1,12 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
-	<div class="center col-md-6 col-md-offset-3">
-		<h1>Your {{ config.HACKATHON_NAME }} Decision</h1>
-		<div class="large-text">
-			{% block decision %}
-			<p>Thanks for applying to {{ config.HACKATHON_NAME }}. Unfortunately, this year we had many more applicants than we had space for and won't be able to accept you.</p>
-			<p>While we wish we could accept everyone who applies for {{ config.HACKATHON_NAME }}, there's a limited amount of space and it wouldn't be fun for anyone if it got too crowded. We'd still be delighted for you to join us as a <a href="https://hacktx.com/volunteer" class="decorate">volunteer</a>!</p>
-			{% endblock %}
-		</div>
-	</div>
+<div class="center col-md-6 col-md-offset-3">
+  <h1>Your {{ config.HACKATHON_NAME }} Decision</h1>
+  <div class="large-text">
+    {% block decision %}
+    <p>Thanks for applying to {{ config.HACKATHON_NAME }}. Unfortunately, this year we had many more applicants than we had space for and won't be able to accept you.</p>
+    <p>While we wish we could accept everyone who applies for {{ config.HACKATHON_NAME }}, there's a limited amount of space and it wouldn't be fun for anyone if it got too crowded. We'd still be delighted for you to join us as a <a href="https://hacktx.com/volunteer" class="decorate">volunteer</a>!</p>
+    {% endblock %}
+  </div>
+</div>
 {% endblock %}

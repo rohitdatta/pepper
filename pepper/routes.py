@@ -23,6 +23,8 @@ def configure_routes(app):
     app.add_url_rule('/edit_profile', 'edit-profile', view_func=users.views.edit_profile,
                      methods=['GET', 'POST'])
     app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
+    app.add_url_rule('/resend_confirmation_email', 'resend-confirmation-email',
+                     view_func=users.views.resend_confirmation, methods=['GET'])
     """
     app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
     app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_mlh, methods=['GET'])

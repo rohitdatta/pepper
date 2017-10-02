@@ -54,7 +54,7 @@
   <div class="row">
     <div class="col-md-4">
       <label for="birthday" class="required">Birthday</label>
-      <input type="text" onfocus="(this.type='date')" onfocusout="(this.type='text')" placeholder="Birthday" name="date_of_birth" id="birthday" class="info-field" aria-required="true" required {% if not required %}value="{{ user.birthday }}"{% endif %}>
+      <input type="text" placeholder="Birthday" name="date_of_birth" id="birthday" class="info-field" aria-required="true" required {% if not required %}value="{{ user.birthday }}"{% endif %}>
     </div>
     <div class="col-md-4">
       <label for="shirt-size" class="required">T-shirt size</label>

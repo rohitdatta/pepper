@@ -71,6 +71,7 @@ class User(DB.Model, UserMixin):
             self.access_token = info['access_token']
             self.school_id = info['data']['school']['id']
             self.school_name = info['data']['school']['name']
+            self.confirmed = False
         elif info['type'] == 'local':  # if creating an user through local sign up
             self.email = info['email']
             self.password = hash_pwd(info['password'])
@@ -141,6 +142,12 @@ class User(DB.Model, UserMixin):
             return cls.query.get(id)
         except IndexError:
             return None
+
+    @property
+    def is_leader(self):
+        if self.team_id:
+            return self.id == min((user.time_team_join, user.id) for user in self.team.users)[1]
+        return False
 
 
 class UserRole(DB.Model):

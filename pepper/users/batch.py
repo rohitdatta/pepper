@@ -3,9 +3,9 @@ from pepper import settings
 from pepper.app import DB
 from pepper.utils import send_email, serializer, timed_serializer
 
-from flask import render_template, render_template_string, url_for
+from flask import g, render_template, render_template_string, url_for
 from sqlalchemy import or_
-
+import keen
 import random
 
 
@@ -36,11 +36,12 @@ def send_forgot_password_email(user_id, token):
     if not user:
         print 'Could not send forgot password email to user id {} because this id does not exist'.format(id)
         return
-    if user:
-        url = url_for('reset-password', token=token, _external=True)
-        html = render_template('emails/reset_password.html', user=user, link=url)
-        txt = render_template('emails/reset_password.txt', user=user, link=url)
-        send_email(settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
+    url = url_for('reset-password', token=token, _external=True)
+    g.log = g.log.bind(email=user.email, url=url)
+    g.log.error(url)
+    html = render_template('emails/reset_password.html', user=user, link=url)
+    txt = render_template('emails/reset_password.txt', user=user, link=url)
+    send_email(settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
 
 
 def send_attending_email(user_id):
@@ -108,3 +109,33 @@ def random_accept(num_to_accept, include_waitlist):
         html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
         DB.session.commit()
         send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
+
+
+def keen_add_event(user_id, event_type):
+
+    user = User.query.filter_by(id=user_id).first()
+    keen.add_event('sign_ups', {
+            'date_of_birth': user.birthday.strftime(fmt),
+            'dietary_restrictions': user.dietary_restrictions,
+            'email': user.email,
+            'first_name': user.fname,
+            'last_name': user.lname,
+            'gender': user.gender,
+            'id': user.id,
+            'major': user.major,
+            'phone_number': user.phone_number,
+            'school': {
+                'id': user.school_id,
+                'name': user.school_name
+            },
+            'keen': {
+                'timestamp': user.time_applied.strftime(fmt)
+            },
+            'interests': user.interests,
+            'skill_level': user.skill_level,
+            'races': user.race,
+            'num_hackathons': user.num_hackathons,
+            'class_standing': user.class_standing,
+            'shirt_size': user.shirt_size,
+            'special_needs': user.special_needs
+        })

@@ -67,7 +67,7 @@ def create_team(request):
         return redirect(url_for('team'))
     # Team cannot be created
     else:
-        flash('Team name not valid','warning')
+        flash('This team name already exists! Please try another name.','warning')
         return redirect(request.url)
 
 @login_required

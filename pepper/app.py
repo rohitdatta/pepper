@@ -17,8 +17,7 @@ DB = SQLAlchemy()
 redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
-redis_url = settings.REDIS_URL
-conn = redis.from_url(redis_url)
+conn = redis.from_url(settings.REDIS_URL)
 q = Queue(connection=conn)
 
 import routes
@@ -88,6 +87,14 @@ def setup_error_handlers(app):
                                    settings.GENERAL_INFO_EMAIL)), 500
 
 
+def setup_env_filters(app):
+    app.jinja_env.filters['json'] = json.dumps
+
+    def multisort(items, *attrs):
+        return sorted(items, key=lambda x: tuple(getattr(x, attr) for attr in attrs))
+    app.jinja_env.filters['multisort'] = multisort
+
+
 def create_app():
     app = flask.Flask(__name__)
     app.config.from_object(settings)
@@ -98,8 +105,7 @@ def create_app():
     configure_login(app)
     configure_logger(app)
     setup_error_handlers(app)
-
-    app.jinja_env.filters['json'] = json.dumps
+    setup_env_filters(app)
 
     app.config['CDN_DOMAIN'] = settings.CDN_URL
     app.config['CDN_HTTPS'] = True
