@@ -3,7 +3,7 @@ from pepper import settings
 from pepper.app import DB, q
 from pepper.utils import send_email, serializer, timed_serializer
 
-from flask import render_template, render_template_string, url_for
+from flask import render_template, render_template_string, url_for, g
 from sqlalchemy import or_
 import keen
 import random
@@ -28,6 +28,7 @@ def send_forgot_password_email(user):
     url = url_for('reset-password', token=token, _external=True)
     html = render_template('emails/reset_password.html', user=user, link=url)
     txt = render_template('emails/reset_password.txt', user=user, link=url)
+    g.log.info('Sending password reset to:', email=user.email)
     q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
 
 
