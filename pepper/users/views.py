@@ -14,7 +14,7 @@ import keen
 from pytz import timezone
 import redis
 import requests
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DataError, IntegrityError
 
 tz = timezone('US/Central')
 
