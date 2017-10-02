@@ -7,15 +7,30 @@
 <h1 class="center">Team</h1>
 <p class="center large-text">{{ team.tname }}</p>
 <h1 class="center">Teammates</h1>
+{% if current_user.is_leader %}
 {% for user in team.users|multisort('time_team_join', 'id') %}
 <div class="center">
     {% if user.is_leader %} {# assume the first user is the leader #}
     <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
     {% else %}
-    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }})</p>
+  <form method="POST" action="{{url_for('team')}}" id="remove">
+    <input type="text" name="user" value="{{ user.email }}" class="hidden">{{ user.fname }} {{ user.lname }} ({{ user.email }}) </input>
+    <button type="submit" name="button" value="remove">X</button>
+  </form>
     {% endif %}
 </div>
 {% endfor %}
+{% else %}
+{% for user in team.users|multisort('time_team_join', 'id') %}
+<div class="center">
+    {% if user.is_leader %} {# assume the first user is the leader #}
+    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
+    {% else %}
+    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) </p>
+    {% endif %}
+</div>
+{% endfor %}
+{% endif %}
 <div class="spacing"></div>
 
 <!-- Contains rename and leave team buttons -->

@@ -1,4 +1,5 @@
 from models import Team
+from pepper.users.models import User
 from pepper.app import DB
 from pepper.utils import user_status_blacklist
 from datetime import datetime
@@ -130,4 +131,27 @@ def rename_team(request):
         g.log.info('TEAM IS NOT AVAILABLE')
         flash('Team name has already used. Please pick a different name.','warning')
     return redirect(url_for('team', team=current_user.team, user=current_user))
+
+
+@login_required
+@user_status_blacklist('NEW')
+def remove_team(request):
+    if not current_user.is_leader:
+        flash('Cannot remove team.','warning')
+        return redirect(url_for('team'))
+    else:
+        email = request.form.get('user')
+        remove_user = User.query.filter_by(email=email).first()
+        if remove_user:
+            remove_user.time_team_join = None
+            current_user.team.users.remove(remove_user)
+            g.log.info('Attempting to kick from team')
+            DB.session.add(current_user.team)
+            DB.session.commit()
+            g.log.info('Successfully kicked from team')
+            return redirect(url_for('team'))
+        else:
+            flash('Teammate cannot be removed. Please try again later.', 'error')
+            return redirect(url_for('team'))
+
 
