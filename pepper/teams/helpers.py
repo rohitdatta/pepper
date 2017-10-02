@@ -12,6 +12,9 @@ def join_team(request):
     if request.form.get('join_tname') == '':
         flash('Please enter a team name.','warning')
         return redirect(url_for('team'))
+    if current_user.team_id is not None:
+        flash('You are already part of a team', 'error')
+        return redirect(request.url)
     team = Team.query.filter_by(tname=request.form.get('join_tname')).first()
     # Team doesn't exist so can't join
     if team is None:

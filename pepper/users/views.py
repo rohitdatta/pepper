@@ -345,7 +345,7 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         if user:
             batch.send_forgot_password_email(user)
-        flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
+        flash('If there is a registered user with {}, then a password reset email has been sent!'.format(email), 'success')
         return redirect(url_for('login'))
 
 

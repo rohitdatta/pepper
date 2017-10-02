@@ -1,7 +1,11 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
 {% if not user.confirmed %}
-<p class="red">Your email has not been confirmed yet. You cannot be accepted until you click the link in your confirmation email. If you can't find the email, you can resend it by clicking <a href="{{ url_for('resend-confirmation-email') }}">here</a>.</p>
+<div class="alert alert-danger">
+  <div class="center">
+    <strong>Your email has not been confirmed yet.</strong> If you can't find the email, you can resend it by clicking  <a href="{{ url_for('resend-confirmation-email') }}" class="alert-link">here</a>.
+  </div>
+</div>
 {% endif %}
 <script src="{{ url_for('static', filename='js/pending.js') }}"></script>
 <div class="text-center col-md-8 col-md-offset-2">

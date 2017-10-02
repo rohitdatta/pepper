@@ -3,7 +3,7 @@ from pepper import settings
 from pepper.app import DB, q
 from pepper.utils import send_email, serializer, timed_serializer
 
-from flask import g, render_template, render_template_string, url_for
+from flask import render_template, render_template_string, url_for
 from sqlalchemy import or_
 import keen
 import random
