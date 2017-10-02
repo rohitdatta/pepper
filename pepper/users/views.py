@@ -138,12 +138,16 @@ def complete_mlh_registration():
     if 'error' in user_info:
         flash(user_info['error'], 'error')
         return redirect(request.url)
+    user_info.update(extract_resume(current_user.fname, current_user.lname, resume_required=True))
+    if 'error' in user_info:
+        flash(user_info['error'], 'error')
+        return redirect(request.url)
     helpers.update_user_info(current_user, user_info)
 
     return complete_user_sign_up()
 
 
-def extract_mlh_info(ignore_resume=False):
+def extract_mlh_info():
     num_hackathons = request.form.get('num_hackathons')
     try:
         if int(num_hackathons) > 9223372036854775807:
@@ -171,6 +175,18 @@ def extract_mlh_info(ignore_resume=False):
         missing_fields = (helpers.display_field_name(key) for key, value in user_info.iteritems() if value is None)
         message = 'You must fill out the required fields:\n' + 's, '.join(missing_fields)
         return {'error': message}
+    optional_user_info = {
+        'interests': request.form.get('interests'),
+        'most_nervous': request.form.get('most_nervous'),
+        'most_excited': request.form.get('most_excited'),
+        'expectations': request.form.get('expectations'),
+        'workshops': request.form.get('workshops'),
+    }
+    user_info.update((key, value) for key, value in user_info.iteritems() if value is not None)
+    return user_info
+
+
+def extract_resume(first_name, last_name, resume_required=True):
     resume = request.files.get('resume')
     if resume:
         if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
@@ -184,18 +200,9 @@ def extract_mlh_info(ignore_resume=False):
         else:
             # resume was uploaded but wrong file format
             return {'error': 'Resume must be in PDF format'}
-    elif not ignore_resume:
+    elif resume_required:
         return {'error': 'Please upload your resume'}
-
-    optional_user_info = {
-        'interests': request.form.get('interests'),
-        'most_nervous': request.form.get('most_nervous'),
-        'most_excited': request.form.get('most_excited'),
-        'expectations': request.form.get('expectations'),
-        'workshops': request.form.get('workshops'),
-    }
-    user_info.update((key, value) for key, value in user_info.iteritems() if value is not None)
-    return user_info
+    return {}
 
 
 def complete_user_sign_up():
@@ -252,7 +259,7 @@ def complete_registration():
     if request.form.get('mlh') != 'TRUE':
         flash('You must agree to the MLH Code of Conduct', 'error')
         return redirect(request.url)
-    user_info = extract_user_info()
+    user_info = extract_user_info(resume_required=True)
     if 'error' in user_info:
         flash(user_info['error'], 'error')
         return redirect(request.url)
@@ -262,7 +269,7 @@ def complete_registration():
     return complete_user_sign_up()
 
 
-def extract_user_info(ignore_resume=False):
+def extract_user_info(resume_required=False):
     user_info = {
         'type': 'local',
         'fname': request.form.get('first_name'),
@@ -285,7 +292,10 @@ def extract_user_info(ignore_resume=False):
         message = 'You must fill out the required fields:\n' + ', '.join(missing_fields)
         return {'error': message}
 
-    user_info.update(extract_mlh_info(ignore_resume=ignore_resume))
+    user_info.update(extract_mlh_info())
+    if 'error' in user_info:
+        return user_info
+    user_info.update(extract_resume(user_info['fname'], user_info['lname'], resume_required=resume_required))
     return user_info
 
 @login_required
@@ -329,7 +339,7 @@ def logout():
 @user_status_blacklist('NEW')
 def edit_profile():
     if request.method == 'POST':
-        user_info = extract_user_info(ignore_resume=True)
+        user_info = extract_user_info(resume_required=False)
         if 'error' in user_info:
             flash(user_info['error'], 'error')
             return redirect(request.url)
