@@ -22,10 +22,6 @@ def join_team(request):
         g.log.info('Joining team from local information')
         current_user.time_team_join = datetime.utcnow()
         team.users.append(current_user)
-        team.users = sorted(
-            team.users,
-            key=lambda x: datetime.strptime(x.time_team_join, '%m/%d/%y %H:%M'), reverse=True
-        )
         try:
             DB.session.add(team)
             DB.session.commit()
@@ -89,7 +85,11 @@ def leave_team(request):
         if team.users:
             if current_user.is_leader:
                 current_user.is_leader = False
-                temp_user = team.users[0]
+                team.users = sorted(
+                    team.users,
+                    key=lambda x: x.time_team_join, reverse=True
+                )
+                temp_user = team.users[len(team.users)-1]
                 temp_user.is_leader = True
             DB.session.add(team)
             DB.session.commit()

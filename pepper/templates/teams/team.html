@@ -8,12 +8,12 @@
 <h1 class="center">Team</h1>
 <p class="center large-text">{{ team.tname }}</p>
 <h1 class="center">Teammates</h1>
-{% for user in team.users %}
+{% for user in team.users|sort(attribute='time_team_join') %}
 <div class="center">
 	{% if user.is_leader %}
-	<p>{{ user.fname }} {{ user.lname }} - <b>Team Leader</b></p>
+	<p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
 	{% else %}
-	<p>{{ user.fname }} {{ user.lname }}</p>
+	<p>{{ user.fname }} {{ user.lname }} ({{ user.email }})</p>
 	{% endif %}
 </div>
 {% endfor %}
