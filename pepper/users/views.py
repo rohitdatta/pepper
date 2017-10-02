@@ -208,8 +208,12 @@ def extract_resume(first_name, last_name, resume_required=True):
 def complete_user_sign_up():
     current_user.status = 'PENDING'
     current_user.time_applied = datetime.utcnow()
-    DB.session.add(current_user)
-    DB.session.commit()
+    try:
+        DB.session.add(current_user)
+        DB.session.commit()
+    except DataError as e:
+        flash('There was an error with your registration information. Please try again.', 'error')
+        return redirect(request.url)
     g.log = g.log.bind(email=current_user.email)
     g.log.info('User successfully applied')
 
