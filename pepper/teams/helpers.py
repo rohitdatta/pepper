@@ -51,6 +51,7 @@ def create_team(request):
     if team is None:
         g.log.info('Creating a team')
         g.log = g.log.bind(tname=tname)
+        current_user.time_team_join = datetime.utcnow()
         team = Team(tname, current_user)
         try:
             DB.session.add(team)
