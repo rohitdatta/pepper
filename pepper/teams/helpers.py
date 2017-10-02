@@ -58,6 +58,7 @@ def create_team(request):
         team = Team(tname, current_user)
         try:
             DB.session.add(team)
+            DB.session.add(current_user)
             DB.session.commit()
         except Exception as e:
             g.log.error('error occurred while creating team: {}'.format(e))
@@ -83,8 +84,10 @@ def leave_team(request):
         g.log.info('Leaving team')
         g.log = g.log.bind(tname=team.tname)
         team.users.remove(current_user)
+        current_user.time_team_join = None
         if team.users:
             DB.session.add(team)
+            DB.session.add(current_user)
             DB.session.commit()
             g.log.info('Successfully left team')
         else:

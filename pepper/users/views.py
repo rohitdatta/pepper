@@ -46,6 +46,7 @@ def sign_up():
     user = User(user_info)
     DB.session.add(user)
     DB.session.commit()
+    g.log = g.log.bind(email=email)
     g.log.info('Successfully created user from sign-up flow')
 
     login_user(user, remember=True)
