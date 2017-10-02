@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash
 from pepper.utils import send_email, s
 from pepper import settings
 from flask import render_template, url_for, flash
+import time
 
 def hash_pwd(password):
 	return generate_password_hash(password)
@@ -37,3 +38,6 @@ def send_recruiter_invite(user):
 	except Exception as e:
 		g.log = g.log.bind(error=e)
 		g.log.error('Unable to send recruiter email: ')
+
+def sleep():
+	time.sleep(5)

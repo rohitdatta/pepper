@@ -1,23 +1,25 @@
-from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response, render_template_string
-import requests
-from models import User, UserRole
-from pepper.app import DB
-from sqlalchemy.exc import IntegrityError
-from pepper import settings
-import urllib2
-from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
-from helpers import send_status_change_notification, check_password, hash_pwd, send_recruiter_invite
-import keen
 from datetime import datetime
 from pytz import timezone
+import urllib2
+
+import redis
+import keen
+import requests
+from flask import request, render_template, redirect, url_for, flash, g, jsonify, make_response
+from flask.ext.login import login_user, logout_user, current_user, login_required
+from rq.job import Job
+from sqlalchemy.exc import IntegrityError
+
+from models import User, UserRole
+from pepper.app import DB, q
+from pepper import settings
+from pepper.utils import s3, send_email, s, roles_required, ts, calculate_age
+from helpers import check_password, hash_pwd, send_recruiter_invite
 from pepper.legal.models import Waiver
-import random
 from sqlalchemy import or_, and_
-import urllib
+import batch
 
-
-cst = timezone('US/Central')
+tz = timezone('US/Central')
 
 
 def landing():
@@ -70,7 +72,7 @@ def register_local():
 		return redirect(url_for('landing'))
 	if request.method == 'GET':
 		return render_template('users/register_local.html')
-	else: # Local registration
+	else:  # Local registration
 		user_info = {
 				'email': request.form.get('email'),
 				'first_name': request.form.get('fname'),
@@ -105,7 +107,7 @@ def register_local():
 			html = render_template('emails/confirm_account.html', link=url, user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
 			login_user(user, remember=True)
-		else: # Admin/Corporate need to login in from a different page
+		else:  # Admin/Corporate need to login in from a different page
 			flash('The account already exists, please login again', 'error')
 			return redirect(url_for('login_local'))
 
@@ -170,13 +172,14 @@ def callback():
 		g.log = g.log.bind(error=e, response=resp)
 		g.log.error('Error Decoding JSON')
 	
-	if resp.status_code == 401: # MLH sent expired token
+	if resp.status_code == 401:  # MLH sent expired token
 		redirect_url = 'https://my.mlh.io/oauth/authorize?client_id={0}&redirect_uri={1}callback&response_type=code'.format(
 			settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
 		
-		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, redirect_url=redirect_url)
+		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code,
+						   resp=resp.text, redirect_url=redirect_url)
 		g.log.error('Got expired auth code, redirecting: ')
-		if settings.FALLBACK_LOCAL_REGISTER: # If our fallback is to request a new MLH code
+		if settings.FALLBACK_LOCAL_REGISTER: # If local registration fallback
 			g.log.info('Redirecting user to local registration')
 			return redirect(url_for('register_local'))
 		else:
@@ -185,21 +188,24 @@ def callback():
 
 	if 'access_token' in json:
 		access_token = json['access_token']
-	else: # This is VERY bad, we should never hit this error
+	else:  # This is VERY bad, we should never hit this error
 		g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text, body=body)
 		g.log.error('URGENT: FAILED BOTH MLH AUTH CODE CHECKS')
-		return render_template('layouts/error.html', title='MLH Server Error', message="We're having trouble pulling your information from MLH servers. This is a fatal error. Please contact {} for assistance".format(settings.GENERAL_INFO_EMAIL)), 505
-
+		return render_template('layouts/error.html', title='MLH Server Error',
+							message="We're having trouble pulling your information"
+									"from MLH servers. This is a fatal error."
+									"Please contact {} for assistance"
+							.format(settings.GENERAL_INFO_EMAIL)), 505
 
 	user = User.query.filter_by(access_token=access_token).first()
 	if user is None:  # create the user
 		try:
 			g.log.info('Creating a user')
-			user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(access_token)).json()
+			user_info = requests.get('https://my.mlh.io/api/v2/user.json?access_token={0}'.format(access_token)).json()
 			user_info['type'] = 'MLH'
 			user_info['access_token'] = access_token
 			g.log = g.log.bind(email=user_info['data']['email'])
-			user = User.query.filter_by(email=user_info['data']['email']).first()
+			user = User.query.filter_by(mlh_id=user_info['data']['id']).first()
 			if user is None:
 				if settings.REGISTRATION_OPEN:
 					g.log.info('Creating a new user from MLH info')
@@ -323,7 +329,9 @@ def confirm_registration():
 
 		# send a confirmation email
 		html = render_template('emails/applied.html', user=current_user)
-		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'.format(settings.HACKATHON_NAME), current_user.email, txt_content=None, html_content=html)
+		send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
+				   .format(settings.HACKATHON_NAME), current_user.email,
+				   txt_content=None, html_content=html)
 		g.log.info('Successfully sent a confirmation email')
 
 		flash('Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(settings.HACKATHON_NAME), 'success')
@@ -508,9 +516,10 @@ def dashboard():
 			return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
 		return render_template('users/dashboard/pending.html', user=current_user)
 
-# Refresh the MyMLH profile info
+
+#  Refresh the MyMLH profile info
 @login_required
-def refresh_from_MLH():
+def refresh_from_mlh():
 	user_info = requests.get('https://my.mlh.io/api/v1/user?access_token={0}'.format(current_user.access_token)).json()
 	if 'data' in user_info:
 		current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
@@ -546,14 +555,16 @@ def edit_resume():
 		flash('You successfully updated your resume', 'success')
 		return redirect(request.url)
 
-# allow attendee to view their own resume
+#  allow attendee to view their own resume
 @login_required
 def view_own_resume():
-	data_object = s3.Object(settings.S3_BUCKET_NAME,
-							'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname, current_user.hashid)).get()
+	data_object = s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'
+							.format(current_user.lname, current_user.fname,
+									current_user.hashid)).get()
 	response = make_response(data_object['Body'].read())
 	response.headers['Content-Type'] = 'application/pdf'
 	return response
+
 
 # Check if a filename is a pdf
 def is_pdf(filename):
@@ -564,13 +575,19 @@ def is_pdf(filename):
 def accept():
 	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
 		message = {
-			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(settings.HACKATHON_NAME),
-			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
-				settings.HACKATHON_NAME),
-			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
-				settings.HACKATHON_NAME),
-			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
-				settings.HACKATHON_NAME),
+			'NEW': "You haven't completed your application for {0}! "
+				   "Please submit your application before visiting this page!"
+				.format(settings.HACKATHON_NAME),
+			'PENDING': "You haven't been accepted to {0}! "
+					"Please wait for your invitation before visiting this page!"
+				.format(settings.HACKATHON_NAME),
+			'CONFIRMED': "You've already accepted your invitation to {0}! "
+						"We look forward to seeing you here!"
+				.format(settings.HACKATHON_NAME),
+			'REJECTED': "You've already rejected your {0} invitation. "
+						"Unfortunately, for space considerations "
+						"you cannot change your response."
+				.format(settings.HACKATHON_NAME),
 			None: "Corporate users cannot view this page."
 		}
 		if current_user.status in message:
@@ -630,7 +647,7 @@ def sign():
 			flash(message[current_user.status], 'error')
 		return redirect(url_for('dashboard'))
 	if request.method == 'GET':
-		today = datetime.now(cst).date()
+		today = datetime.now(tz).date()
 		return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
 	else:
 		relative_name = request.form.get('relative_name')
@@ -709,14 +726,15 @@ def sign():
 @roles_required('admin')
 def create_corp_user():
 	if request.method == 'GET':
-		unverified_users = User.query.filter(and_(User.type == 'corporate', User.password == None)).all()
+		unverified_users = User.query.filter(and_(User.type == 'corporate',
+												  User.password is None)).all()
 		return render_template('users/admin/create_user.html', unverified=unverified_users)
 	else:
 		# Build a user based on the request form
 		user_data = {'fname': request.form['fname'],
-					 'lname': request.form['lname'],
-					 'email': request.form['email'].lower(),
-					 'type': 'corporate'}
+					'lname': request.form['lname'],
+					'email': request.form['email'].lower(),
+					'type': 'corporate'}
 		user = User(user_data)
 		DB.session.add(user)
 		DB.session.commit()
@@ -756,39 +774,13 @@ def batch_modify():
 		g.log.info('Starting acceptances')
 		modify_type = request.form.get('type')
 		num_to_accept = int(request.form.get('num_to_accept'))
+		include_waitlist = request.form.get('include_waitlist', True) == 'true'
 		if modify_type == 'fifo':
-			accepted_attendees = User.query.filter_by(status='WAITLISTED').order_by(User.time_applied.asc()).limit(num_to_accept).all()
-			for attendee in accepted_attendees:
-				attendee.status = 'ACCEPTED'
-				DB.session.commit()
-				html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
-				g.log = g.log.bind(email=attendee.email)
-				g.log.info('Sent email to')
+			q.enqueue(batch.accept_fifo, num_to_accept, include_waitlist)
 		else:  # randomly select n users out of x users
-			random_pool = User.query.filter(or_(User.status=='PENDING', User.status=='WAITLISTED')).all()
-			accepted = random.sample(set(random_pool), num_to_accept)
-			for attendee in accepted:
-				if attendee.status == 'PENDING':
-					html = render_template('emails/application_decisions/accepted.html', user=attendee)
-				else: # they got off waitlist
-					html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-				attendee.status = 'ACCEPTED'
-				DB.session.commit()
-				send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
-
-			# set everyone else to go from pending to waitlisted
-			pending_attendees = User.query.filter_by(status='PENDING').all()
-			for pending_attendee in pending_attendees:
-				pending_attendee.status = 'WAITLISTED'
-				html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
-				DB.session.commit()
-				send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
-		# x = request.form.get('x') if request.form.get(
-			# 	'x') is not 0 else -1  # TODO it's the count of users who are pending
-		# TODO: figure out how to find x random numbers
-		flash('Finished acceptances', 'success')
-		g.log.info('Finished acceptances')
+			q.enqueue(batch.random_accept, num_to_accept, include_waitlist)
+		flash('Worker is running acceptances', 'success')
+		g.log.info('Acceptances have been queued')
 		return redirect(request.url)
 
 
@@ -799,22 +791,17 @@ def send_email_to_users():
 		return render_template('users/admin/send_email.html')
 	else:
 		statuses = request.form.getlist('status')
-		users = User.query.filter(and_(User.status.in_(statuses), User.checked_in == 'true'))
-		foo = users.all()
-		content = request.form.get('content')
-		lines = content.split('\r\n')
-		msg_body = u""
-		i = 0
-		for line in lines:
-			msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
-		for user in users:
-			html = render_template('emails/generic_message.html', content=msg_body)
-			html = render_template_string(html, user=user)
-			send_email(settings.GENERAL_INFO_EMAIL, request.form.get('subject'), user.email, html_content=html)
-			print 'Sent Email' + str(i)
-			i += 1
+		users = User.query.filter(and_(User.status.in_(statuses)))
+		q.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'), users.all())
 		flash('Successfully sent', 'success')
 		return 'Done'
+
+def job_view(job_key):
+	job = Job.fetch(job_key, connection=redis.from_url(settings.REDIS_URL))
+	if job.is_finished:
+		return 'Finished'
+	else:
+		return 'Nope'
 
 @login_required
 @roles_required('admin')
@@ -823,7 +810,6 @@ def reject_users():
 		return render_template('users/admin/reject_users.html')
 	else:
 		users = User.query.filter(and_(or_(User.status == 'WAITLISTED'), User.school_id == 23)).all()
-		i = 0
 		for user in users:
 			html = render_template('emails/application_decisions/rejected.html', user=user)
 			send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
@@ -831,11 +817,8 @@ def reject_users():
 			DB.session.add(user)
 			DB.session.commit()
 			print 'Rejected {}'.format(user.email)
-			print i
-			i += 1
 		flash('Finished rejecting', 'success')
 		return redirect(request.url)
-
 
 
 @login_required

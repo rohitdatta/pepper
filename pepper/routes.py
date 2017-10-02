@@ -19,7 +19,7 @@ def configure_routes(app):
 	app.add_url_rule('/confirm', 'confirm-registration', view_func=users.views.confirm_registration, methods=['GET', 'POST'])
 	app.add_url_rule('/profile', 'update-profile', view_func=users.views.edit_resume, methods=['GET', 'POST'])
 	app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
-	app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_MLH, methods=['GET'])
+	app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_mlh, methods=['GET'])
 	app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
 	app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
 
@@ -36,6 +36,7 @@ def configure_routes(app):
 	app.add_url_rule('/admin/check-in', 'manual-check-in', view_func=users.views.check_in_manual, methods=['GET', 'POST'])
 	app.add_url_rule('/admin/check-in-post', 'manual-check-in-post', view_func=users.views.check_in_post, methods=['POST'])
 	app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.views.set_mlh_id, methods=['GET', 'POST'])
+	app.add_url_rule('/admin/job/<job_key>', view_func=users.views.job_view, methods=['GET'])
 
 	# API
 	app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list, methods=['GET'])
