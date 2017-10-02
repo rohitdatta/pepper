@@ -36,11 +36,12 @@ def send_forgot_password_email(user_id, token):
     if not user:
         print 'Could not send forgot password email to user id {} because this id does not exist'.format(id)
         return
-    if user:
-        url = url_for('reset-password', token=token, _external=True)
-        html = render_template('emails/reset_password.html', user=user, link=url)
-        txt = render_template('emails/reset_password.txt', user=user, link=url)
-        send_email(settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
+    url = url_for('reset-password', token=token, _external=True)
+    g.log = g.log.bind(email=user.email, url=url)
+    g.log.error(url)
+    html = render_template('emails/reset_password.html', user=user, link=url)
+    txt = render_template('emails/reset_password.txt', user=user, link=url)
+    send_email(settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
 
 
 def send_attending_email(user_id):

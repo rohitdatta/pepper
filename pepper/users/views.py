@@ -374,7 +374,8 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         if user:
             token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
-            q.enqueue(batch.send_forgot_password_email, user.id, token)
+            #q.enqueue(batch.send_forgot_password_email, user.id, token)
+            batch.send_forgot_password_email(user.id, token)
         flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
         return redirect(url_for('login'))
 
