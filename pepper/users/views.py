@@ -10,7 +10,6 @@ from pepper.utils import calculate_age, get_current_user_roles, get_default_dash
 
 from flask import flash, g, jsonify, make_response, redirect, render_template, request, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
-import keen
 from pytz import timezone
 import redis
 import requests
@@ -225,7 +224,7 @@ def complete_user_sign_up():
     # TODO: get rid of DEBUG check
     if not settings.DEBUG:
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        batch.keen_add_event(current_user.id)
+        batch.keen_add_event(current_user.id, 'sign_ups')
 
     if current_user.confirmed:
         q.enqueue(batch.send_applied_email, current_user.id)
