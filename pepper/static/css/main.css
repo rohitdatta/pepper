@@ -366,6 +366,12 @@ form :-moz-placeholder {
     font-size: 1.5em;
     line-height: 70px; }
 
+.app-status {
+  text-align: center; }
+
+.welcome {
+  text-align: center; }
+
 .footer {
   position: absolute;
   bottom: 0;
@@ -384,5 +390,3 @@ input[type=text].fullwidth, form input.fullwidth[type=number], form textarea.ful
   text-align: left; }
   input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus, form textarea.fullwidth:focus {
     width: 100%; }
-
-/*# sourceMappingURL=main.css.map */

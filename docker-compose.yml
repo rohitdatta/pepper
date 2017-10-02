@@ -1,0 +1,20 @@
+web:
+  build: .
+  command: bash -c "python manage.py db upgrade && python manage.py runserver"
+  ports:
+   - "5000:5000"
+  links:
+   - redis
+   - postgres
+redis:
+    image: redis
+    expose:
+      - "6379"
+postgres:
+    image: postgres
+    restart: always
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_DB=pepper

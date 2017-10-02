@@ -1,6 +1,6 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-<h1>Dashboard</h1>
+<h1 class="center">Dashboard</h1>
 <div class="welcome">Welcome {{ user.fname }}!</div>
 <div class="app-status">Your application status is: <span class="user-status">{{ user.status }}</span>.</div>
 {% if next_steps %}
