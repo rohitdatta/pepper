@@ -112,9 +112,8 @@ def random_accept(num_to_accept, include_waitlist):
 
 
 def keen_add_event(user_id, event_type):
-
     user = User.query.filter_by(id=user_id).first()
-    if event_type == 'sign_ups'
+    if event_type == 'sign_ups':
         keen.add_event('sign_ups', {
                 'date_of_birth': user.birthday.strftime(fmt),
                 'dietary_restrictions': user.dietary_restrictions,
@@ -140,3 +139,26 @@ def keen_add_event(user_id, event_type):
                 'shirt_size': user.shirt_size,
                 'special_needs': user.special_needs
             })
+    # else:
+    #     #user decision
+    #     keen.add_event(event_type, {
+    #         'date_of_birth': user.birthday.strftime(fmt),
+    #         'dietary_restrictions': user.dietary_restrictions,
+    #         'email': user.email,
+    #         'first_name': user.fname,
+    #         'last_name': user.lname,
+    #         'gender': user.gender,
+    #         'id': user.id,
+    #         'major': user.major,
+    #         'phone_number': user.phone_number,
+    #         'school': {
+    #             'id': user.school_id,
+    #             'name': user.school_name
+    #         },
+    #         'skill_level': user.skill_level,
+    #         'races': user.race.split(','),
+    #         'num_hackathons': user.num_hackathons,
+    #         'class_standing': user.class_standing,
+    #         'shirt_size': user.shirt_size,
+    #         'special_needs': current_user.special_needs
+    #     })
