@@ -142,6 +142,9 @@ button {
   button:disabled {
     background-color: #bfbfbf; }
 
+.error {
+  color: red; }
+
 h1 {
   font-size: 36pt; }
 
@@ -390,3 +393,5 @@ input[type=text].fullwidth, form input.fullwidth[type=number], form textarea.ful
   text-align: left; }
   input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus, form textarea.fullwidth:focus {
     width: 100%; }
+
+/*# sourceMappingURL=main.css.map */

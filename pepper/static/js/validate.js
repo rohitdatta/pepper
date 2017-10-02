@@ -61,6 +61,9 @@ $(function() {
             },
             class_standing: "required",
             race: "required",
+            why_travel_reimbursement: {
+                required: ".travel-reimbursement-checkbox:checked"
+            },
             facebook_account: {
                 required: ".campus-ambassador-checkbox:checked",
                 facebook: true
@@ -91,6 +94,7 @@ $(function() {
             num_hackathons: "Please enter the number of hackathons you've been to. It's ok to say 0!",
             class_standing: "Please choose your class standing",
             race: "Please select your race",
+            why_travel_reimbursement: "Please tell us why you deserve travel reimbursement",
             facebook_account: "Please enter your Facebook username",
             campus_ambassadors_application: "Please enter your campus ambassador application",
             mlh: "Please agree to the MLH Code of Conduct"
@@ -101,6 +105,7 @@ $(function() {
             } else {
                 element.after(error);
             }
+            toastr['error']('Please fill out the required fields');
         }
         // Make sure the form is submitted to the destination defined
         // in the "action" attribute of the form when valid

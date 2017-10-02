@@ -26,10 +26,15 @@ $(document).ready(function() {
         }
     });
 
+    function toggleWhyTravelReimbursement() {
+        $('.travel-reimbursement-fields').toggle($('.travel-reimbursement-checkbox').is(':checked'));
+    }
+    toggleWhyTravelReimbursement();
+    $('.travel-reimbursement-checkbox').on('change', toggleWhyTravelReimbursement);
+
     function toggleCampusAmbassador() {
         $(".campus-ambassador-fields").toggle($(".campus-ambassador-checkbox").is(":checked"));
     }
     toggleCampusAmbassador();
-
     $(".campus-ambassador-checkbox").on("change", toggleCampusAmbassador);
 });

@@ -1,6 +1,9 @@
 const toastr = window.toastr;
 
-toastr.options = {positionClass: 'toast-top-center'}
+toastr.options = {
+    positionClass: 'toast-top-center',
+    preventDuplicates: true
+};
 
 /* turning flask flash messages into js popup notifications */
 window.popupMessages.forEach(function (m, i) {

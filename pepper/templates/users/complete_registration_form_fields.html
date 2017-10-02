@@ -90,27 +90,15 @@
       <div class="control__indicator"></div>
     </label>
     <br>
-    <div class="control-group">
-      <h4>Interests</h4>
-      <textarea name="interests" rows="5" placeholder="Some examples: iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech">{% if not required and user.interests %}{{ user.interests }}{% endif %}</textarea>
-    </div>
-    <br>
     <h4>We can offer a limited amount of travel reimbursement to hackers coming from out of Austin. Would you like to receive travel reimbursement to attend HackTX?</h4>
     <label class="control control--checkbox">I would be interested in receiving travel reimbursement!
-      <input type="checkbox" name="travel_reimbursement" value="TRUE" {% if not required and user.needs_travel_reimbursement %}checked{% endif %}>
+      <input type="checkbox" name="travel_reimbursement" value="TRUE" class="travel-reimbursement-checkbox" {% if not required and user.needs_travel_reimbursement %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
-
-    <br>
-    <h4>What are you most nervous about coming to HackTX?</h4>
-    <textarea rows="5" name="most_nervous">{% if not required and user.most_nervous %}{{ user.most_nervous }}{% endif %}</textarea>
-    <br>
-    <h4>What are you most excited about coming to HackTX?</h4>
-    <textarea rows="5" name="most_excited">{% if not required and user.most_excited %}{{ user.most_excited }}{% endif %}</textarea>
-    <br>
-    <h4>What do you expect to get out of HackTX?</h4>
-    <textarea rows="5" name="expectations">{% if not required and user.expectations %}{{ user.expectations }}{% endif %}</textarea>
-    <br>
+    <div class="travel-reimbursement-fields">
+      <h4 class="required">Why do you think you deserve travel reimbursement?</h4>
+      <textarea rows="5" name="why_travel_reimbursement" required>{% if not required and user.why_travel_reimbursement %}{{ user.why_travel_reimbursement }}{% endif %}</textarea>
+    </div>
     <h4>We will be hosting workshops both before and during HackTX. What kind of workshops would you want to see?</h4>
     <textarea rows="5" name="workshops">{% if not required and user.workshops %}{{ user.workshops }}{% endif %}</textarea>
     <br>

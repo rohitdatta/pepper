@@ -170,6 +170,8 @@ def extract_mlh_info():
         'needs_travel_reimbursement': request.form.get('travel_reimbursement') == 'TRUE',
         'campus_ambassador': request.form.get('campus_ambassador') == 'TRUE',
     }
+    if user_info['needs_travel_reimbursement']:
+        user_info['why_travel_reimbursement'] = request.form.get('why_travel_reimbursement')
     if user_info['campus_ambassador']:
         user_info.update({
             'facebook_account': request.form.get('facebook_account'),
@@ -179,14 +181,9 @@ def extract_mlh_info():
         missing_fields = (helpers.display_field_name(key) for key, value in user_info.iteritems() if value is None)
         message = 'You must fill out the required fields:\n' + 's, '.join(missing_fields)
         return {'error': message}
-    optional_user_info = {
-        'interests': request.form.get('interests'),
-        'most_nervous': request.form.get('most_nervous'),
-        'most_excited': request.form.get('most_excited'),
-        'expectations': request.form.get('expectations'),
-        'workshops': request.form.get('workshops'),
-    }
-    user_info.update((key, value) for key, value in user_info.iteritems() if value is not None)
+    workshops = request.form.get('workshops')
+    if workshops:
+        user_info['workshops'] = workshops
     return user_info
 
 
