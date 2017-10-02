@@ -28,6 +28,8 @@ class User(DB.Model, UserMixin):
     roles = DB.relationship('UserRole', backref='users', lazy='dynamic')
     team = DB.relationship("Team", back_populates="users")
     team_id = DB.Column(DB.Integer, DB.ForeignKey('teams.id', ondelete='CASCADE'))
+    is_leader = DB.Column(DB.Boolean)
+    time_team_join = DB.Column(DB.DateTime)
     mlh_id = DB.Column(DB.Integer)
     access_token = DB.Column(DB.String(255))
     password = DB.Column(DB.String(100))
