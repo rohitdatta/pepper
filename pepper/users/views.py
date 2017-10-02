@@ -69,12 +69,14 @@ def callback():
     except Exception as e:
         g.log = g.log.bind(error=e, response=resp)
         g.log.error('Error Decoding JSON')
+        flash('MyMLH had an error, please sign up here.', 'error')
+        return redirect(url_for('sign-up'))
 
     if resp.status_code == 401:  # MLH sent expired token
         redirect_url = helpers.mlh_oauth_url
 
         g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text,
-                           redirect_url=redirect_url)
+                           redirect_url=redirect_url, request_url=resp.url)
         g.log.error('Got expired auth code, redirecting: ')
         flash('MyMLH had an error, please sign up here.', 'error')
         return redirect(url_for('sign-up'))
