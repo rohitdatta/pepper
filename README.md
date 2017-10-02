@@ -9,7 +9,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
 1. Create a PostgreSQL database named `pepper`
 2. Run `pip install -r requirements.txt`
 3. Create a `.env` file with your configuration like the following:
-
+```
     LOG_LEVEL=debug
     SERVICE_NAME=Pepper
     DEBUG=True
@@ -39,7 +39,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     FIREBASE_KEY=''
     RESUMES_LINK=''
     REDISTOGO_URL='127.0.0.1:6379'
-
+```
 4. Making sure PostgreSQL is running, set up the tables by running `python manage.py db upgrade`
 5. Run the server by running `python manage.py runserver`
 
