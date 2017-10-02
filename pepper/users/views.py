@@ -98,7 +98,7 @@ def callback():
             user_info['type'] = 'MLH'
             user_info['access_token'] = access_token
             g.log = g.log.bind(email=user_info['data']['email'])
-            user = User.query.filter_by(mlh_id=user_info['data']['id']).first()
+            user = User.query.filter_by(email=user_info['data']['email']).first()
             if user is None:
                 if settings.REGISTRATION_OPEN:
                     g.log.info('Creating a new user from MLH info')
