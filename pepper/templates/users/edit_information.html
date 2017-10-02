@@ -42,7 +42,7 @@ if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
       </div>
     </div>
     <div class="col-md-6" id="input-gender-container">
-      <label for="input-gender">Please specify</label>
+      <label for="input-gender required">Please specify</label>
       <input type="text" placeholder="Gender" id="input-gender" name="gender_other" class="info-field" {% if not required and user.gender not in ['Female', 'Male', 'Non-Binary', 'I prefer not to say'] %}value="{{ user.gender }}"{% endif %}>
     </div>
   </div>
