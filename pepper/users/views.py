@@ -6,7 +6,7 @@ from models import User
 from pepper import settings
 from pepper.app import DB, q
 from pepper.legal.models import Waiver
-from pepper.utils import calculate_age, get_current_user_roles, roles_required, s3, serializer, timed_serializer, user_status_blacklist, user_status_whitelist
+from pepper.utils import calculate_age, get_current_user_roles, get_default_dashboard_for_role, redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, user_status_whitelist
 
 from flask import flash, g, jsonify, make_response, redirect, render_template, request, url_for
 from flask.ext.login import current_user, login_required, login_user, logout_user
@@ -19,12 +19,12 @@ from sqlalchemy.exc import IntegrityError
 tz = timezone('US/Central')
 
 
-@helpers.redirect_to_dashboard_if_authed
+@redirect_to_dashboard_if_authed
 def landing():
     return render_template("static_pages/index.html")
 
 
-@helpers.redirect_to_dashboard_if_authed
+@redirect_to_dashboard_if_authed
 @helpers.check_registration_opened
 def sign_up():
     if request.method == 'GET':
@@ -298,7 +298,7 @@ def dashboard():
 
 
 @helpers.check_registration_opened
-@helpers.redirect_to_dashboard_if_authed
+@redirect_to_dashboard_if_authed
 def login():
     if request.method == 'GET':
         return render_template('users/login.html', mlh_oauth_url=helpers.mlh_oauth_url)
@@ -315,7 +315,7 @@ def login():
     login_user(user, remember=True)
     next_url = request.args.get('next')
     flash('Logged in successfully!', 'success')
-    return redirect(next_url or url_for(helpers.get_default_dashboard_for_role()))
+    return redirect(next_url or url_for(get_default_dashboard_for_role()))
 
 
 def logout():

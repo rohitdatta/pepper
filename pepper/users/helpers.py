@@ -64,26 +64,6 @@ def get_mlh_user_data(access_token):
     return requests.get('https://my.mlh.io/api/v2/user.json', params={'access_token': access_token}).json()
 
 
-def get_default_dashboard_for_role():
-    roles = utils.get_current_user_roles()
-    if "admin" in roles:
-        return "admin-dash"
-    if "corp" in roles:
-        return "corp-dash"
-    return "dashboard"
-
-
-def redirect_to_dashboard_if_authed(func):
-    @functools.wraps(func)
-    def decorated_view(*args, **kwargs):
-        if current_user.is_authenticated:
-            if 'admin' not in utils.get_current_user_roles():
-                return redirect(url_for(get_default_dashboard_for_role()))
-        return func(*args, **kwargs)
-
-    return decorated_view
-
-
 def check_registration_opened(func):
     @functools.wraps(func)
     def decorated_view(*args, **kwargs):

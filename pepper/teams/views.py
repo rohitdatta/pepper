@@ -8,7 +8,8 @@ def team():
         if current_user.team_id is None:
             return render_template('teams/manage_team.html')
         else:
-            return render_template('teams/team.html', team=current_user.team, user=current_user)
+            team = current_user.team
+            return render_template('teams/team.html', team_name=team.tname, teammates=', '.join(user.fname + ' ' + user.lname for user in team.users), user=current_user)
     else:
         val = request.form.get('button')
         if val == 'join':

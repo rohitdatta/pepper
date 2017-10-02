@@ -85,6 +85,26 @@ def user_status_blacklist(*statuses):
     return wrapper
 
 
+def get_default_dashboard_for_role():
+    roles = get_current_user_roles()
+    if "admin" in roles:
+        return "admin-dash"
+    if "corp" in roles:
+        return "corp-dash"
+    return "dashboard"
+
+
+def redirect_to_dashboard_if_authed(func):
+    @functools.wraps(func)
+    def decorated_view(*args, **kwargs):
+        if g.user.is_authenticated:
+            if 'admin' not in get_current_user_roles():
+                return redirect(url_for(get_default_dashboard_for_role()))
+        return func(*args, **kwargs)
+
+    return decorated_view
+
+
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
     # TODO: get rid of debug path
     if settings.DEBUG:

@@ -5,20 +5,29 @@
 <script src="{{ url_for('static', filename='js/validate.js') }}"></script>
 
 <!-- Show information for people who already have a team -->
-<h2>Team</h2>
-<p>{{ team.tname }}</p>
-<h2>Teammates</h2>
-{% for user in team.users %}
-<p>{{ user.fname }} {{ user.lname }}</p>
-{% endfor %}
+<h1 class="center">Team</h1>
+<p class="center large-text">{{ team_name }}</p>
+<h1 class="center">Teammates</h1>
+<div class="center">
+  <p class="large-text">
+  {{ teammates }}
+  </p>
+</div>
+<div class="spacing"></div>
 
 <!-- Contains rename and leave team buttons -->
-<form method="POST" action="team" id="rename">
-	<input type="text" placeholder="Rename team" name="rename_tname">
-	<button type="submit" name="button" value="rename">Rename</button>
-</form>
+<div class="center">
+  <form method="POST" action="team" id="rename">
+    <input type="text" placeholder="Rename team" name="rename_tname">
+    <button type="submit" name="button" value="rename">Rename</button>
+  </form>
+</div>
 
-<form method="POST" action="team" id="leave">
-	<button type="submit" name="button" value="leave">Leave Team</button>
-	</form>
+<div class="spacing"></div>
+
+<div class="center">
+  <form method="POST" action="team" id="leave">
+    <button type="submit" name="button" value="leave">Leave Team</button>
+  </form>
+</div>
 {% endblock %}
