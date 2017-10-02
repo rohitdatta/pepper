@@ -225,31 +225,7 @@ def complete_user_sign_up():
     # TODO: get rid of DEBUG check
     if not settings.DEBUG:
         fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        keen.add_event('sign_ups', {
-            'date_of_birth': current_user.birthday.strftime(fmt),
-            'dietary_restrictions': current_user.dietary_restrictions,
-            'email': current_user.email,
-            'first_name': current_user.fname,
-            'last_name': current_user.lname,
-            'gender': current_user.gender,
-            'id': current_user.id,
-            'major': current_user.major,
-            'phone_number': current_user.phone_number,
-            'school': {
-                'id': current_user.school_id,
-                'name': current_user.school_name
-            },
-            'keen': {
-                'timestamp': current_user.time_applied.strftime(fmt)
-            },
-            'interests': current_user.interests,
-            'skill_level': current_user.skill_level,
-            'races': current_user.race,
-            'num_hackathons': current_user.num_hackathons,
-            'class_standing': current_user.class_standing,
-            'shirt_size': current_user.shirt_size,
-            'special_needs': current_user.special_needs
-        })
+        batch.keen_add_event(current_user.id)
 
     if current_user.confirmed:
         q.enqueue(batch.send_applied_email, current_user.id)
