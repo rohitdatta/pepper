@@ -226,11 +226,11 @@ def complete_user_sign_up():
             'keen': {
                 'timestamp': current_user.time_applied.strftime(fmt)
             },
-            'interests': interests,
-            'skill_level': skill_level,
-            'races': race_list,
-            'num_hackathons': num_hackathons,
-            'class_standing': class_standing,
+            'interests': current_user.interests,
+            'skill_level': current_user.skill_level,
+            'races': current_user.race,
+            'num_hackathons': current_user.num_hackathons,
+            'class_standing': current_user.class_standing,
             'shirt_size': current_user.shirt_size,
             'special_needs': current_user.special_needs
         })
