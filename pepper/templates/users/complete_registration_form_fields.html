@@ -62,31 +62,31 @@
     <br>
     <h4 class="required">What race(s) do you identify with?</h4>
     <label class="control control--checkbox">American Indian / Alaskan Native
-      <input type="checkbox" name="race" class="other-race" value="AMERICAN_INDIAN_ALASKAN" aria-required="true" required {% if not required and user.race and 'AMERICAN_INDIAN_ALASKAN' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="AMERICAN_INDIAN_ALASKAN" {% if not required and user.race and 'AMERICAN_INDIAN_ALASKAN' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">Asian
-      <input type="checkbox" name="race" class="other-race" value="ASIAN" aria-required="true" required {% if not required and user.race and 'ASIAN' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="ASIAN" {% if not required and user.race and 'ASIAN' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">Black and African American
-      <input type="checkbox" name="race" class="other-race" value="BLACK_AFRICAN_AMERICAN" aria-required="true" required {% if not required and user.race and 'BLACK_AFRICAN_AMERICAN' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="BLACK_AFRICAN_AMERICAN" {% if not required and user.race and 'BLACK_AFRICAN_AMERICAN' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">Hispanic or Latino
-      <input type="checkbox" name="race" class="other-race" value="HISPANIC_LATINO" aria-required="true" required {% if not required and user.race and 'HISPANIC_LATINO' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="HISPANIC_LATINO" {% if not required and user.race and 'HISPANIC_LATINO' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">Native Hawaiian or Other Pacific Islander
-      <input type="checkbox" name="race" class="other-race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER" aria-required="true" required {% if not required and user.race and 'NATIVE_HAWAIIAN_PACIFIC_ISLANDER' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER" {% if not required and user.race and 'NATIVE_HAWAIIAN_PACIFIC_ISLANDER' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">White (Not of Hispanic Origin)
-      <input type="checkbox" name="race" class="other-race" value="EUROPEAN_WHITE" aria-required="true" required {% if not required and user.race and 'EUROPEAN_WHITE' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="other-race" value="EUROPEAN_WHITE" {% if not required and user.race and 'EUROPEAN_WHITE' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <label class="control control--checkbox">I choose not to disclose
-      <input type="checkbox" name="race" class="no-race" value="NO_DISCLOSURE" aria-required="true" required {% if not required and user.race and 'NO_DISCLOSURE' in user.race.split(',') %}checked{% endif %}>
+      <input type="checkbox" name="race" class="no-race" value="NO_DISCLOSURE" {% if not required and user.race and 'NO_DISCLOSURE' in user.race.split(',') %}checked{% endif %}>
       <div class="control__indicator"></div>
     </label>
     <br>

@@ -6,16 +6,21 @@
 
 <!-- Show information for people who already have a team -->
 <h1 class="center">Team</h1>
-<p class="center large-text">{{ team_name }}</p>
+<p class="center large-text">{{ team.tname }}</p>
 <h1 class="center">Teammates</h1>
+{% for user in team.users|sort(attribute='time_team_join') %}
 <div class="center">
-  <p class="large-text">
-  {{ teammates }}
-  </p>
+	{% if user.is_leader %}
+	<p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
+	{% else %}
+	<p>{{ user.fname }} {{ user.lname }} ({{ user.email }})</p>
+	{% endif %}
 </div>
+{% endfor %}
 <div class="spacing"></div>
 
 <!-- Contains rename and leave team buttons -->
+{% if current_user.is_leader %}
 <div class="center">
   <form method="POST" action="team" id="rename">
     <input type="text" placeholder="Rename team" name="rename_tname">
@@ -24,6 +29,7 @@
 </div>
 
 <div class="spacing"></div>
+{% endif %}
 
 <div class="center">
   <form method="POST" action="team" id="leave">

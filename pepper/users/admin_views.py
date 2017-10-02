@@ -8,7 +8,7 @@ from pepper.app import DB
 from pepper.utils import calculate_age, roles_required, send_email
 
 from flask import flash, g, redirect, render_template, render_template_string, request, url_for
-from flask.ext.login import current_user, login_required
+from flask.ext.login import current_user, login_required, login_user
 import keen
 from sqlalchemy import and_, or_
 

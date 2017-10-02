@@ -1,6 +1,7 @@
 from models import Team
 from pepper.app import DB
 from pepper.utils import user_status_blacklist
+from datetime import datetime
 
 from flask.ext.login import current_user, login_required
 from flask import g, render_template, redirect, url_for, flash
@@ -19,6 +20,7 @@ def join_team(request):
         g.log.info('Joining a team')
         g.log = g.log.bind(tname=request.form.get('join_tname'))
         g.log.info('Joining team from local information')
+        current_user.time_team_join = datetime.utcnow()
         team.users.append(current_user)
         try:
             DB.session.add(team)
@@ -28,7 +30,6 @@ def join_team(request):
             flash('The team you were trying to join either does not exist or is full. If this error occurs multiple times, please contact us', 'error')
             return redirect(request.url)
         g.log.info('Successfully created team')
-
         flash('Successfully joined team.','success')
     else:
         flash('Team size has reached capacity.','warning')
@@ -51,6 +52,8 @@ def create_team(request):
         g.log.info('Creating a team')
         g.log = g.log.bind(tname=tname)
         g.log.info('Creating a new team from local information')
+        current_user.is_leader = True
+        current_user.time_team_join = datetime.utcnow()
         team = Team(tname, current_user)
         try:
             DB.session.add(team)
@@ -60,7 +63,6 @@ def create_team(request):
             flash('The team you were trying to create already exists. If this error occurs multiple times, please contact us', 'error')
             return redirect(request.url)
         g.log.info('Successfully created team')
-
         flash('Successfully created team!','success')
         return redirect(url_for('team'))
     # Team cannot be created
@@ -81,12 +83,22 @@ def leave_team(request):
         g.log = g.log.bind(tname=team.tname)
         team.users.remove(current_user)
         if team.users:
+            if current_user.is_leader:
+                current_user.is_leader = False
+                team.users = sorted(
+                    team.users,
+                    key=lambda x: x.time_team_join, reverse=True
+                )
+                temp_user = team.users[len(team.users)-1]
+                temp_user.is_leader = True
             DB.session.add(team)
             DB.session.commit()
             g.log.info('Successfully left team')
         else:
             # delete an empty team
             try:
+                if current_user.is_leader:
+                    current_user.is_leader = False
                 DB.session.delete(team)
                 DB.session.commit()
             except Exception as e:
@@ -101,6 +113,9 @@ def leave_team(request):
 @login_required
 @user_status_blacklist('NEW')
 def rename_team(request):
+    if not current_user.is_leader:
+        flash('Cannot rename team.','warning')
+        return redirect(url_for('team'))
     if request.form.get('rename_tname') == '':
         flash('Please enter a team name.','warning')
         return redirect(url_for('team'))
