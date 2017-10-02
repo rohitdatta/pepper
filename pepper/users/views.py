@@ -47,7 +47,7 @@ def sign_up():
     DB.session.add(user)
     DB.session.commit()
     g.log.info('Successfully created user from sign-up flow')
-    q.enqueue(batch.send_confirmation_email, user.id)
+    batch.send_confirmation_email(user)
 
     login_user(user, remember=True)
     flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
@@ -110,7 +110,7 @@ def callback():
                 user.access_token = access_token
             DB.session.add(user)
             DB.session.commit()
-            q.enqueue(batch.send_confirmation_email, user.id)
+            batch.send_confirmation_email(user)
             g.log.info('Successfully created user')
             login_user(user, remember=True)
             flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
@@ -212,6 +212,7 @@ def extract_resume(first_name, last_name, resume_required=True):
 def complete_user_sign_up():
     current_user.status = 'PENDING'
     current_user.time_applied = datetime.utcnow()
+    q.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0)
     try:
         DB.session.add(current_user)
         DB.session.commit()
@@ -221,13 +222,8 @@ def complete_user_sign_up():
     g.log = g.log.bind(email=current_user.email)
     g.log.info('User successfully applied')
 
-    # TODO: get rid of DEBUG check
-    if not settings.DEBUG:
-        fmt = '%Y-%m-%dT%H:%M:%S.%f'
-        batch.keen_add_event(current_user.id, 'sign_ups')
-
     if current_user.confirmed:
-        q.enqueue(batch.send_applied_email, current_user.id)
+        batch.send_applied_email(current_user)
         flash(
             'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
             settings.HACKATHON_NAME), 'success')
@@ -348,9 +344,7 @@ def forgot_password():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         if user:
-            token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
-            #q.enqueue(batch.send_forgot_password_email, user.id, token)
-            batch.send_forgot_password_email(user.id, token)
+            batch.send_forgot_password_email(user)
         flash('If there is a registered user with {email}, then a password reset email has been sent!', 'success')
         return redirect(url_for('login'))
 
@@ -391,7 +385,7 @@ def resend_confirmation():
     if current_user.confirmed:
         flash('Your email is already confirmed', 'warning')
         return redirect(url_for('dashboard'))
-    q.enqueue(batch.send_confirmation_email, current_user.id)
+    batch.send_confirmation_email(current_user)
     flash("We sent another confirmation email to you! If you don't see it in a few minutes, check your spam or contact us", 'success')
     return redirect(url_for('dashboard'))
 
@@ -416,7 +410,7 @@ def confirm_account(token):
         DB.session.add(user)
         DB.session.commit()
         if user.status == 'PENDING':
-            q.enqueue(batch.send_applied_email, user.id)
+            batch.send_applied_email(user)
         flash('Successfully confirmed account', 'success')
         return redirect(url_for('complete-registration'))
     except:
@@ -655,7 +649,7 @@ def sign():
             'special_needs': current_user.special_needs
         })
 
-        q.enqueue(batch.send_attending_email, current_user.id)
+        batch.send_attending_email(current_user)
 
         flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
         return redirect(url_for('dashboard'))

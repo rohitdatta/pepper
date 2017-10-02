@@ -1,6 +1,6 @@
 from models import User
 from pepper import settings
-from pepper.app import DB
+from pepper.app import DB, q
 from pepper.utils import send_email, serializer, timed_serializer
 
 from flask import g, render_template, render_template_string, url_for
@@ -9,50 +9,33 @@ import keen
 import random
 
 
-def send_confirmation_email(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        print 'Could not send confirmation email to user id {} because this id does not exist'.format(id)
-        return
+def send_confirmation_email(user):
     token = serializer.dumps(user.email)
     url = url_for('confirm-account', token=token, _external=True)
     html = render_template('emails/confirm_account.html', link=url, user=user)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
+    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
 
 
-def send_applied_email(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        print 'Could not send applied email to user id {} because this id does not exist'.format(id)
-        return
+def send_applied_email(user):
     html = render_template('emails/applied.html', user=user)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
+    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
                .format(settings.HACKATHON_NAME), user.email,
-               txt_content=None, html_content=html)
+               None, html)
 
 
-def send_forgot_password_email(user_id, token):
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        print 'Could not send forgot password email to user id {} because this id does not exist'.format(id)
-        return
+def send_forgot_password_email(user):
+    token = timed_serializer.dumps(user.email, salt=settings.RECOVER_SALT)
     url = url_for('reset-password', token=token, _external=True)
-    g.log = g.log.bind(email=user.email, url=url)
-    g.log.error(url)
     html = render_template('emails/reset_password.html', user=user, link=url)
     txt = render_template('emails/reset_password.txt', user=user, link=url)
-    send_email(settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
+    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
 
 
-def send_attending_email(user_id):
-    user = User.query.filter_by(id=user_id).first()
-    if not user:
-        print 'Could not send attending email to user id {} because id does not exist'.format(id)
-        return
+def send_attending_email(user):
     # send email saying that they are confirmed to attend
     html = render_template('emails/application_decisions/confirmed_invite.html', user=user)
-    send_email(settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME),
-               user.email, html_content=html)
+    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME),
+               user.email, None, html)
 
 
 def send_batch_email(content, subject, users):
@@ -111,34 +94,42 @@ def random_accept(num_to_accept, include_waitlist):
         send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
 
 
-def keen_add_event(user_id, event_type):
+def keen_add_event(user_id, event_type, count):
     user = User.query.filter_by(id=user_id).first()
-    if event_type == 'sign_ups':
-        keen.add_event('sign_ups', {
-                'date_of_birth': user.birthday.strftime(fmt),
-                'dietary_restrictions': user.dietary_restrictions,
-                'email': user.email,
-                'first_name': user.fname,
-                'last_name': user.lname,
-                'gender': user.gender,
-                'id': user.id,
-                'major': user.major,
-                'phone_number': user.phone_number,
-                'school': {
-                    'id': user.school_id,
-                    'name': user.school_name
+    fmt = '%Y-%m-%dT%H:%M:%S.%f'
+    try:
+        keen.add_event(event_type, {
+            'date_of_birth': user.birthday.strftime(fmt),
+            'dietary_restrictions': user.dietary_restrictions,
+            'email': user.email,
+            'first_name': user.fname,
+            'last_name': user.lname,
+            'gender': user.gender,
+            'id': user.id,
+            'major': user.major,
+            'phone_number': user.phone_number,
+            'school': {
+                'id': user.school_id,
+                'name': user.school_name
                 },
-                'keen': {
-                    'timestamp': user.time_applied.strftime(fmt)
+            'keen': {
+                'timestamp': user.time_applied.strftime(fmt)
                 },
-                'interests': user.interests,
-                'skill_level': user.skill_level,
-                'races': user.race,
-                'num_hackathons': user.num_hackathons,
-                'class_standing': user.class_standing,
-                'shirt_size': user.shirt_size,
-                'special_needs': user.special_needs
-            })
+            'interests': user.interests,
+            'skill_level': user.skill_level,
+            'races': user.race,
+            'num_hackathons': user.num_hackathons,
+            'class_standing': user.class_standing,
+            'shirt_size': user.shirt_size,
+            'special_needs': user.special_needs
+        })
+        print 'success'
+    except Exception as e:
+        print e
+        if count < 3:
+            q.enqueue(keen_add_event, user_id, event_type, count + 1)
+        else:
+            print 'Keen failed too many times, {}'.format(event_type)
     # else:
     #     #user decision
     #     keen.add_event(event_type, {

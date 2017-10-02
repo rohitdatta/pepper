@@ -51,9 +51,6 @@ def create_team(request):
     if team is None:
         g.log.info('Creating a team')
         g.log = g.log.bind(tname=tname)
-        g.log.info('Creating a new team from local information')
-        current_user.is_leader = True
-        current_user.time_team_join = datetime.utcnow()
         team = Team(tname, current_user)
         try:
             DB.session.add(team)
@@ -83,22 +80,12 @@ def leave_team(request):
         g.log = g.log.bind(tname=team.tname)
         team.users.remove(current_user)
         if team.users:
-            if current_user.is_leader:
-                current_user.is_leader = False
-                team.users = sorted(
-                    team.users,
-                    key=lambda x: x.time_team_join, reverse=True
-                )
-                temp_user = team.users[len(team.users)-1]
-                temp_user.is_leader = True
             DB.session.add(team)
             DB.session.commit()
             g.log.info('Successfully left team')
         else:
             # delete an empty team
             try:
-                if current_user.is_leader:
-                    current_user.is_leader = False
                 DB.session.delete(team)
                 DB.session.commit()
             except Exception as e:
