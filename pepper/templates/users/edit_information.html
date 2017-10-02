@@ -1,6 +1,11 @@
 {% extends 'layouts/user_base.html' %}
 
 {% block content %}
+<script>
+if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
+      alert('Please complete your registration on a computer.');
+}
+</script>
 <div class="center col-md-12">
   <h1>{% if required %}{{ config.HACKATHON_NAME }} Registration{% else %}Edit Profile{% endif %}</h1>
 </div>
