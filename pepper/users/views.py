@@ -228,7 +228,7 @@ def complete_user_sign_up():
             settings.HACKATHON_NAME), 'success')
         return redirect(url_for('dashboard'))
     elif current_user.type == 'local':
-        batch.send_confirmation_email(user)
+        batch.send_confirmation_email(current_user)
     flash(
         'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
         settings.HACKATHON_NAME), 'success')
