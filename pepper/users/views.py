@@ -55,6 +55,7 @@ def sign_up():
     return redirect(url_for('complete-registration'))
 
 
+@redirect_to_dashboard_if_authed
 def callback():
     url = 'https://my.mlh.io/oauth/token'
     body = {
@@ -110,8 +111,11 @@ def callback():
                 user.access_token = access_token
             DB.session.add(user)
             DB.session.commit()
+            q.enqueue(batch.send_confirmation_email, user.id)
             g.log.info('Successfully created user')
             login_user(user, remember=True)
+            flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
+            return redirect(url_for('complete-mlh-registration'))
         except IntegrityError:
             # a unique value already exists this should never happen
             DB.session.rollback()
@@ -123,7 +127,7 @@ def callback():
             flash('A fatal error occurred. Please contact us for help', 'error')
             return redirect(url_for('landing'))
     login_user(user, remember=True)
-    return redirect(url_for('complete-mlh-registration'))
+    return redirect(url_for('dashboard'))
 
 
 @login_required

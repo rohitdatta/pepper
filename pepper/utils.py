@@ -109,17 +109,11 @@ def redirect_to_dashboard_if_authed(func):
 
 
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
-    # TODO: get rid of debug path
-    if settings.DEBUG:
-        print u'Sending an email with subject {} to email {}'.format(subject, to_email)
-        print u'Email content is:\n{}'.format((txt_content or '') + (html_content or ''))
-        return
-
     mail = Mail()
-    mail.set_from(Email(from_email, settings.HACKATHON_NAME))
+    mail.from_email = Email(from_email, settings.HACKATHON_NAME)
     personalization = Personalization()
     personalization.add_to(Email(to_email))
-    personalization.set_subject(subject)
+    personalization.subject = subject
     mail.add_personalization(personalization)
     transform(html_content)
     if txt_content is None and html_content is None:
