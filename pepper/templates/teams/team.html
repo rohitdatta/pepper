@@ -4,18 +4,18 @@
 <script src="{{ url_for('static', filename='js/teams.js') }}"></script>
 
 <!-- Show information for people who already have a team -->
-<h1 class="center">Team</h1>
-<p class="center large-text">{{ team.tname }}</p>
-<h1 class="center">Teammates</h1>
+<h1 class="center"><u>Team</u></h1>
+<p class="center h1">{{ team.tname }}</p>
+<h1 class="center"><u>Teammates</u></h1>
 {% if current_user.is_leader %}
 {% for user in team.users|multisort('time_team_join', 'id') %}
-<div class="center">
+<div class="center"style="padding-top: 10px;">
     {% if user.is_leader %} {# assume the first user is the leader #}
     <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
     {% else %}
   <form method="POST" action="{{url_for('team')}}" id="remove">
     <input type="text" name="user" value="{{ user.email }}" class="hidden">{{ user.fname }} {{ user.lname }} ({{ user.email }}) </input>
-    <button type="submit" name="button" value="remove">X</button>
+    <button class="btn btn-xs" style="width: 30px;" type="submit" name="button" value="remove">💣</button>
   </form>
     {% endif %}
 </div>
