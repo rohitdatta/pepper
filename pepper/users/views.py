@@ -51,6 +51,7 @@ def sign_up():
     q.enqueue(batch.send_confirmation_email, user.id)
 
     login_user(user, remember=True)
+    flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
     return redirect(url_for('complete-registration'))
 
 
@@ -246,10 +247,15 @@ def complete_user_sign_up():
             'special_needs': current_user.special_needs
         })
 
-    q.enqueue(batch.send_applied_email, current_user.id)
-    flash(
-        'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
-        settings.HACKATHON_NAME), 'success')
+    if current_user.confirmed:
+        q.enqueue(batch.send_applied_email, current_user.id)
+        flash(
+            'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
+            settings.HACKATHON_NAME), 'success')
+    else:
+        flash(
+            'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
+            settings.HACKATHON_NAME), 'success')
 
     return redirect(url_for('dashboard'))
 
@@ -308,6 +314,8 @@ def dashboard():
         if current_user.type == 'local':
             return redirect(url_for('complete-registration'))
         return redirect(url_for('complete-mlh-registration'))
+    if current_user.status == 'PENDING':
+        return render_template('users/dashboard/pending.html', user=current_user)
     if 'corp' in get_current_user_roles():
         return redirect(url_for('corp-dash'))
     return render_template('users/dashboard/dashboard.html', user=current_user)
@@ -397,13 +405,38 @@ def reset_password(token):
             return redirect(url_for('forgot-password'))
 
 
+@login_required
+@user_status_whitelist('NEW', 'PENDING')
+def resend_confirmation():
+    if current_user.confirmed:
+        flash('Your email is already confirmed', 'warning')
+        return redirect(url_for('dashboard'))
+    q.enqueue(batch.send_confirmation_email, current_user.id)
+    flash("We sent another confirmation email to you! If you don't see it in a few minutes, check your spam or contact us", 'success')
+    return redirect(url_for('dashboard'))
+
 def confirm_account(token):
     try:
         email = serializer.loads(token)
         user = User.query.filter_by(email=email).first()
+        if user is None:
+            flash('Invalid link', 'error')
+            return redirect(url_for('landing'))
+        if current_user.is_authenticated:
+            if current_user.email != email:
+                flash('This link is not for you!', 'error')
+                return redirect(url_for(get_default_dashboard_for_role()))
+            if current_user.confirmed:
+                flash('You are already confirmed', 'success')
+                return redirect(url_for(get_default_dashboard_for_role()))
+        if user.confirmed:
+            flash('This user is already confirmed', 'error')
+            return redirect(url_for('login'))
         user.confirmed = True
         DB.session.add(user)
         DB.session.commit()
+        if user.status == 'PENDING':
+            q.enqueue(batch.send_applied_email, user.id)
         flash('Successfully confirmed account', 'success')
         return redirect(url_for('complete-registration'))
     except:

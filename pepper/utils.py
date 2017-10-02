@@ -57,7 +57,10 @@ def corp_login_required(f):
     @functools.wraps(f)
     def decorated_view(*args, **kwargs):
         if not g.user.is_authenticated:
-            return redirect(url_for('corp-login'))
+            return redirect(url_for('login'))
+        roles = get_current_user_roles()
+        if 'admin' not in roles and 'corp' not in roles:
+            return redirect(url_for('login'))
         return f(*args, **kwargs)
 
     return decorated_view

@@ -17,8 +17,7 @@ DB = SQLAlchemy()
 redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
-redis_url = settings.REDIS_URL
-conn = redis.from_url(redis_url)
+conn = redis.from_url(settings.REDIS_URL)
 q = Queue(connection=conn)
 
 import routes

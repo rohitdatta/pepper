@@ -70,6 +70,7 @@ class User(DB.Model, UserMixin):
             self.access_token = info['access_token']
             self.school_id = info['data']['school']['id']
             self.school_name = info['data']['school']['name']
+            self.confirmed = False
         elif info['type'] == 'local':  # if creating an user through local sign up
             self.email = info['email']
             self.password = hash_pwd(info['password'])

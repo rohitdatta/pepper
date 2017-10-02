@@ -20,7 +20,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def runworker():
-    redis_url = os.getenv('REDISTOGO_URL')
+    redis_url = os.getenv('REDIS_URL')
     redis_connection = redis.from_url(redis_url)
     with Connection(redis_connection):
         worker = Worker(['default'])
