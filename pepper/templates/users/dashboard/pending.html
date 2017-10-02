@@ -1,9 +1,26 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
 {% if not user.confirmed %}
-<div class="alert alert-danger">
+<script>
+$(function() {
+  $('#resend-confirmation-link').click(function(e) {
+    var url = "{{ url_for('resend-confirmation-email') }}";
+    console.log(url);
+    $.post(url, {
+      email: "{{ user.email }}"
+    }, function(data) {
+      if (data.category === 'success') {
+        $('#alert-banner').hide();
+      }
+      toastr[data.category](data.message);
+    }, "json");
+    return false;
+  });
+});
+</script>
+<div class="alert alert-danger" id="alert-banner">
   <div class="center">
-    <strong>Your email has not been confirmed yet.</strong> If you can't find the email, you can resend it by clicking  <a href="{{ url_for('resend-confirmation-email') }}" class="alert-link">here</a>.
+    <strong>Your email has not been confirmed yet.</strong> If you can't find the email, you can resend it by clicking  <a href="#" id="resend-confirmation-link" class="alert-link">here</a>.
   </div>
 </div>
 {% endif %}

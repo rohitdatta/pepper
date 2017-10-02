@@ -380,12 +380,27 @@ def reset_password(token):
 @login_required
 @user_status_whitelist('NEW', 'PENDING')
 def resend_confirmation():
+    email = request.values.get('email')
+    if not email:
+        return jsonify({
+            'message': 'Invalid request',
+            'category': 'error',
+        })
+    if email != current_user.email:
+        return jsonify({
+            'message': 'You are not allowed to do that',
+            'category': 'error',
+        })
     if current_user.confirmed:
-        flash('Your email is already confirmed', 'warning')
-        return redirect(url_for('dashboard'))
+        return jsonify({
+            'message': 'Your email is already confirmed',
+            'category': 'warning',
+        })
     batch.send_confirmation_email(current_user)
-    flash("We sent another confirmation email to you! If you don't see it in a few minutes, check your spam or contact us", 'success')
-    return redirect(url_for('dashboard'))
+    return jsonify({
+        'message': "We sent another confirmation email to you! If you don't see it in a few minutes, check your spam or contact us",
+        'category': 'success',
+    })
 
 def confirm_account(token):
     try:
