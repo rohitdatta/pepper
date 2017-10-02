@@ -47,7 +47,6 @@ def sign_up():
     DB.session.add(user)
     DB.session.commit()
     g.log.info('Successfully created user from sign-up flow')
-    batch.send_confirmation_email(user)
 
     login_user(user, remember=True)
     flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
@@ -227,11 +226,12 @@ def complete_user_sign_up():
         flash(
             'Congratulations! You have successfully applied for {0}! You should receive a confirmation email shortly'.format(
             settings.HACKATHON_NAME), 'success')
-    else:
-        flash(
-            'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
-            settings.HACKATHON_NAME), 'success')
-
+        return redirect(url_for('dashboard'))
+    elif current_user.type == 'local':
+        batch.send_confirmation_email(user)
+    flash(
+        'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
+        settings.HACKATHON_NAME), 'success')
     return redirect(url_for('dashboard'))
 
 
