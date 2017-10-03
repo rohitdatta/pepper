@@ -199,7 +199,7 @@ def extract_resume(first_name, last_name, resume_required=True):
                 g.log.info("Uploading resume...")
             else:
                 s3.Object(settings.S3_BUCKET_NAME,
-                          u'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname,
+                          u'resumes/{0}, {1} ({2}).pdf'.format(last_name, first_name,
                                                                current_user.hashid)).put(Body=resume)
         else:
             # resume was uploaded but wrong file format
