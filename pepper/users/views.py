@@ -189,8 +189,6 @@ def extract_mlh_info():
 
 def extract_resume(first_name, last_name, resume_required=True):
     resume = request.files.get('resume')
-    g.log.info(current_user.fname)
-    g.log.info(current_user.lname)
     g.log.info(current_user.hashid)
     if resume:
         if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
