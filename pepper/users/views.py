@@ -311,9 +311,8 @@ def login():
         flash('Invalid password. Please try again.', 'warning')
         return redirect(url_for('login'))
     login_user(user, remember=True)
-    next_url = request.args.get('next')
     flash('Logged in successfully!', 'success')
-    return redirect(next_url or url_for(get_default_dashboard_for_role()))
+    return redirect(url_for(get_default_dashboard_for_role()))
 
 
 def logout():
