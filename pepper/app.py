@@ -53,15 +53,16 @@ def configure_logger(app):
             met=method.upper(),
             rid=request.headers.get('X-Request-Id', '~'),
             msg=event.pop('event'),
-            rest=' '.join(['\x1b[%sm%s\x1b[0m=%s' % (levelcolor, k.upper(), v)
-                           for k, v in event.items()])
+            rest=' '.join('\x1b[{}m{}\x1b[0m={}'.format(levelcolor, k.upper(), v)
+                          for k, v in event.items())
         )
 
     structlog.configure(
         processors=[
+            structlog.processors.UnicodeEncoder(),
             structlog.processors.ExceptionPrettyPrinter(),
-            processor
-        ]
+            processor,
+        ],
     )
 
     logger = structlog.get_logger()

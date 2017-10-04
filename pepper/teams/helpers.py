@@ -10,7 +10,7 @@ from flask import g, render_template, redirect, url_for, flash
 @login_required
 @user_status_blacklist('NEW')
 def join_team(request):
-    if request.form.get('join_tname') == '':
+    if not request.form.get('join_tname'):
         flash('Please enter a team name.','warning')
         return redirect(url_for('team'))
     if current_user.team_id is not None:
@@ -28,6 +28,7 @@ def join_team(request):
         team.users.append(current_user)
         try:
             DB.session.add(team)
+            DB.session.add(current_user)
             DB.session.commit()
         except Exception as e:
             g.log.error('error occurred while joining team: {}'.format(e))
@@ -42,7 +43,7 @@ def join_team(request):
 @login_required
 @user_status_blacklist('NEW')
 def create_team(request):
-    if request.form.get('create_tname') == '':
+    if not request.form.get('create_tname'):
         flash('Please enter a team name.','warning')
         return redirect(request.url)
     if current_user.team_id is not None:
@@ -76,32 +77,30 @@ def create_team(request):
 @login_required
 @user_status_blacklist('NEW')
 def leave_team(request):
-    team = Team.query.filter_by(tname=current_user.team.tname).first()
-    # There is valid team to leave.
-    if team is None:
-        flash('You are not part of a team', 'error')
+    if current_user.team_id is None:
+        flash('You were not part of a team', 'error')
+        return redirect(request.url)
+    team = current_user.team
+    # Delete user data on team
+    g.log.info('Leaving team')
+    g.log = g.log.bind(tname=team.tname)
+    team.users.remove(current_user)
+    current_user.time_team_join = None
+    if team.users:
+        DB.session.add(team)
+        DB.session.add(current_user)
+        DB.session.commit()
+        g.log.info('Successfully left team')
     else:
-        # Delete user data on team
-        g.log.info('Leaving team')
-        g.log = g.log.bind(tname=team.tname)
-        team.users.remove(current_user)
-        current_user.time_team_join = None
-        if team.users:
-            DB.session.add(team)
-            DB.session.add(current_user)
+        # delete an empty team
+        try:
+            DB.session.delete(team)
             DB.session.commit()
-            g.log.info('Successfully left team')
-        else:
-            # delete an empty team
-            try:
-                DB.session.delete(team)
-                DB.session.commit()
-            except Exception as e:
-                g.log.error('error leaving team: {}'.format(e))
-                flash('An error occurred. Please try again.', 'error')
-                return redirect(request.url)
-            g.log.info('Successfully deleted team')
-        g.log.info('current user team: {}'.format(current_user.team_id))
+        except Exception as e:
+            g.log.error('error leaving team: {}'.format(e))
+            flash('An error occurred. Please try again.', 'error')
+            return redirect(request.url)
+        g.log.info('Successfully deleted team')
         flash('You have left the team.','success')
     return redirect(url_for('team'))
 
@@ -118,8 +117,6 @@ def rename_team(request):
     find_team = Team.query.filter_by(tname=new_tname).first()
     # Team is available
     if find_team is None:
-        team_name = current_user.team.tname
-        current_user.team = Team.query.filter_by(tname=team_name).first()
         current_user.team.tname = new_tname
         DB.session.add(current_user.team)
         DB.session.commit()
