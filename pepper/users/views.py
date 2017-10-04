@@ -28,9 +28,12 @@ def landing():
 def sign_up():
     if request.method == 'GET':
         return render_template("users/sign_up.html", mlh_oauth_url=helpers.mlh_oauth_url)
-    email = request.form['email']
-    password = request.form['password']
-    confirm_password = request.form['password-check']
+    email = request.form.get('email')
+    password = request.form.get('password')
+    confirm_password = request.form.get('password-check')
+    if not email or not password or not confirm_password:
+        flash('Please fill out the required fields!', 'error')
+        return redirect(request.url)
     if password != confirm_password:
         flash("The given passwords don't match!", 'error')
         return redirect(request.url)
@@ -301,8 +304,11 @@ def login():
     if request.method == 'GET':
         return render_template('users/login.html', mlh_oauth_url=helpers.mlh_oauth_url)
     # handle login POST logic
-    email = request.form['email']
-    password = request.form['password']
+    email = request.form.get('email')
+    password = request.form.get('password')
+    if not email or not password:
+        flash('Please fill out the required fields!', 'error')
+        return redirect(request.url)
     user = User.query.filter_by(email=email).first()
     if user is None:
         flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
@@ -360,6 +366,11 @@ def reset_password(token):
         return render_template('users/reset_password.html')
     else:
         # take the password they've submitted and change it accordingly
+        password = request.form.get('password')
+        password_check = request.form.get('password-check')
+        if not password or not password_check:
+            flash('Please fill out all required fields!', 'error')
+            return redirect(request.url)
         if user:
             if request.form.get('password') == request.form.get('password-check'):
                 user.password = helpers.hash_pwd(request.form['password'])
