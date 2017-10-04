@@ -40,12 +40,30 @@ def configure_login(app):
 
 
 def configure_logger(app):
+    # Python's standard library logging was incomprehensible to me so
+    # I'll write my own log level filtering processor
+    log_levels = {
+        'debug': 10,
+        'info': 20,
+        'warning': 30,
+        'error': 40,
+        'critical': 50,
+    }
+    app_log_level = log_levels.get(settings.LOG_LEVEL, 0)
+    def filter_by_log_level(_, method, event):
+        if log_levels.get(method, 0) < app_log_level:
+            raise structlog.DropEvent
+        return event
+
+
     def processor(_, method, event):
+        # SGR parameters described here https://en.wikipedia.org/wiki/ANSI_escape_code
         levelcolor = {
             'debug': 32,
             'info': 34,
             'warning': 33,
-            'error': 31
+            'error': 31,
+            'critical': '31;1',
         }.get(method, 37)
 
         return '\x1b[{clr}m{met}\x1b[0m [\x1b[35m{rid}\x1b[0m] {msg} {rest}'.format(
@@ -59,6 +77,7 @@ def configure_logger(app):
 
     structlog.configure(
         processors=[
+            filter_by_log_level,
             structlog.processors.UnicodeEncoder(),
             structlog.processors.ExceptionPrettyPrinter(),
             processor,

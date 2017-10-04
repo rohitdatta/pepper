@@ -6,7 +6,8 @@ if DEBUG:
 
 SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
 
-LOG_LEVEL = os.getenv('LOG_LEVEL') or 'debug'
+LOG_LEVEL = (os.getenv('LOG_LEVEL') or 'debug').lower()
+REDIS_LOG_LEVEL = (os.getenv('REDIS_LOG_LEVEL') or LOG_LEVEL).lower()
 SERVICE_NAME = os.getenv('SERVICE_NAME') or 'Pepper'
 
 SECRET_KEY = os.getenv('SECRET_KEY')

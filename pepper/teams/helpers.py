@@ -109,10 +109,14 @@ def leave_team(request):
 def rename_team(request):
     if not current_user.is_leader:
         flash('Cannot rename team.','warning')
-        return redirect(url_for('team'))
-    if request.form.get('rename_tname') == '':
+        return redirect(request.url)
+    new_tname = request.form.get('rename_tname')
+    if not new_tname:
         flash('Please enter a team name.','warning')
-        return redirect(url_for('team'))
+        return redirect(request.url)
+    if new_tname == current_user.team.tname:
+        flash('That was the same as your current team name.', 'warning')
+        return redirect(request.url)
     new_tname = request.form.get('rename_tname')
     find_team = Team.query.filter_by(tname=new_tname).first()
     # Team is available
