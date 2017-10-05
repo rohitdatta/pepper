@@ -111,12 +111,18 @@ def callback():
                     return redirect(url_for('landing'))
             else:
                 user.access_token = access_token
+                g.log = g.log.bind(email=user_info['data']['email'])
+                g.log.info('added mlh access token for user')
             DB.session.add(user)
             DB.session.commit()
-            batch.send_confirmation_email(user)
-            g.log.info('Successfully created user')
             login_user(user, remember=True)
+            if user.confirmed:
+                return redirect(url_for('dashboard'))
+
+            # don't send another email if they come back way later to add an mlh login
+            batch.send_confirmation_email(user)
             flash('You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX', 'success')
+            g.log.info('Successfully created user')
             return redirect(url_for('complete-mlh-registration'))
         except IntegrityError:
             # a unique value already exists this should never happen
