@@ -313,6 +313,9 @@ def login():
     if user is None:
         flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
         return redirect(url_for('login'))
+    elif not user.password: # they signed up with MLH and have no password
+        flash('Password not found. Try signing in with MLH.', 'warning')
+        return redirect(url_for('login'))
     elif not helpers.check_password(user.password, password):
         flash('Invalid password. Please try again.', 'warning')
         return redirect(url_for('login'))
