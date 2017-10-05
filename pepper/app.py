@@ -112,7 +112,9 @@ def setup_error_handlers(app):
 
 
     @app.errorhandler(400)
-    def csrf_error(error):
+    def bad_request_error(error):
+        g.log = g.log.bind(error=error)
+        g.log.error('New 400 Error: ')
         return render_template('layouts/error.html', title='Bad Request',
                                message='We received invalid data and were unable to process this request. Please clear your cache and try again.'), 400
 
@@ -129,12 +131,12 @@ def create_app():
     app = flask.Flask(__name__)
     app.config.from_object(settings)
 
+    configure_logger(app)
     DB.init_app(app)
     csrf.init_app(app)
     redis_store.init_app(app)
     routes.configure_routes(app)
     configure_login(app)
-    configure_logger(app)
     setup_error_handlers(app)
     setup_env_filters(app)
 
