@@ -10,6 +10,7 @@
 		<p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a
 			filter? Leave the field blank and we'll return all options from that field.</p>
 		<form method="POST" action="{{ url_for('search-results') }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 			{#	Schools#}
 			<div class="row">
 				<div class="col-md-6 col-md-offset-3">

@@ -7,6 +7,7 @@
   </div>
   <h2>{{ config.HACKATHON_NAME }} Sign-in</h2>
   <form action="" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="email" placeholder="Email" name="email" required>
     <input type="password" placeholder="Password" name="password" required>
     <div class="form-group">

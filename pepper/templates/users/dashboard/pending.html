@@ -5,15 +5,23 @@
 $(function() {
   $('#resend-confirmation-link').click(function(e) {
     var url = "{{ url_for('resend-confirmation-email') }}";
-    console.log(url);
-    $.post(url, {
-      email: "{{ user.email }}"
-    }, function(data) {
-      if (data.category === 'success') {
-        $('#alert-banner').hide();
-      }
-      toastr[data.category](data.message);
-    }, "json");
+    $.ajax({
+      method: "POST",
+      url: url,
+      data: {
+        email: "{{ user.email }}"
+      },
+      success: function(data) {
+        if (data.category === 'success') {
+          $('#alert-banner').hide();
+        }
+        toastr[data.category](data.message);
+      },
+      dataType: "json",
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+      },
+    });
     return false;
   });
 });

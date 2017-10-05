@@ -1,52 +1,53 @@
 {% extends 'layouts/admin_base.html' %}
 {% block content %}
-	<h1>Send Email</h1>
-	<form action="{{ url_for('send-email') }}" method="POST">
-		<textarea name="content" placeholder="Message"></textarea>
-			<label class="control control--checkbox">New
-				<input type="checkbox" name="status" value="NEW"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Pending
-				<input type="checkbox" name="status" value="PENDING"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Accepted
-				<input type="checkbox" name="status" value="ACCEPTED"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Confirmed
-				<input type="checkbox" name="status" value="CONFIRMED"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Signing
-				<input type="checkbox" name="status" value="SIGNING"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Waitlisted
-				<input type="checkbox" name="status" value="WAITLISTED"/>
-				<div class="control__indicator"></div>
-			</label>
-			<label class="control control--checkbox">Rejected
-				<input type="checkbox" name="status" value="REJECTED"/>
-				<div class="control__indicator"></div>
-			</label>
-				<input type="text" name="subject" placeholder="Subject">
+<h1>Send Email</h1>
+<form action="{{ url_for('send-email') }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <textarea name="content" placeholder="Message"></textarea>
+  <label class="control control--checkbox">New
+    <input type="checkbox" name="status" value="NEW"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Pending
+    <input type="checkbox" name="status" value="PENDING"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Accepted
+    <input type="checkbox" name="status" value="ACCEPTED"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Confirmed
+    <input type="checkbox" name="status" value="CONFIRMED"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Signing
+    <input type="checkbox" name="status" value="SIGNING"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Waitlisted
+    <input type="checkbox" name="status" value="WAITLISTED"/>
+    <div class="control__indicator"></div>
+  </label>
+  <label class="control control--checkbox">Rejected
+    <input type="checkbox" name="status" value="REJECTED"/>
+    <div class="control__indicator"></div>
+  </label>
+  <input type="text" name="subject" placeholder="Subject">
 
-		<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
-	</form>
-	<br>
-	<p>    List of pending users</p>
+  <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+</form>
+<br>
+<p>    List of pending users</p>
 
-    <ul>
-    </ul>
-    <ul>
-    {% for user in users %}
-		<div class="row">
-		<div class="col-md-6">
-        {{ user.fname }} {{ user.lname }}
-		</div>
-		</div>
-    {% endfor %}
-    </ul>
+<ul>
+</ul>
+<ul>
+  {% for user in users %}
+  <div class="row">
+    <div class="col-md-6">
+      {{ user.fname }} {{ user.lname }}
+    </div>
+  </div>
+  {% endfor %}
+</ul>
 {% endblock content %}

@@ -2,6 +2,7 @@
 {% block content %}
 <h1>Accept Users</h1>
 <form action="{{ url_for('batch-modify') }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
   <input type="number" name="num_to_accept" placeholder="Number to accept">
   <div class="select">
     <select name="type">

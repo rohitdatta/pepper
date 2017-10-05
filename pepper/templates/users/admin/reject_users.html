@@ -1,9 +1,10 @@
 {% extends 'layouts/admin_base.html' %}
 {% block content %}
-	<h1>Send Email</h1>
-	<form action="{{ url_for('reject-users') }}" method="POST">
-		<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
-	</form>
-	<br>
-	<p>List of pending users</p>
+<h1>Send Email</h1>
+<form action="{{ url_for('reject-users') }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+</form>
+<br>
+<p>List of pending users</p>
 {% endblock content %}

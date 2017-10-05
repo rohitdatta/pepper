@@ -7,6 +7,7 @@
   </div>
   <h2>Create an Account</h2>
   <form action="" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="email" placeholder="Email" name="email" required>
     <input type="password" placeholder="Password" name="password" required>
     <input type="password" placeholder="Confirm Password" name="password-check" required>

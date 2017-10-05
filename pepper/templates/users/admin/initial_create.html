@@ -1,4 +1,5 @@
 <form method="POST" action="">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 	<input type="text" placeholder="email" name="email">
 	<input type="text" placeholder="fname" name="fname">
 	<input type="text" placeholder="lname" name="lname">

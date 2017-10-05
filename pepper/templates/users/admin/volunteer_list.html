@@ -1,15 +1,16 @@
 {% extends 'layouts/admin_base.html' %}
 {% block content %}
-	<h1>Add Volunteers</h1>
-	<form action="{{ url_for('add-volunteer') }}" method="POST">
-		<input type="email" name="email" placeholder="Volunteer Email">
-		<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
-	</form>
-	<br>
-	<p>List of volunteers</p>
-    {% for volunteer in volunteers %}
-		<div class="row">
-        {{ volunteer.email }}
-		</div>
-    {% endfor %}
+<h1>Add Volunteers</h1>
+<form action="{{ url_for('add-volunteer') }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <input type="email" name="email" placeholder="Volunteer Email">
+  <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
+</form>
+<br>
+<p>List of volunteers</p>
+{% for volunteer in volunteers %}
+<div class="row">
+  {{ volunteer.email }}
+</div>
+{% endfor %}
 {% endblock content %}

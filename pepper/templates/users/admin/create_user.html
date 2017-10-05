@@ -2,16 +2,17 @@
 {% block content %}
 Create a corporate account
 <form method="POST" action="">
-    <input type="text" name="fname" placeholder="First Name">
-    <input type="text" name="lname" placeholder="Last">
-    <input type="email" name="email" placeholder="Email">
-    <button type="submit">Submit</button>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <input type="text" name="fname" placeholder="First Name">
+  <input type="text" name="lname" placeholder="Last">
+  <input type="email" name="email" placeholder="Email">
+  <button type="submit">Submit</button>
 </form>
 <script src="{{ url_for('static', filename='js/corp-create.js') }}"></script>
-	<h3>Unverified Users</h3>
-	{% for user in unverified %}
-		<div class="row">
-			{{ user.fname }} {{ user.lname }} <button class="pull-right unverified-user" id="{{ user.email }}">Resend email</button>
-		</div>
-	{% endfor %}
+<h3>Unverified Users</h3>
+{% for user in unverified %}
+<div class="row">
+  {{ user.fname }} {{ user.lname }} <button class="pull-right unverified-user" id="{{ user.email }}">Resend email</button>
+</div>
+{% endfor %}
 {% endblock %}

@@ -7,6 +7,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask_redis import Redis
 from flask_sslify import SSLify
+from flask_wtf.csrf import CSRFError, CSRFProtect
 import redis
 from rq import Queue
 import sendgrid
@@ -19,6 +20,7 @@ sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
 conn = redis.from_url(settings.REDIS_URL)
 q = Queue(connection=conn)
+csrf = CSRFProtect()
 
 import routes
 from users.models import User
@@ -109,6 +111,12 @@ def setup_error_handlers(app):
                                    settings.GENERAL_INFO_EMAIL)), 500
 
 
+    @app.errorhandler(CSRFError)
+    def csrf_error(error):
+        return render_template('layouts/error.html', title='Bad Request',
+                               message='We received invalid data and were unable to process this request. Please clear your cache and try again.'), 400
+
+
 def setup_env_filters(app):
     app.jinja_env.filters['json'] = json.dumps
 
@@ -122,6 +130,7 @@ def create_app():
     app.config.from_object(settings)
 
     DB.init_app(app)
+    csrf.init_app(app)
     redis_store.init_app(app)
     routes.configure_routes(app)
     configure_login(app)

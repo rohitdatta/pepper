@@ -8,6 +8,7 @@
   </div>
   <div class="col-md-8 col-md-offset-2">
     <form action="" method="POST" enctype="multipart/form-data" id="edit-information">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       {% include 'users/complete_registration_form_fields.html' %}
     </form>
   </div>

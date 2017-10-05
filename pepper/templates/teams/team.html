@@ -14,6 +14,7 @@
     <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
     {% else %}
   <form method="POST" action="{{url_for('team')}}" id="remove">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" name="user" value="{{ user.email }}" class="hidden">{{ user.fname }} {{ user.lname }} ({{ user.email }}) </input>
     <button class="btn btn-xs" style="width: 30px;" type="submit" name="button" value="remove">💣</button>
   </form>
@@ -37,6 +38,7 @@
 {% if current_user.is_leader %}
 <div class="center">
   <form method="POST" action="team" id="rename">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <input type="text" placeholder="Rename team" name="rename_tname">
     <button type="submit" name="button" value="rename">Rename</button>
   </form>
@@ -47,6 +49,7 @@
 
 <div class="center">
   <form method="POST" action="team" id="leave">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
     <button type="submit" name="button" value="leave">Leave Team</button>
   </form>
 </div>
