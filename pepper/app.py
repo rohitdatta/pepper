@@ -89,6 +89,8 @@ def configure_logger(app):
     @app.before_request
     def get_request_id():
         g.log = logger.new()
+        if current_user.is_authenticated:
+            g.log = g.log.bind(uid=current_user.id)
 
 
 def setup_error_handlers(app):
