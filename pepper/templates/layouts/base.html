@@ -16,7 +16,7 @@
   {% endif %}
   {% endwith %}
 </noscript>
-{% if g.user.is_authenticated %}
+{% if g.user and g.user.is_authenticated %}
 <nav class="header navbar navbar-toggleable">
   <a class="navbar-brand" href="{{ url_for('landing') }}"><img src="{{ url_for('static', filename='branding/logo.svg') }}" width=183 height=50></a>
   <ul class="nav navbar-nav pull-right">

@@ -111,7 +111,7 @@ def setup_error_handlers(app):
                                    settings.GENERAL_INFO_EMAIL)), 500
 
 
-    @app.errorhandler(CSRFError)
+    @app.errorhandler(400)
     def csrf_error(error):
         return render_template('layouts/error.html', title='Bad Request',
                                message='We received invalid data and were unable to process this request. Please clear your cache and try again.'), 400
