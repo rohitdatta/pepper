@@ -135,6 +135,9 @@ def callback():
 @login_required
 @user_status_whitelist('NEW')
 def complete_mlh_registration():
+    if current_user.type == 'local':
+        # local sign up users should go to the other form
+        return redirect(url_for('complete-registration'))
     if request.method == 'GET':
         return render_template("users/complete_mlh_registration.html", required=True, user=current_user)
 
@@ -240,6 +243,9 @@ def complete_user_sign_up():
 @login_required
 @user_status_whitelist('NEW')
 def complete_registration():
+    if current_user.type == 'MLH':
+        # mlh users should complete the MLH registration form
+        return redirect(url_for('complete-mlh-registration'))
     if request.method == 'GET':
         return render_template('users/edit_information.html', required=True, user=current_user)
 
