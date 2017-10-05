@@ -96,7 +96,6 @@ def callback():
     user = User.query.filter_by(access_token=access_token).first()
     if user is None:  # create the user
         try:
-            g.log.info('Creating a user')
             user_info = helpers.get_mlh_user_data(access_token)
             user_info['type'] = 'MLH'
             user_info['access_token'] = access_token
@@ -118,6 +117,9 @@ def callback():
             login_user(user, remember=True)
             if user.confirmed:
                 return redirect(url_for('dashboard'))
+            elif user.type == 'local':
+                # user didn't confirm email but signed up locally
+                return redirect(url_for('complete-registration'))
 
             # don't send another email if they come back way later to add an mlh login
             batch.send_confirmation_email(user)
@@ -239,6 +241,8 @@ def complete_user_sign_up():
             settings.HACKATHON_NAME), 'success')
         return redirect(url_for('dashboard'))
     elif current_user.type == 'local':
+        # we couldn't send these emails to people who signed up locally
+        # until now since we didn't have their first names
         batch.send_confirmation_email(current_user)
     flash(
         'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
