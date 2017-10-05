@@ -17,6 +17,9 @@ $(function() {
         }
         toastr[data.category](data.message);
       },
+      error: function() {
+        toastr['error']('An unexpected error occurred. Please refresh your cache and try again.');
+      },
       dataType: "json",
       beforeSend: function(xhr) {
         xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
