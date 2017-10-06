@@ -1,4 +1,4 @@
-import announcements, users, corporate, static_pages, api, volunteer, teams
+import announcements, users, corporate, api, volunteer, teams
 
 
 def configure_routes(app):
@@ -76,8 +76,6 @@ def configure_routes(app):
     app.add_url_rule('/api/check-in', 'check-in-api', view_func=api.views.check_in, methods=['GET', 'POST'])
     app.add_url_rule('/api/passbook', 'passbook', view_func=api.views.passbook, methods=['POST'])
 
-    app.add_url_rule('/.well-known/acme-challenge/<path>', view_func=static_pages.views.lets_encrypt_challenge,
-                     methods=['GET'])
 
     # Corporate Portal
     app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
