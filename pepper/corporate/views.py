@@ -90,7 +90,8 @@ def forgot_password():
             html = render_template('emails/reset_password.html', user=user, link=url)
             txt = render_template('emails/reset_password.txt', user=user, link=url)
             send_email('hello@hacktx.com', 'Your password reset link', email, txt, html)
-        flash('If there is a registered user with {}, then a password reset email has been sent!'.format(email), 'success')
+        flash('If there is a registered user with {}, then a password reset email has been sent!'.format(email),
+              'success')
         return redirect(url_for('corp-login'))
 
 

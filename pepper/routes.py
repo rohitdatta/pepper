@@ -1,15 +1,16 @@
 import announcements, users, corporate, static_pages, api, volunteer, teams
 
 
-
 def configure_routes(app):
     app.add_url_rule('/', 'landing', view_func=users.views.landing, methods=['GET'])
 
     # Signing Up/Registration
     app.add_url_rule('/register', 'sign-up', view_func=users.views.sign_up, methods=['GET', 'POST'])
     app.add_url_rule('/callback', 'callback', view_func=users.views.callback, methods=['GET'])
-    app.add_url_rule('/complete_mlh_registration', 'complete-mlh-registration', view_func=users.views.complete_mlh_registration, methods=['GET', 'POST'])
-    app.add_url_rule('/complete_registration', 'complete-registration', view_func=users.views.complete_registration, methods=['GET', 'POST'])
+    app.add_url_rule('/complete_mlh_registration', 'complete-mlh-registration',
+                     view_func=users.views.complete_mlh_registration, methods=['GET', 'POST'])
+    app.add_url_rule('/complete_registration', 'complete-registration', view_func=users.views.complete_registration,
+                     methods=['GET', 'POST'])
     app.add_url_rule('/login', 'login', view_func=users.views.login, methods=['GET', 'POST'])
     app.add_url_rule('/logout', 'logout', view_func=users.views.logout, methods=['GET'])
     app.add_url_rule('/login/reset', 'forgot-password', view_func=users.views.forgot_password,
@@ -25,12 +26,10 @@ def configure_routes(app):
     app.add_url_rule('/dashboard', 'dashboard', view_func=users.views.dashboard, methods=['GET'])
     app.add_url_rule('/resend_confirmation_email', 'resend-confirmation-email',
                      view_func=users.views.resend_confirmation, methods=['POST'])
-    """
-    app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
-    app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_mlh, methods=['GET'])
-    app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
-    app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
-    """
+    # app.add_url_rule('/profile/resume', 'view-own-resume', view_func=users.views.view_own_resume, methods=['GET'])
+    # app.add_url_rule('/refresh', 'refresh-mlh-data', view_func=users.views.refresh_from_mlh, methods=['GET'])
+    # app.add_url_rule('/accept', 'accept-invite', view_func=users.views.accept, methods=['GET', 'POST'])
+    # app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
 
     # Team actions
     app.add_url_rule('/team', 'team', view_func=teams.views.team, methods=['GET', 'POST'])

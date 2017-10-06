@@ -1,5 +1,5 @@
 from pepper.app import DB
-from flask import jsonify, request, Response
+from flask import request, Response
 from models import Announcement
 from pepper import settings
 from datetime import datetime

@@ -73,7 +73,9 @@ def user_status_whitelist(*statuses):
             if 'admin' not in get_current_user_roles() and g.user.status not in statuses:
                 return redirect(url_for(get_default_dashboard_for_role()))
             return func(*args, **kwargs)
+
         return decorated_view
+
     return wrapper
 
 
@@ -84,7 +86,9 @@ def user_status_blacklist(*statuses):
             if 'admin' not in get_current_user_roles() and g.user.status in statuses:
                 return redirect(url_for(get_default_dashboard_for_role()))
             return func(*args, **kwargs)
+
         return decorated_view
+
     return wrapper
 
 

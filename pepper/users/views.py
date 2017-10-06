@@ -4,7 +4,7 @@ import batch
 import helpers
 from models import User
 from pepper import settings
-from pepper.app import DB, q
+from pepper.app import DB, worker_queue
 from pepper.legal.models import Waiver
 from pepper.utils import calculate_age, get_current_user_roles, get_default_dashboard_for_role, redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, user_status_whitelist
 
@@ -224,7 +224,7 @@ def extract_resume(first_name, last_name, resume_required=True):
 def complete_user_sign_up():
     current_user.status = 'PENDING'
     current_user.time_applied = datetime.utcnow()
-    q.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0)
+    worker_queue.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0)
     try:
         DB.session.add(current_user)
         DB.session.commit()

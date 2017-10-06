@@ -1,13 +1,11 @@
-import random
-
 import helpers
 from models import User, UserRole
 from views import logout_user
 from pepper import settings
-from pepper.app import DB
+from pepper.app import DB, worker_queue
 from pepper.utils import calculate_age, roles_required, send_email
 
-from flask import flash, g, redirect, render_template, render_template_string, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from flask.ext.login import current_user, login_required, login_user
 import keen
 from sqlalchemy import and_, or_
@@ -103,9 +101,9 @@ def batch_modify():
         num_to_accept = int(request.form.get('num_to_accept'))
         include_waitlist = request.form.get('include_waitlist', True) == 'true'
         if modify_type == 'fifo':
-            q.enqueue(batch.accept_fifo, num_to_accept, include_waitlist)
+            worker_queue.enqueue(batch.accept_fifo, num_to_accept, include_waitlist)
         else:  # randomly select n users out of x users
-            q.enqueue(batch.random_accept, num_to_accept, include_waitlist)
+            worker_queue.enqueue(batch.random_accept, num_to_accept, include_waitlist)
         flash('Worker is running acceptances', 'success')
         g.log.info('Acceptances have been queued')
         return redirect(request.url)
@@ -119,7 +117,8 @@ def send_email_to_users():
     else:
         statuses = request.form.getlist('status')
         users = User.query.filter(and_(User.status.in_(statuses)))
-        q.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'), users.all())
+        worker_queue.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'),
+                             users.all())
         flash('Successfully sent', 'success')
         return 'Done'
 

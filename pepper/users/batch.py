@@ -1,6 +1,6 @@
 from models import User
 from pepper import settings
-from pepper.app import DB, q
+from pepper.app import DB, worker_queue
 from pepper.utils import send_email, serializer, timed_serializer
 
 from flask import render_template, render_template_string, url_for, g
@@ -13,14 +13,14 @@ def send_confirmation_email(user):
     token = serializer.dumps(user.email)
     url = url_for('confirm-account', token=token, _external=True)
     html = render_template('emails/confirm_account.html', link=url, user=user)
-    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
+    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Confirm Your Account', user.email, None, html)
 
 
 def send_applied_email(user):
     html = render_template('emails/applied.html', user=user)
-    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
-               .format(settings.HACKATHON_NAME), user.email,
-               None, html)
+    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Thank you for applying to {0}'
+                         .format(settings.HACKATHON_NAME), user.email,
+                         None, html)
 
 
 def send_forgot_password_email(user):
@@ -29,14 +29,15 @@ def send_forgot_password_email(user):
     html = render_template('emails/reset_password.html', user=user, link=url)
     txt = render_template('emails/reset_password.txt', user=user, link=url)
     g.log.info('Sending password reset to:', email=user.email)
-    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
+    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Your password reset link', user.email, txt, html)
 
 
 def send_attending_email(user):
     # send email saying that they are confirmed to attend
     html = render_template('emails/application_decisions/confirmed_invite.html', user=user)
-    q.enqueue(send_email, settings.GENERAL_INFO_EMAIL, "You're confirmed for {}".format(settings.HACKATHON_NAME),
-               user.email, None, html)
+    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL,
+                         "You're confirmed for {}".format(settings.HACKATHON_NAME),
+                         user.email, None, html)
 
 
 def send_batch_email(content, subject, users):
@@ -50,18 +51,19 @@ def send_batch_email(content, subject, users):
         send_email(settings.GENERAL_INFO_EMAIL, subject, user.email, html_content=html)
         print 'Sent email'
 
+
 def accept_fifo(num_to_accept, include_waitlist):
     if include_waitlist:
         potential_attendees = User.query.filter(or_(User.status == 'WAITLISTED', User.status == 'PENDING'))
     else:
         potential_attendees = User.query.filter_by(status='PENDING')
     ordered_attendees = potential_attendees.order_by(User.time_applied.asc()).limit(
-            num_to_accept).all()
+        num_to_accept).all()
 
     for attendee in ordered_attendees:
         if attendee.status == 'WAITLISTED':
             html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-        else: # User should be in pending state, but catch all just in case
+        else:  # User should be in pending state, but catch all just in case
             html = render_template('emails/application_decisions/accepted.html', user=attendee)
         attendee.status = 'ACCEPTED'
         DB.session.commit()
@@ -84,7 +86,8 @@ def random_accept(num_to_accept, include_waitlist):
             html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
         attendee.status = 'ACCEPTED'
         DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME), attendee.email, html_content=html)
+        send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
+                   attendee.email, html_content=html)
 
     # set everyone else to go from pending to waitlisted
     pending_attendees = User.query.filter_by(status='PENDING').all()
@@ -92,7 +95,8 @@ def random_accept(num_to_accept, include_waitlist):
         pending_attendee.status = 'WAITLISTED'
         html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
         DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME), pending_attendee.email, html_content=html)
+        send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME),
+                   pending_attendee.email, html_content=html)
 
 
 def keen_add_event(user_id, event_type, count):
@@ -112,10 +116,10 @@ def keen_add_event(user_id, event_type, count):
             'school': {
                 'id': user.school_id,
                 'name': user.school_name
-                },
+            },
             'keen': {
                 'timestamp': user.time_applied.strftime(fmt)
-                },
+            },
             'interests': user.interests,
             'skill_level': user.skill_level,
             'races': user.race,
@@ -128,29 +132,29 @@ def keen_add_event(user_id, event_type, count):
     except Exception as e:
         print e
         if count < 3:
-            q.enqueue(keen_add_event, user_id, event_type, count + 1)
+            worker_queue.enqueue(keen_add_event, user_id, event_type, count + 1)
         else:
             print 'Keen failed too many times, {}'.format(event_type)
-    # else:
-    #     #user decision
-    #     keen.add_event(event_type, {
-    #         'date_of_birth': user.birthday.strftime(fmt),
-    #         'dietary_restrictions': user.dietary_restrictions,
-    #         'email': user.email,
-    #         'first_name': user.fname,
-    #         'last_name': user.lname,
-    #         'gender': user.gender,
-    #         'id': user.id,
-    #         'major': user.major,
-    #         'phone_number': user.phone_number,
-    #         'school': {
-    #             'id': user.school_id,
-    #             'name': user.school_name
-    #         },
-    #         'skill_level': user.skill_level,
-    #         'races': user.race.split(','),
-    #         'num_hackathons': user.num_hackathons,
-    #         'class_standing': user.class_standing,
-    #         'shirt_size': user.shirt_size,
-    #         'special_needs': current_user.special_needs
-    #     })
+            # else:
+            #     #user decision
+            #     keen.add_event(event_type, {
+            #         'date_of_birth': user.birthday.strftime(fmt),
+            #         'dietary_restrictions': user.dietary_restrictions,
+            #         'email': user.email,
+            #         'first_name': user.fname,
+            #         'last_name': user.lname,
+            #         'gender': user.gender,
+            #         'id': user.id,
+            #         'major': user.major,
+            #         'phone_number': user.phone_number,
+            #         'school': {
+            #             'id': user.school_id,
+            #             'name': user.school_name
+            #         },
+            #         'skill_level': user.skill_level,
+            #         'races': user.race.split(','),
+            #         'num_hackathons': user.num_hackathons,
+            #         'class_standing': user.class_standing,
+            #         'shirt_size': user.shirt_size,
+            #         'special_needs': current_user.special_needs
+            #     })

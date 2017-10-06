@@ -7,7 +7,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, current_user
 from flask_redis import Redis
 from flask_sslify import SSLify
-from flask_wtf.csrf import CSRFError, CSRFProtect
+from flask_wtf.csrf import CSRFProtect
 import redis
 from rq import Queue
 import sendgrid
@@ -19,7 +19,7 @@ redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
 conn = redis.from_url(settings.REDIS_URL)
-q = Queue(connection=conn)
+worker_queue = Queue(connection=conn)
 csrf = CSRFProtect()
 
 import routes
@@ -52,11 +52,11 @@ def configure_logger(app):
         'critical': 50,
     }
     app_log_level = log_levels.get(settings.LOG_LEVEL, 0)
+
     def filter_by_log_level(_, method, event):
         if log_levels.get(method, 0) < app_log_level:
             raise structlog.DropEvent
         return event
-
 
     def processor(_, method, event):
         # SGR parameters described here https://en.wikipedia.org/wiki/ANSI_escape_code
@@ -110,7 +110,6 @@ def setup_error_handlers(app):
                                message='Something went wrong and we are unable to process this request. Our tech team has been alerted to this error and is working hard to fix it. We appreciate your patience! If this error continues, please email {}'.format(
                                    settings.GENERAL_INFO_EMAIL)), 500
 
-
     @app.errorhandler(400)
     def bad_request_error(error):
         g.log = g.log.bind(error=error)
@@ -124,6 +123,7 @@ def setup_env_filters(app):
 
     def multisort(items, *attrs):
         return sorted(items, key=lambda x: tuple(getattr(x, attr) for attr in attrs))
+
     app.jinja_env.filters['multisort'] = multisort
 
 

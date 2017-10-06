@@ -16,6 +16,7 @@ manager = Manager(hackathon_identity_app)
 Migrate(hackathon_identity_app, app.DB)
 manager.add_command('db', MigrateCommand)
 
+
 @manager.command
 def runworker():
     redis_url = os.getenv('REDIS_URL')
@@ -24,9 +25,10 @@ def runworker():
         worker = Worker(['default'])
         worker.work(logging_level=hackathon_identity_app.config['REDIS_LOG_LEVEL'].upper())
 
+
 @manager.command
 def run(port=5000):
-    app.run(port=int(port))
+    hackathon_identity_app.run(port=int(port))
 
 
 if __name__ == "__main__":

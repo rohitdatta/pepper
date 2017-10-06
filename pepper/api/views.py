@@ -1,10 +1,15 @@
+import json
+import os
+import urllib
+import datetime
+
+from flask import jsonify, request, Response
+import keen
+
+from pepper import settings
 from pepper.app import DB
 from pepper.users import User
-from flask import url_for, jsonify, request, Response
-import json, os, urllib, datetime
-from pepper import settings
 from pepper.utils import calculate_age
-import keen
 
 
 def schedule():
@@ -100,7 +105,7 @@ def check_in():
                     message = 'Attendee successfully checked in'
                 else:
                     message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
-                # return back success to the check in app
+                    # return back success to the check in app
 
         return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email,
                        age=calculate_age(user.birthday), checked_in=user.checked_in,
