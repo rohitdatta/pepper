@@ -1,53 +1,77 @@
 {% extends 'layouts/admin_base.html' %}
+
+{% block imports %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css">
+    <script src="{{ url_for('static', filename='js/batch-email.js') }}"></script>
+{% endblock %}
+
 {% block content %}
-<h1>Send Email</h1>
-<form action="{{ url_for('send-email') }}" method="POST">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-  <textarea name="content" placeholder="Message"></textarea>
-  <label class="control control--checkbox">New
-    <input type="checkbox" name="status" value="NEW"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Pending
-    <input type="checkbox" name="status" value="PENDING"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Accepted
-    <input type="checkbox" name="status" value="ACCEPTED"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Confirmed
-    <input type="checkbox" name="status" value="CONFIRMED"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Signing
-    <input type="checkbox" name="status" value="SIGNING"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Waitlisted
-    <input type="checkbox" name="status" value="WAITLISTED"/>
-    <div class="control__indicator"></div>
-  </label>
-  <label class="control control--checkbox">Rejected
-    <input type="checkbox" name="status" value="REJECTED"/>
-    <div class="control__indicator"></div>
-  </label>
-  <input type="text" name="subject" placeholder="Subject">
+    <h1>Send Email</h1>
+    <form id="batch_email" action="{{ url_for('send-email') }}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="text" name="subject" placeholder="Subject">
+        <textarea name="content" placeholder="Message"></textarea>
+        <label class="control control--checkbox">New
+            <input type="checkbox" name="status" value="NEW"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Pending
+            <input type="checkbox" name="status" value="PENDING"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Accepted
+            <input type="checkbox" name="status" value="ACCEPTED"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Confirmed
+            <input type="checkbox" name="status" value="CONFIRMED"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Signing
+            <input type="checkbox" name="status" value="SIGNING"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Waitlisted
+            <input type="checkbox" name="status" value="WAITLISTED"/>
+            <div class="control__indicator"></div>
+        </label>
+        <label class="control control--checkbox">Rejected
+            <input type="checkbox" name="status" value="REJECTED"/>
+            <div class="control__indicator"></div>
+        </label>
 
-  <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i></button>
-</form>
-<br>
-<p>    List of pending users</p>
+        <h2>Users</h2>
+        <table id="user_table" class="display" cellspacing="0">
+            <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Status</th>
+                <th>Email</th>
+                <th>Confirmed</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td></td>
+                    <td id="user_id">{{ user.id }}</td>
+                    <td>{{ user.fname }}</td>
+                    <td>{{ user.lname }}</td>
+                    <td>{{ user.status }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.confirmed }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
 
-<ul>
-</ul>
-<ul>
-  {% for user in users %}
-  <div class="row">
-    <div class="col-md-6">
-      {{ user.fname }} {{ user.lname }}
-    </div>
-  </div>
-  {% endfor %}
-</ul>
+        <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+        </button>
+    </form>
 {% endblock content %}

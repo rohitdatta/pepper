@@ -1,3 +1,4 @@
+import batch
 import helpers
 from models import User, UserRole
 from views import logout_user
@@ -5,9 +6,11 @@ from pepper import settings
 from pepper.app import DB, worker_queue
 from pepper.utils import calculate_age, roles_required, send_email
 
-from flask import flash, g, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for, jsonify
 from flask.ext.login import current_user, login_required, login_user
 import keen
+import redis
+from rq.job import Job
 from sqlalchemy import and_, or_
 
 
@@ -112,15 +115,34 @@ def batch_modify():
 @login_required
 @roles_required('admin')
 def send_email_to_users():
+    all_users = User.query.all()
     if request.method == 'GET':
-        return render_template('users/admin/send_email.html')
+        return render_template('users/admin/send_email.html', users=all_users)
     else:
+        targeted_users = []
+        user_id_set = set()
+
         statuses = request.form.getlist('status')
-        users = User.query.filter(and_(User.status.in_(statuses)))
-        worker_queue.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'),
-                             users.all())
-        flash('Successfully sent', 'success')
-        return 'Done'
+        status_users = User.query.filter(or_(User.status.in_(statuses))).all()
+        checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
+        checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all()
+
+        for user in status_users:
+            if user.id not in user_id_set:
+                user_id_set.add(user.id)
+                targeted_users.append(user)
+
+        for user in checkbox_users:
+            if user.id not in user_id_set:
+                user_id_set.add(user.id)
+                targeted_users.append(user)
+
+        if len(targeted_users) > 0:
+            worker_queue.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'),
+                                 targeted_users)
+
+        flash('Batch email(s) successfully sent', 'success')
+        return render_template('users/admin/send_email.html', users=all_users)
 
 
 # TODO: Needs auth annotations?
