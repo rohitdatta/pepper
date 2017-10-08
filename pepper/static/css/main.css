@@ -394,4 +394,20 @@ input[type=text].fullwidth, form input.fullwidth[type=number], form textarea.ful
   input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus, form textarea.fullwidth:focus {
     width: 100%; }
 
+.data-table {
+  background: white;
+  padding: 10px 20px 10px 20px;
+  color: black; }
+
+.black-text {
+  color: black; }
+
+.context-menu {
+  display: none;
+  position: absolute;
+  z-index: 10; }
+
+.context-menu--active {
+  display: block; }
+
 /*# sourceMappingURL=main.css.map */

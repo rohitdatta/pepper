@@ -48,7 +48,7 @@ def send_batch_email(content, subject, users):
     for user in users:
         html = render_template('emails/generic_message.html', content=msg_body)
         html = render_template_string(html, user=user)
-        send_email(settings.GENERAL_INFO_EMAIL, subject, user.email, html_content=html)
+        worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, subject, user.email, html_content=html)
         print 'Sent email'
 
 

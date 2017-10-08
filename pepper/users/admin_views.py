@@ -138,14 +138,15 @@ def send_email_to_users():
                 targeted_users.append(user)
 
         if len(targeted_users) > 0:
-            worker_queue.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'),
-                                 targeted_users)
+            batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
+                                   targeted_users)
 
         flash('Batch email(s) successfully sent', 'success')
-        return render_template('users/admin/send_email.html', users=all_users)
+        return redirect(url_for('send-email'))
 
 
-# TODO: Needs auth annotations?
+@login_required
+@roles_required('admin')
 def job_view(job_key):
     job = Job.fetch(job_key, connection=redis.from_url(settings.REDIS_URL))
     if job.is_finished:
@@ -213,6 +214,8 @@ def check_in_manual():
         return render_template('users/admin/confirm_check_in.html', user=user, age=age)
 
 
+@login_required
+@roles_required('admin')
 def check_in_post():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
