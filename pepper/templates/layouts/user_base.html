@@ -1,8 +1,8 @@
 {% extends 'layouts/base.html' %}
 {% block nav_items %}
-{% if not required %}
-{{ nav_item('Home', 'dashboard') }}
-{{ nav_item('Manage Team', 'team') }}
-{{ nav_item('Edit Profile', 'edit-profile') }}
-{% endif %}
+    {% if not required %}
+        {{ nav_item('Home', 'dashboard') }}
+        {{ nav_item('Manage Team', 'team') }}
+        {{ nav_item('Edit Profile', 'edit-profile') }}
+    {% endif %}
 {% endblock %}

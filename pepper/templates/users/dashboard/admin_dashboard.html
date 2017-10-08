@@ -3,11 +3,11 @@
     HELLO ADMIN!
     Here are some actions you can do:
     <ul>
-{#    <li><a href="{{ url_for('activate') }}">Activate Nucleus</a> </li>#}
+        {#    <li><a href="{{ url_for('activate') }}">Activate Nucleus</a> </li>#}
     </ul>
     <ul>
-    {% for user in users %}
-        <li>{{ user.created }}</li>
-    {% endfor %}
+        {% for user in users %}
+            <li>{{ user.created }}</li>
+        {% endfor %}
     </ul>
 {% endblock content %}

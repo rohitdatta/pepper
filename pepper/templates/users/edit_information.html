@@ -1,104 +1,162 @@
 {% extends 'layouts/user_base.html' %}
 
 {% block content %}
-<script>
-if( /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent) ) {
-      alert('Please complete your registration on a computer.');
-}
-</script>
-<div class="center col-md-12">
-  <h1>{% if required %}{{ config.HACKATHON_NAME }} Registration{% else %}Edit Profile{% endif %}</h1>
-</div>
+    <script>
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent)) {
+            alert('Please complete your registration on a computer.');
+        }
+    </script>
+    <div class="center col-md-12">
+        <h1>{% if required %}{{ config.HACKATHON_NAME }} Registration{% else %}Edit Profile{% endif %}</h1>
+    </div>
 
-<form method="POST" action="" enctype="multipart/form-data" id="edit-information">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-  <div class="row">
-    <div class="col-md-6">
-      <label for="first-name" class="required">First name</label>
-      <input type="text" placeholder="First name" name="first_name" id="first-name" class="info-field" aria-required="true" required {% if not required %}value="{{ user.fname }}"{% endif %}>
-    </div>
-    <div class="col-md-6">
-      <label for="last-name" class="required">Last name</label>
-      <input type="text" placeholder="Last name" name="last_name" id="last-name" class="info-field" aria-required="true" required {% if not required %}value="{{ user.lname }}"{% endif %}>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <label for="phone-number" class="required">Phone number</label>
-      <input type="text" placeholder="Phone number" name="phone_number" id="phone-number" class="info-field" aria-required="true" required {% if not required %}value="{{ user.phone_number }}"{% endif %}>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12" id="dropdown-gender-container">
-      <div class="select">
-        <label for="dropdown-gender" class="required">Gender</label>
-        <select name="gender" id="dropdown-gender" class="info-field" aria-required="true" required>
-          <option value='' {% if required %}selected{% endif %} disabled>Gender</option>
-          <option value="Female" {% if not required and user.gender == 'Female' %}selected{% endif %}>Female</option>
-          <option value="Male" {% if not required and user.gender == 'Male' %}selected{% endif %}>Male</option>
-          <option value="Non-Binary" {% if not required and user.gender == 'Non-Binary' %}selected{% endif %}>Non-binary</option>
-          <option value="I prefer not to say" {% if not required and user.gender == 'I prefer not to say' %}selected{% endif %}>I prefer not to say</option>
-          <option value="Other" {% if not required and user.gender not in ['Female', 'Male', 'Non-Binary', 'I prefer not to say'] %}selected{% endif %}>Other</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-md-6" id="input-gender-container">
-      <label for="input-gender" class="required">Please specify</label>
-      <input type="text" placeholder="Gender" id="input-gender" name="gender_other" class="info-field" {% if not required and user.gender not in ['Female', 'Male', 'Non-Binary', 'I prefer not to say'] %}value="{{ user.gender }}"{% endif %}>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-      <label for="school-name" class="required">School name</label>
-      <input type="text" placeholder="School" id="school-name" name="school_name" class="info-field" aria-required="true" required {% if not required %}value="{{ user.school_name }}"{% endif %}>
-    </div>
-    <div class="col-md-6">
-      <label for="major" class="required">Major</label>
-      <input type="text" placeholder="Major" name="major" id="major" class="info-field" aria-required="true" required {% if not required %}value="{{ user.major }}"{% endif %}>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-4">
-      <label for="birthday" class="required">Birthday</label>
-      <input type="text" placeholder="Birthday" name="date_of_birth" id="birthday" class="info-field" aria-required="true" required {% if not required %}value="{{ user.birthday }}"{% endif %}>
-    </div>
-    <div class="col-md-4">
-      <label for="shirt-size" class="required">T-shirt size</label>
-      <div class="select">
-        <select name="shirt_size" id="shirt-size" class="info-field" aria-required="true" required>
-          <option value='' {% if required %}selected{% endif %} disabled>T-shirt size</option>
-          <option value="Women's - S" {% if not required and user.shirt_size == "Women's - S" %}selected{% endif %}>Women's - S</option>
-          <option value="Women's - M" {% if not required and user.shirt_size == "Women's - M" %}selected{% endif %}>Women's - M</option>
-          <option value="Women's - L" {% if not required and user.shirt_size == "Women's - L" %}selected{% endif %}>Women's - L</option>
-          <option value="Women's - XL" {% if not required and user.shirt_size == "Women's - XL" %}selected{% endif %}>Women's - XL</option>
-          <option value="Unisex - XS" {% if not required and user.shirt_size == "Unisex - XS" %}selected{% endif %}>Unisex - XS</option>
-          <option value="Unisex - S" {% if not required and user.shirt_size == "Unisex - S" %}selected{% endif %}>Unisex - S</option>
-          <option value="Unisex - M" {% if not required and user.shirt_size == "Unisex - M" %}selected{% endif %}>Unisex - M</option>
-          <option value="Unisex - L" {% if not required and user.shirt_size == "Unisex - L" %}selected{% endif %}>Unisex - L</option>
-          <option value="Unisex - XL" {% if not required and user.shirt_size == "Unisex - XL" %}selected{% endif %}>Unisex - XL</option>
-        </select>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="select">
-        <label for="dietary-restrictions" class="required">Dietary restrictions</label>
-        <select name="dietary_restrictions" id="dietary-restrictions" class="info-field" aria-required="true" required>
-          <option value='' {% if required %}selected{% endif %} disabled>Dietary restrictions</option>
-          <option value="Gluten-Free" {%if not required and user.dietary_restrictions == 'Gluten-Free' %}selected{% endif %}>Gluten-free</option>
-          <option value="Vegan" {% if not required and user.dietary_restrictions == 'Vegan' %}selected{% endif %}>Vegan</option>
-          <option value="Vegetarian" {% if not required and user.dietary_restrictions == 'Vegetarian' %}selected{% endif %}>Vegetarian</option>
-          <option value="None" {% if not required and user.dietary_restrictions == 'None' %}selected{% endif %}>None</option>
-          <option value="Other" {% if not required and user.dietary_restrictions == 'Other' %}selected{% endif %}>Other (please describe below)</option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <label for="special-needs">Special needs</label>
-      <textarea placeholder="Special needs" name="special_needs" id="special-needs" class="info-field">{% if not required and user.special_needs %}{{ user.special_needs }}{% endif %}</textarea>
-    </div>
-  </div>
-  {% include 'users/complete_registration_form_fields.html' %}
-</form>
+    <form method="POST" action="" enctype="multipart/form-data" id="edit-information">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="first-name" class="required">First name</label>
+                <input type="text" placeholder="First name" name="first_name" id="first-name" class="info-field"
+                       aria-required="true" required {% if not required %}value="{{ user.fname }}"{% endif %}>
+            </div>
+            <div class="col-md-6">
+                <label for="last-name" class="required">Last name</label>
+                <input type="text" placeholder="Last name" name="last_name" id="last-name" class="info-field"
+                       aria-required="true" required {% if not required %}value="{{ user.lname }}"{% endif %}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="phone-number" class="required">Phone number</label>
+                <input type="text" placeholder="Phone number" name="phone_number" id="phone-number" class="info-field"
+                       aria-required="true" required {% if not required %}value="{{ user.phone_number }}"{% endif %}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="dropdown-gender-container">
+                <div class="select">
+                    <label for="dropdown-gender" class="required">Gender</label>
+                    <select name="gender" id="dropdown-gender" class="info-field" aria-required="true" required>
+                        <option value='' {% if required %}selected{% endif %} disabled>Gender</option>
+                        <option value="Female" {% if not required and user.gender == 'Female' %}selected{% endif %}>
+                            Female
+                        </option>
+                        <option value="Male" {% if not required and user.gender == 'Male' %}selected{% endif %}>Male
+                        </option>
+                        <option value="Non-Binary"
+                                {% if not required and user.gender == 'Non-Binary' %}selected{% endif %}>Non-binary
+                        </option>
+                        <option value="I prefer not to say"
+                                {% if not required and user.gender == 'I prefer not to say' %}selected{% endif %}>I
+                            prefer not to say
+                        </option>
+                        <option value="Other"
+                                {% if not required and user.gender not in ['Female', 'Male', 'Non-Binary', 'I prefer not to say'] %}selected{% endif %}>
+                            Other
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6" id="input-gender-container">
+                <label for="input-gender" class="required">Please specify</label>
+                <input type="text" placeholder="Gender" id="input-gender" name="gender_other" class="info-field"
+                       {% if not required and user.gender not in ['Female', 'Male', 'Non-Binary', 'I prefer not to say'] %}value="{{ user.gender }}"{% endif %}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label for="school-name" class="required">School name</label>
+                <input type="text" placeholder="School" id="school-name" name="school_name" class="info-field"
+                       aria-required="true" required {% if not required %}value="{{ user.school_name }}"{% endif %}>
+            </div>
+            <div class="col-md-6">
+                <label for="major" class="required">Major</label>
+                <input type="text" placeholder="Major" name="major" id="major" class="info-field" aria-required="true"
+                       required {% if not required %}value="{{ user.major }}"{% endif %}>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <label for="birthday" class="required">Birthday</label>
+                <input type="text" placeholder="Birthday" name="date_of_birth" id="birthday" class="info-field"
+                       aria-required="true" required {% if not required %}value="{{ user.birthday }}"{% endif %}>
+            </div>
+            <div class="col-md-4">
+                <label for="shirt-size" class="required">T-shirt size</label>
+                <div class="select">
+                    <select name="shirt_size" id="shirt-size" class="info-field" aria-required="true" required>
+                        <option value='' {% if required %}selected{% endif %} disabled>T-shirt size</option>
+                        <option value="Women's - S"
+                                {% if not required and user.shirt_size == "Women's - S" %}selected{% endif %}>Women's -
+                            S
+                        </option>
+                        <option value="Women's - M"
+                                {% if not required and user.shirt_size == "Women's - M" %}selected{% endif %}>Women's -
+                            M
+                        </option>
+                        <option value="Women's - L"
+                                {% if not required and user.shirt_size == "Women's - L" %}selected{% endif %}>Women's -
+                            L
+                        </option>
+                        <option value="Women's - XL"
+                                {% if not required and user.shirt_size == "Women's - XL" %}selected{% endif %}>Women's -
+                            XL
+                        </option>
+                        <option value="Unisex - XS"
+                                {% if not required and user.shirt_size == "Unisex - XS" %}selected{% endif %}>Unisex -
+                            XS
+                        </option>
+                        <option value="Unisex - S"
+                                {% if not required and user.shirt_size == "Unisex - S" %}selected{% endif %}>Unisex - S
+                        </option>
+                        <option value="Unisex - M"
+                                {% if not required and user.shirt_size == "Unisex - M" %}selected{% endif %}>Unisex - M
+                        </option>
+                        <option value="Unisex - L"
+                                {% if not required and user.shirt_size == "Unisex - L" %}selected{% endif %}>Unisex - L
+                        </option>
+                        <option value="Unisex - XL"
+                                {% if not required and user.shirt_size == "Unisex - XL" %}selected{% endif %}>Unisex -
+                            XL
+                        </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="select">
+                    <label for="dietary-restrictions" class="required">Dietary restrictions</label>
+                    <select name="dietary_restrictions" id="dietary-restrictions" class="info-field"
+                            aria-required="true" required>
+                        <option value='' {% if required %}selected{% endif %} disabled>Dietary restrictions</option>
+                        <option value="Gluten-Free"
+                                {% if not required and user.dietary_restrictions == 'Gluten-Free' %}selected{% endif %}>
+                            Gluten-free
+                        </option>
+                        <option value="Vegan"
+                                {% if not required and user.dietary_restrictions == 'Vegan' %}selected{% endif %}>Vegan
+                        </option>
+                        <option value="Vegetarian"
+                                {% if not required and user.dietary_restrictions == 'Vegetarian' %}selected{% endif %}>
+                            Vegetarian
+                        </option>
+                        <option value="None"
+                                {% if not required and user.dietary_restrictions == 'None' %}selected{% endif %}>None
+                        </option>
+                        <option value="Other"
+                                {% if not required and user.dietary_restrictions == 'Other' %}selected{% endif %}>Other
+                            (please describe below)
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="special-needs">Special needs</label>
+                <textarea placeholder="Special needs" name="special_needs" id="special-needs"
+                          class="info-field">{% if not required and user.special_needs %}
+                    {{ user.special_needs }}{% endif %}</textarea>
+            </div>
+        </div>
+        {% include 'users/complete_registration_form_fields.html' %}
+    </form>
 {% endblock %}

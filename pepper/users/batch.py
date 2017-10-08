@@ -4,9 +4,15 @@ from pepper.app import DB, worker_queue
 from pepper.utils import send_email, serializer, timed_serializer
 
 from flask import render_template, render_template_string, url_for, g
-from sqlalchemy import or_
+from sqlalchemy import and_, or_
 import keen
 import random
+
+
+def send_accepted_email(user):
+    html = render_template('emails/application_decisions/accepted.html', user=user)
+    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Congrats! Your HackTX Invitation', user.email, None,
+                         html)
 
 
 def send_confirmation_email(user):
@@ -73,51 +79,58 @@ def _send_static_batch_emails(subject, html_content, emails):
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
 
-def accept_fifo(num_to_accept, include_waitlist):
-    if include_waitlist:
-        potential_attendees = User.query.filter(or_(User.status == 'WAITLISTED', User.status == 'PENDING'))
+def accept_fifo(num_to_accept, include_waitlisted):
+    if include_waitlisted:
+        potential_users = User.query.filter(
+            and_(or_(User.status == 'WAITLISTED', User.status == 'PENDING'), User.confirmed.is_(True)))
     else:
-        potential_attendees = User.query.filter_by(status='PENDING')
-    ordered_attendees = potential_attendees.order_by(User.time_applied.asc()).limit(
-        num_to_accept).all()
+        potential_users = User.query.filter(and_(User.status == 'PENDING'), User.confirmed.is_(True))
 
-    for attendee in ordered_attendees:
-        if attendee.status == 'WAITLISTED':
-            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
+    accepted_users = potential_users.order_by(User.time_applied.asc()).limit(num_to_accept).all()
+
+    for user in accepted_users:
+        if user.status == 'WAITLISTED':
+            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
         else:  # User should be in pending state, but catch all just in case
-            html = render_template('emails/application_decisions/accepted.html', user=attendee)
-        attendee.status = 'ACCEPTED'
+            html = render_template('emails/application_decisions/accepted.html', user=user)
+        user.status = 'ACCEPTED'
+        DB.session.add(user)
         DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "Congrats! {} Invitation"
+        send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation"
                    .format(settings.HACKATHON_NAME),
-                   attendee.email, html_content=html)
+                   user.email, html_content=html)
 
 
-def random_accept(num_to_accept, include_waitlist):
-    if include_waitlist:
-        pool = User.query.filter(or_(User.status == 'PENDING', User.status == 'WAITLISTED')).all()
+def accept_random(num_to_accept, include_waitlisted):
+    if include_waitlisted:
+        filtered_users = User.query.filter(and_(or_(User.status == 'PENDING', User.status == 'WAITLISTED'),
+                                                User.confirmed.is_(True))).all()
     else:
-        pool = User.query.filter_by(status='PENDING').all()
+        filtered_users = User.query.filter(and_(User.status == 'PENDING', User.confirmed.is_(True))).all()
 
-    accepted = random.sample(set(pool), num_to_accept)
-    for attendee in accepted:
-        if attendee.status == 'PENDING':
-            html = render_template('emails/application_decisions/accepted.html', user=attendee)
-        else:  # they got off waitlist
-            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=attendee)
-        attendee.status = 'ACCEPTED'
+    accepted_users = random.sample(set(filtered_users), num_to_accept)
+
+    for user in accepted_users:
+        if user.status == 'WAITLISTED':
+            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
+        else:  # User should be in pending state, but catch all just in case
+            html = render_template('emails/application_decisions/accepted.html', user=user)
+        user.status = 'ACCEPTED'
+        DB.session.add(user)
         DB.session.commit()
         send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                   attendee.email, html_content=html)
+                   user.email, html_content=html)
 
-    # set everyone else to go from pending to waitlisted
-    pending_attendees = User.query.filter_by(status='PENDING').all()
-    for pending_attendee in pending_attendees:
-        pending_attendee.status = 'WAITLISTED'
-        html = render_template('emails/application_decisions/waitlisted.html', user=pending_attendee)
-        DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "You're {} Application Status".format(settings.HACKATHON_NAME),
-                   pending_attendee.email, html_content=html)
+        # Moving everyone from PENDING with confirmed emails to WAITLISTED
+        # pending_users = User.query.filter(and_(User.status == 'PENDING', User.confirmed.is_(True))).all()
+        #
+        # for user in pending_users:
+        #     user.status = 'WAITLISTED'
+        #     html = render_template('emails/application_decisions/waitlisted.html', user=user)
+        #     DB.session.commit()
+        #     DB.session.add(user)
+        #     send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
+        #                user.email, html_content=html)
 
 
 def keen_add_event(user_id, event_type, count):

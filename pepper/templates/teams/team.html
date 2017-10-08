@@ -1,56 +1,58 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-<!-- team.html -->
-<script src="{{ url_for('static', filename='js/teams.js') }}"></script>
+    <!-- team.html -->
+    <script src="{{ url_for('static', filename='js/teams.js') }}"></script>
 
-<!-- Show information for people who already have a team -->
-<h1 class="center"><u>Team</u></h1>
-<p class="center h1">{{ team.tname }}</p>
-<h1 class="center"><u>Teammates</u></h1>
-{% if current_user.is_leader %}
-{% for user in team.users|multisort('time_team_join', 'id') %}
-<div class="center"style="padding-top: 10px;">
-    {% if user.is_leader %} {# assume the first user is the leader #}
-    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
+    <!-- Show information for people who already have a team -->
+    <h1 class="center"><u>Team</u></h1>
+    <p class="center h1">{{ team.tname }}</p>
+    <h1 class="center"><u>Teammates</u></h1>
+    {% if current_user.is_leader %}
+        {% for user in team.users|multisort('time_team_join', 'id') %}
+            <div class="center" style="padding-top: 10px;">
+                {% if user.is_leader %} {# assume the first user is the leader #}
+                    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
+                {% else %}
+                    <form method="POST" action="{{ url_for('team') }}" id="remove">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="text" name="user" value="{{ user.email }}"
+                               class="hidden">{{ user.fname }} {{ user.lname }} ({{ user.email }}) </input>
+                        <button class="btn btn-xs" style="width: 30px;" type="submit" name="button" value="remove">💣
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endfor %}
     {% else %}
-  <form method="POST" action="{{url_for('team')}}" id="remove">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    <input type="text" name="user" value="{{ user.email }}" class="hidden">{{ user.fname }} {{ user.lname }} ({{ user.email }}) </input>
-    <button class="btn btn-xs" style="width: 30px;" type="submit" name="button" value="remove">💣</button>
-  </form>
+        {% for user in team.users|multisort('time_team_join', 'id') %}
+            <div class="center">
+                {% if user.is_leader %} {# assume the first user is the leader #}
+                    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
+                {% else %}
+                    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) </p>
+                {% endif %}
+            </div>
+        {% endfor %}
     {% endif %}
-</div>
-{% endfor %}
-{% else %}
-{% for user in team.users|multisort('time_team_join', 'id') %}
-<div class="center">
-    {% if user.is_leader %} {# assume the first user is the leader #}
-    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) - <b>Team Leader</b></p>
-    {% else %}
-    <p>{{ user.fname }} {{ user.lname }} ({{ user.email }}) </p>
+    <div class="spacing"></div>
+
+    <!-- Contains rename and leave team buttons -->
+    {% if current_user.is_leader %}
+        <div class="center">
+            <form method="POST" action="team" id="rename">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="text" placeholder="Rename team" name="rename_tname">
+                <button type="submit" name="button" value="rename">Rename</button>
+            </form>
+        </div>
+
+        <div class="spacing"></div>
     {% endif %}
-</div>
-{% endfor %}
-{% endif %}
-<div class="spacing"></div>
 
-<!-- Contains rename and leave team buttons -->
-{% if current_user.is_leader %}
-<div class="center">
-  <form method="POST" action="team" id="rename">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    <input type="text" placeholder="Rename team" name="rename_tname">
-    <button type="submit" name="button" value="rename">Rename</button>
-  </form>
-</div>
-
-<div class="spacing"></div>
-{% endif %}
-
-<div class="center">
-  <form method="POST" action="team" id="leave">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-    <button type="submit" name="button" value="leave">Leave Team</button>
-  </form>
-</div>
+    <div class="center">
+        <form method="POST" action="team" id="leave">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <button type="submit" name="button" value="leave">Leave Team</button>
+        </form>
+    </div>
 {% endblock %}

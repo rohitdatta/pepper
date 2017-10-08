@@ -53,7 +53,7 @@ def configure_routes(app):
                      view_func=volunteer.views.add_volunteer, methods=['POST'])
     app.add_url_rule('/admin/reject', 'reject-users', view_func=users.admin_views.reject_users,
                      methods=['GET', 'POST'])
-    app.add_url_rule('/admin/modify-user', 'modify-user', view_func=users.admin_views.modify_user,
+    app.add_url_rule('/admin/modify-users', 'modify-users', view_func=users.admin_views.modify_users,
                      methods=['GET', 'POST'])
     app.add_url_rule('/admin/check-in', 'manual-check-in',
                      view_func=users.admin_views.check_in_manual, methods=['GET', 'POST'])

@@ -1,31 +1,40 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hi {{ user.fname }}!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks for joining us for {{ config.HACKATHON_NAME }} 2016! You now have access to my{{ config.HACKATHON_NAME }}, a secure portal to download resumes and filter by major, school, or class standing.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Because we have so many resumes (over 1,800 of them), we will only keep this portal open until November 18, 2016. Please make sure to download and search for any resumes before then!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			To accept your invitation, please click <a href="{{ setup_url }}">here</a> to setup your account. Privacy and security are extremely important to us at Freetail Hackers, so please <strong>DO NOT</strong> forward this email or share your login information. Should you need another person to access the portal, we'd be happy to create an account for them, just send their first and last name as well as email over to your {{ config.HACKATHON_NAME }} representative.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			❤️ Freetail Hackers
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hi {{ user.fname }}!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks for joining us for {{ config.HACKATHON_NAME }} 2016! You now have access to
+            my{{ config.HACKATHON_NAME }}, a secure portal to download resumes and filter by major, school, or class
+            standing.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Because we have so many resumes (over 1,800 of them), we will only keep this portal open until November 18,
+            2016. Please make sure to download and search for any resumes before then!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            To accept your invitation, please click <a href="{{ setup_url }}">here</a> to setup your account. Privacy
+            and security are extremely important to us at Freetail Hackers, so please <strong>DO NOT</strong> forward
+            this email or share your login information. Should you need another person to access the portal, we'd be
+            happy to create an account for them, just send their first and last name as well as email over to
+            your {{ config.HACKATHON_NAME }} representative.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            ❤️ Freetail Hackers
+        </td>
+    </tr>
 {% endblock %}
 {% block footer %}
-You are receiving this email because a Freetail Hackers representative was told that you would like access to our corporate portal. If you don't know why this happened, please reach out to <a href="mailto:partnerships@freetailhackers.com">partnerships@freetailhackers.com</a>.
+    You are receiving this email because a Freetail Hackers representative was told that you would like access to our
+    corporate portal. If you don't know why this happened, please reach out to
+    <a href="mailto:partnerships@freetailhackers.com">partnerships@freetailhackers.com</a>.
 {% endblock %}

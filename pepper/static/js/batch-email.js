@@ -10,7 +10,7 @@ $(document).ready(function () {
             selector: 'td:first-child'
         },
         order: [[1, 'asc']],
-        lengthMenu: [[-1], ["All"]]
+        lengthMenu: [[10, 50, 100, 500, -1], [10, 50, 100, 500, "All"]]
     });
     $('#batch_email').on('submit', function (e) {
         var $currentForm = $(this);

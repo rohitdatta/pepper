@@ -1,0 +1,76 @@
+{% extends 'layouts/admin_base.html' %}
+{% block imports %}
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.3/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/select/1.2.3/css/select.dataTables.min.css">
+    <script src="{{ url_for('static', filename='js/modify-users.js') }}"></script>
+{% endblock %}
+{% block content %}
+    {#    <div class="container">#}
+    {#        <h1>Accept Individual User</h1>#}
+    {#        <form action="{{ url_for('modify-users') }}" method="POST">#}
+    {#            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>#}
+    {#            <input type="number" id="user-id" name="id" placeholder="User id to accept">#}
+    {#            <div class="select">#}
+    {#                <select name="status">#}
+    {#                    <option value="ACCEPTED">ACCEPTED</option>#}
+    {#                </select>#}
+    {#                <div class="select__arrow"></div>#}
+    {#            </div>#}
+    {#            <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>#}
+    {#            </button>#}
+    {#        </form>#}
+    {#    </div>#}
+    {#    <script>#}
+    {#        $(function () {#}
+    {#            $("#user-id").focus();#}
+    {#        });#}
+    {#    </script>#}
+    {#    <div class="container">#}
+    {#        <h1>Waitlisted User(s)</h1>#}
+    {#        {% for user in users %}#}
+    {#            <ul>{{ user.fname }} {{ user.lname }}</ul>#}
+    {#        {% endfor %}#}
+    {#    </div>#}
+    <div class="container">
+        <h1>Pending User(s) With Teams</h1>
+        <h3>Modifying users are currently <b>only for acceptances</b></h3>
+        <form id="batch_users" action="{{ url_for('modify-users') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <table id="user_table" class="display" cellspacing="0">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                    <th>Email</th>
+                    <th>Verified Email</th>
+                    <th>Team ID</th>
+                    <th>Joined Team At</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td></td>
+                        <td class="user_id">{{ user.id }}</td>
+                        <td>{{ user.fname }}</td>
+                        <td>{{ user.lname }}</td>
+                        <td>{{ user.status }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.confirmed }}</td>
+                        <td>{{ user.team_id }}</td>
+                        <td>{{ user.time_team_join }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit" class="confirm">Accept User(s) <i class="fa fa-arrow-circle-o-right"
+                                                                    aria-hidden="true"></i>
+            </button>
+        </form>
+    </div>
+{% endblock content %}

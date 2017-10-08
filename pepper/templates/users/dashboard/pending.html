@@ -1,54 +1,62 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-{% if not user.confirmed %}
-<script>
-$(function() {
-  $('#resend-confirmation-link').click(function(e) {
-    var url = "{{ url_for('resend-confirmation-email') }}";
-    $.ajax({
-      method: "POST",
-      url: url,
-      data: {
-        email: "{{ user.email }}"
-      },
-      success: function(data) {
-        if (data.category === 'success') {
-          $('#alert-banner').hide();
-        }
-        toastr[data.category](data.message);
-      },
-      error: function() {
-        toastr['error']('An unexpected error occurred. Please refresh your cache and try again.');
-      },
-      dataType: "json",
-      beforeSend: function(xhr) {
-        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
-      },
-    });
-    return false;
-  });
-});
-</script>
-<div class="alert alert-danger" id="alert-banner">
-  <div class="center">
-    <strong>Your email has not been confirmed yet.</strong> If you can't find the email, you can resend it by clicking  <a href="#" id="resend-confirmation-link" class="alert-link">here</a>.
-  </div>
-</div>
-{% endif %}
-<script src="{{ url_for('static', filename='js/pending.js') }}"></script>
-<div class="text-center col-md-8 col-md-offset-2">
-  <h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
-  <div class="large-text">
-    <p>There are two ways to get accepted into HackTX. One way is to be on one of the earliest created teams in the <a href="{{ url_for('team') }}">Manage Team</a> tab in the first round of acceptances. The second way is to get in as an individual through the lottery afterwards. Teams must have at least two members to be considered for the first round.</p>
-    {% if user.team_id is none %}
-    <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we decide to send acceptances, you will only be eligible to get in through the lottery!</p>
+    {% if not user.confirmed %}
+        <script>
+            $(function () {
+                $('#resend-confirmation-link').click(function (e) {
+                    var url = "{{ url_for('resend-confirmation-email') }}";
+                    $.ajax({
+                        method: "POST",
+                        url: url,
+                        data: {
+                            email: "{{ user.email }}"
+                        },
+                        success: function (data) {
+                            if (data.category === 'success') {
+                                $('#alert-banner').hide();
+                            }
+                            toastr[data.category](data.message);
+                        },
+                        error: function () {
+                            toastr['error']('An unexpected error occurred. Please refresh your cache and try again.');
+                        },
+                        dataType: "json",
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}");
+                        },
+                    });
+                    return false;
+                });
+            });
+        </script>
+        <div class="alert alert-danger" id="alert-banner">
+            <div class="center">
+                <strong>Your email has not been confirmed yet.</strong> If you can't find the email, you can resend it
+                by clicking <a href="#" id="resend-confirmation-link" class="alert-link">here</a>.
+            </div>
+        </div>
     {% endif %}
-  {% if not user.confirmed %}
-  </div>
-  {% else %}
-    <p>You should receive an email that confirms your registration. Email <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}" class="decorate">{{ config.GENERAL_INFO_EMAIL }}</a> if you have any questions and here's a cute GIF just because.</p>
-  </div>
-  <img src="{{ url_for('static', filename='img/puppy.gif') }}" class="puppy">
-  {% endif %}
-</div>
+    <script src="{{ url_for('static', filename='js/pending.js') }}"></script>
+    <div class="text-center col-md-8 col-md-offset-2">
+        <h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
+        <div class="large-text">
+            <p>There are two ways to get accepted into HackTX. One way is to be on one of the earliest created teams in
+                the <a href="{{ url_for('team') }}">Manage Team</a> tab in the first round of acceptances. The second
+                way is to get in as an individual through the lottery afterwards. Teams must have at least two members
+                to be considered for the first round.</p>
+            {% if user.team_id is none %}
+                <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we
+                    decide to send acceptances, you will only be eligible to get in through the lottery!</p>
+            {% endif %}
+            {% if not user.confirmed %}
+                </div>
+            {% else %}
+                <p>You should receive an email that confirms your registration. Email <a
+                        href="mailto:{{ config.GENERAL_INFO_EMAIL }}"
+                        class="decorate">{{ config.GENERAL_INFO_EMAIL }}</a> if you have any questions and here's a cute
+                    GIF just because.</p>
+                </div>
+                <img src="{{ url_for('static', filename='img/puppy.gif') }}" class="puppy">
+            {% endif %}
+    </div>
 {% endblock %}

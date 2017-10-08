@@ -1,40 +1,45 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
-	<div class="results">
-	<div class="row">
-	<div class="col-md-6"><h1>Results</h1></div>
-		<div class="col-md-6">
-	<span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
-			</div>
-	</div>
-	About {{ users|length }} results ({{ time|round(5) }} seconds)
-	{% if users|length > 0 %}
-	<table class="info">
-	<tr>
-		<td>Name</td>
-		<td>Class Standing</td>
-		<td>Major(s)</td>
-		<td>School</td>
-		<td>Resume Link</td>
-		<td style="text-align: center;">Attended</td>
-	</tr>
-	<col>
-		{% for user in users %}
-					<tr class="border_bottom">
-						<td width="15%">{{ user.fname }} {{ user.lname }}</td>
-						<td>{{ user.class_standing }}</td>
-						<td width="25%">{{ user.major }}</td>
-						<td width="25%">{{ user.school_name }}</td>
-						<td><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate" target="_blank">View Resume</a></td>
-						<td style="text-align: center;">{% if user.checked_in %}<i class="fa fa-check-circle" aria-hidden="true"></i>{% else %}<i class="fa fa-times-circle" aria-hidden="true"></i>{% endif %}</td>
+    <div class="results">
+        <div class="row">
+            <div class="col-md-6"><h1>Results</h1></div>
+            <div class="col-md-6">
+                <span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
+            </div>
+        </div>
+        About {{ users|length }} results ({{ time|round(5) }} seconds)
+        {% if users|length > 0 %}
+            <table class="info">
+                <tr>
+                    <td>Name</td>
+                    <td>Class Standing</td>
+                    <td>Major(s)</td>
+                    <td>School</td>
+                    <td>Resume Link</td>
+                    <td style="text-align: center;">Attended</td>
+                </tr>
+                <col>
+                {% for user in users %}
+                    <tr class="border_bottom">
+                        <td width="15%">{{ user.fname }} {{ user.lname }}</td>
+                        <td>{{ user.class_standing }}</td>
+                        <td width="25%">{{ user.major }}</td>
+                        <td width="25%">{{ user.school_name }}</td>
+                        <td><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate" target="_blank">View
+                            Resume</a></td>
+                        <td style="text-align: center;">{% if user.checked_in %}
+                            <i class="fa fa-check-circle" aria-hidden="true"></i>{% else %}
+                            <i class="fa fa-times-circle" aria-hidden="true"></i>{% endif %}</td>
 
-					</tr>
-		{% endfor %}
-				</table>
-		{% else %}
-		<div class="large-text">
-		<p>Oops! We weren't able to find anyone who matches your criteria. We have a pretty diverse hacker list, but looks like you might've been a bit too specific. Perhaps you can try a <a href="{{ url_for('corp-search') }}" class="decorate">new search</a>?</p>
-		</div>
-	{% endif %}
-	</div>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <div class="large-text">
+                <p>Oops! We weren't able to find anyone who matches your criteria. We have a pretty diverse hacker list,
+                    but looks like you might've been a bit too specific. Perhaps you can try a <a
+                            href="{{ url_for('corp-search') }}" class="decorate">new search</a>?</p>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
