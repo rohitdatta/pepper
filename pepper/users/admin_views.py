@@ -1,7 +1,4 @@
-<<<<<<< 324e2991e964ca05c82167cb58deba1db022c3f8
-=======
 from collections import defaultdict
->>>>>>> Improve UI visibility for batch single user acceptance and reformat code indentation
 import batch
 import helpers
 from models import User, UserRole
@@ -135,15 +132,9 @@ def send_email_to_users():
         user_id_set = set()
 
         statuses = request.form.getlist('status')
-<<<<<<< 324e2991e964ca05c82167cb58deba1db022c3f8
         status_users = User.query.filter(or_(User.status.in_(statuses))).all() if statuses else []
         checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
         checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all() if checkbox_user_ids else []
-=======
-        status_users = User.query.filter(or_(User.status.in_(statuses))).all()
-        checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
-        checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all()
->>>>>>> Improve UI visibility for batch single user acceptance and reformat code indentation
 
         for user in status_users:
             if user.id not in user_id_set:
@@ -156,19 +147,11 @@ def send_email_to_users():
                 targeted_users.append(user)
 
         if len(targeted_users) > 0:
-<<<<<<< 324e2991e964ca05c82167cb58deba1db022c3f8
             batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
                                    targeted_users, request.form.get('user-context') == 'TRUE')
 
         flash('Batch email(s) successfully sent', 'success')
         return redirect(url_for('send-email'))
-=======
-            worker_queue.enqueue(batch.send_batch_email, request.form.get('content'), request.form.get('subject'),
-                                 targeted_users)
-
-        flash('Batch email(s) successfully sent', 'success')
-        return render_template('users/admin/send_email.html', users=all_users)
->>>>>>> Improve UI visibility for batch single user acceptance and reformat code indentation
 
 
 @login_required
