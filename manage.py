@@ -6,15 +6,20 @@ dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-from pepper import hackathon_identity_app, app
-from rq import Connection, Worker
 import redis
+from rq import Connection, Worker
+
+from pepper import hackathon_identity_app, app
+from scripts.rename_resumes import FixResumeCommand
 
 manager = Manager(hackathon_identity_app)
 
 # Migration commands for when you create DB
 Migrate(hackathon_identity_app, app.DB)
 manager.add_command('db', MigrateCommand)
+
+# add commands from the scripts directory
+manager.add_command('fixresumes', FixResumeCommand)
 
 
 @manager.command

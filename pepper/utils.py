@@ -13,7 +13,8 @@ from datetime import date
 resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
                     aws_secret_access_key=settings.AWS_SECRET_KEY)
-s3_client = boto3.client('s3')
+s3_client = boto3.client(
+    's3', aws_access_key_id=settings.AWS_ACCESS_KEY, aws_secret_access_key=settings.AWS_SECRET_KEY)
 timed_serializer = URLSafeTimedSerializer(settings.SECRET_KEY)
 serializer = URLSafeSerializer(settings.SECRET_KEY)
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
