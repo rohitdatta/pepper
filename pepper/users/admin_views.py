@@ -139,7 +139,7 @@ def send_email_to_users():
 
         if len(targeted_users) > 0:
             batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
-                                   targeted_users)
+                                   targeted_users, request.form.get('user-context') == 'TRUE')
 
         flash('Batch email(s) successfully sent', 'success')
         return redirect(url_for('send-email'))

@@ -40,22 +40,36 @@ def send_attending_email(user):
                          user.email, None, html)
 
 
-def send_batch_email(content, subject, users):
+def send_batch_email(content, subject, users, needs_user_context):
     g.log.info('Sending batch emails to {} users'.format(len(users)))
     lines = content.split('\r\n')
     msg_body = u""
     for line in lines:
         msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
-    email_contexts = []
-    for user in users:
+    if needs_user_context:
+        email_contexts = []
+        for user in users:
+            html = render_template('emails/generic_message.html', content=msg_body)
+            html = render_template_string(html, user=user)
+            email_contexts.append((user.email, html))
+        for i in range(0, len(email_contexts), settings.MAX_BATCH_EMAILS):
+            worker_queue.enqueue(_send_batch_emails_with_context, subject,
+                                 email_contexts[i:i+settings.MAX_BATCH_EMAILS])
+    else:
+        emails = [user.email for user in users]
         html = render_template('emails/generic_message.html', content=msg_body)
-        html = render_template_string(html, user=user)
-        email_contexts.append((user.email, html))
-    worker_queue.enqueue(_send_batch_emails, subject, email_contexts)
+        html = render_template_string(html)
+        for i in range(0, len(emails), settings.MAX_BATCH_EMAILS):
+            worker_queue.enqueue(_send_static_batch_emails, subject, html, emails[i:i+settings.MAX_BATCH_EMAILS])
 
 
-def _send_batch_emails(subject, email_contexts):
+def _send_batch_emails_with_context(subject, email_contexts):
     for email, html_content in email_contexts:
+        send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
+
+
+def _send_static_batch_emails(subject, html_content, emails):
+    for email in emails:
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
 

@@ -16,6 +16,10 @@
     <form id="batch_email" action="{{ url_for('send-email') }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <input type="text" name="subject" placeholder="Subject">
+        <label class="control control--checkbox">This email needs user context.
+            <input type="checkbox" name="user-context" value="TRUE"/>
+            <div class="control__indicator"></div>
+        </label>
         <textarea name="content" placeholder="Message"></textarea>
         <label class="control control--checkbox">New
             <input type="checkbox" name="status" value="NEW"/>
