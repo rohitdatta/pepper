@@ -45,11 +45,17 @@ def send_batch_email(content, subject, users):
     msg_body = u""
     for line in lines:
         msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
+    email_contexts = []
     for user in users:
         html = render_template('emails/generic_message.html', content=msg_body)
         html = render_template_string(html, user=user)
-        worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, subject, user.email, html_content=html)
-        print 'Sent email'
+        email_contexts.append((user.email, html))
+    worker_queue.enqueue(_send_batch_emails, subject, email_contexts)
+
+
+def _send_batch_emails(subject, email_contexts):
+    for email, html_content in email_contexts:
+        send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
 
 def accept_fifo(num_to_accept, include_waitlist):
