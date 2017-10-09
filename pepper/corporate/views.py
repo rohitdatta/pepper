@@ -1,14 +1,16 @@
+import time
+
 from flask import request, render_template, flash, redirect, url_for, g, make_response
-from flask.ext.login import login_user, current_user
-from pepper.users import User
-from helpers import check_password
-from pepper.utils import corp_login_required, roles_required, s3, serializer, timed_serializer, send_email
-from pepper import settings
+from flask_login import login_user, current_user
 from sqlalchemy import distinct, and_
+
+from helpers import check_password
+from pepper.users import User
+from pepper.utils import corp_login_required, roles_required, s3, serializer, timed_serializer, send_email
+from pepper import settings, status
 from pepper.app import DB
 from pepper.users.helpers import hash_pwd
 from pepper.users.models import UserRole
-import time
 
 
 def login():
@@ -155,7 +157,7 @@ def search_results():
     class_standings = request.form.getlist('class_standings')
     majors = request.form.getlist('majors')
     attended = request.form.get('attended')
-    users = User.query.filter(and_(User.status != 'NEW', User.type == 'MLH'))
+    users = User.query.filter(and_(User.status != status.NEW, User.type == 'MLH'))
     if schools:
         users = users.filter(User.school_name.in_(schools))
     if majors:

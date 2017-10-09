@@ -2,7 +2,7 @@ from pepper.app import DB
 from flask import request, flash, redirect, url_for, render_template
 from models import Volunteer
 from pepper.utils import roles_required
-from flask.ext.login import login_required
+from flask_login import login_required
 
 
 @login_required

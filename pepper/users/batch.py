@@ -1,12 +1,13 @@
-from models import User
-from pepper import settings
-from pepper.app import DB, worker_queue
-from pepper.utils import send_email, serializer, timed_serializer
+import random
 
 from flask import render_template, render_template_string, url_for, g
 from sqlalchemy import and_, or_
 import keen
-import random
+
+from models import User
+from pepper import settings, status
+from pepper.app import DB, worker_queue
+from pepper.utils import send_email, serializer, timed_serializer
 
 
 def send_accepted_email(user):
@@ -82,18 +83,18 @@ def _send_static_batch_emails(subject, html_content, emails):
 def accept_fifo(num_to_accept, include_waitlisted):
     if include_waitlisted:
         potential_users = User.query.filter(
-            and_(or_(User.status == 'WAITLISTED', User.status == 'PENDING'), User.confirmed.is_(True)))
+            and_(or_(User.status == status.WAITLISTED, User.status == status.PENDING), User.confirmed.is_(True)))
     else:
-        potential_users = User.query.filter(and_(User.status == 'PENDING'), User.confirmed.is_(True))
+        potential_users = User.query.filter(and_(User.status == status.PENDING), User.confirmed.is_(True))
 
     accepted_users = potential_users.order_by(User.time_applied.asc()).limit(num_to_accept).all()
 
     for user in accepted_users:
-        if user.status == 'WAITLISTED':
+        if user.status == status.WAITLISTED:
             html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
         else:  # User should be in pending state, but catch all just in case
             html = render_template('emails/application_decisions/accepted.html', user=user)
-        user.status = 'ACCEPTED'
+        user.status = status.ACCEPTED
         DB.session.add(user)
         DB.session.commit()
         send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation"
@@ -103,35 +104,23 @@ def accept_fifo(num_to_accept, include_waitlisted):
 
 def accept_random(num_to_accept, include_waitlisted):
     if include_waitlisted:
-        filtered_users = User.query.filter(and_(or_(User.status == 'PENDING', User.status == 'WAITLISTED'),
+        filtered_users = User.query.filter(and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED),
                                                 User.confirmed.is_(True))).all()
     else:
-        filtered_users = User.query.filter(and_(User.status == 'PENDING', User.confirmed.is_(True))).all()
+        filtered_users = User.query.filter(and_(User.status == status.PENDING, User.confirmed.is_(True))).all()
 
     accepted_users = random.sample(set(filtered_users), num_to_accept)
 
     for user in accepted_users:
-        if user.status == 'WAITLISTED':
+        if user.status == status.WAITLISTED:
             html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
         else:  # User should be in pending state, but catch all just in case
             html = render_template('emails/application_decisions/accepted.html', user=user)
-        user.status = 'ACCEPTED'
+        user.status = status.ACCEPTED
         DB.session.add(user)
         DB.session.commit()
         send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
                    user.email, html_content=html)
-
-        # Moving everyone from PENDING with confirmed emails to WAITLISTED
-        # pending_users = User.query.filter(and_(User.status == 'PENDING', User.confirmed.is_(True))).all()
-        #
-        # for user in pending_users:
-        #     user.status = 'WAITLISTED'
-        #     html = render_template('emails/application_decisions/waitlisted.html', user=user)
-        #     DB.session.commit()
-        #     DB.session.add(user)
-        #     send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
-        #                user.email, html_content=html)
-
 
 def keen_add_event(user_id, event_type, count, event_time):
     user = User.query.filter_by(id=user_id).first()

@@ -1,18 +1,19 @@
 from collections import defaultdict
-import batch
-import helpers
-from models import User, UserRole
-from views import logout_user
-from pepper import settings
-from pepper.app import DB, worker_queue
-from pepper.utils import calculate_age, roles_required, send_email
 
 from flask import flash, g, redirect, render_template, request, url_for, jsonify
-from flask.ext.login import current_user, login_required, login_user
+from flask_login import current_user, login_required, login_user
 import keen
 import redis
 from rq.job import Job
 from sqlalchemy import and_, or_
+
+import batch
+import helpers
+from models import User, UserRole
+from views import logout_user
+from pepper import settings, status
+from pepper.app import DB, worker_queue
+from pepper.utils import calculate_age, roles_required, send_email
 
 
 def initial_create():
@@ -29,7 +30,7 @@ def initial_create():
                 'type': 'admin'
             }
             user = User(user_info)
-            user.status = 'ADMIN'
+            user.status = status.ADMIN
             DB.session.add(user)
             DB.session.commit()
 
@@ -97,7 +98,7 @@ def debug_user():
 @roles_required('admin')
 def batch_modify():
     users = User.query.filter(
-        and_(or_(User.status == 'PENDING', User.status == 'WAITLISTED'), User.confirmed.is_(True))).order_by(
+        and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED), User.confirmed.is_(True))).order_by(
         User.time_applied.asc()).all()
     if request.method == 'GET':
         return render_template('users/admin/accept_users.html', users=users)
@@ -167,7 +168,7 @@ def job_view(job_key):
 @login_required
 @roles_required('admin')
 def reject_users():
-    waitlisted_users = User.query.filter(User.status == 'WAITLISTED').all()
+    waitlisted_users = User.query.filter(User.status == status.WAITLISTED).all()
 
     if request.method == 'GET':
         return render_template('users/admin/reject_users.html', users=waitlisted_users)
@@ -175,7 +176,7 @@ def reject_users():
         for user in waitlisted_users:
             html = render_template('emails/application_decisions/rejected.html', user=user)
             send_email(settings.GENERAL_INFO_EMAIL, "Update from HackTX", user.email, html_content=html)
-            user.status = 'REJECTED'
+            user.status = status.REJECTED
             DB.session.add(user)
             DB.session.commit()
         flash('Successfully rejected all waitlisted user(s)', 'success')
@@ -186,7 +187,7 @@ def reject_users():
 @roles_required('admin')
 def get_pending_team_users():
     users = User.query.filter(
-        and_(User.status == 'PENDING',
+        and_(User.status == status.PENDING,
              User.team_id.isnot(None),
              User.time_team_join.isnot(None),
              User.confirmed.is_(True))).all()
@@ -233,7 +234,7 @@ def modify_users():
 
         for user in selected_users:
             previous_status = user.status
-            user.status = 'ACCEPTED'
+            user.status = status.ACCEPTED
             DB.session.add(user)
             DB.session.commit()
             g.log.info('Modifying user_id={} previous_status={} current_status={}'.format(user.id,
@@ -257,10 +258,10 @@ def check_in_manual():
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
         age = calculate_age(user.birthday)
-        if age < 18 or user.status != 'CONFIRMED' or user.checked_in:
+        if age < 18 or user.status != status.CONFIRMED or user.checked_in:
             if age < 18:
                 flash('User under 18', 'error')
-            if user.status != 'CONFIRMED':
+            if user.status != status.CONFIRMED:
                 flash('User not confirmed', 'error')
             if user.checked_in:
                 flash('User is already checked in', 'error')

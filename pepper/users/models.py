@@ -1,8 +1,11 @@
-from pepper.app import DB
 from datetime import datetime
-from helpers import hash_pwd
+
 from flask_user import UserMixin
+
+from pepper.app import DB
+from helpers import hash_pwd
 from pepper.utils import resume_hash
+from pepper import status
 
 
 class User(DB.Model, UserMixin):
@@ -53,7 +56,7 @@ class User(DB.Model, UserMixin):
             self.email = info['data']['email']
             self.fname = info['data']['first_name']
             self.lname = info['data']['last_name']
-            self.status = 'NEW'
+            self.status = status.NEW
             self.created = datetime.utcnow()
             self.major = info['data']['major']
             self.shirt_size = info['data']['shirt_size']
@@ -74,7 +77,7 @@ class User(DB.Model, UserMixin):
             self.password = hash_pwd(info['password'])
             self.created = datetime.utcnow()
             self.type = 'local'
-            self.status = 'NEW'
+            self.status = status.NEW
             self.checked_in = False
             self.confirmed = False
 

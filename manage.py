@@ -4,13 +4,14 @@ import dotenv
 # Load environment variable from a .env file
 dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
-from flask.ext.script import Manager
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 import redis
 from rq import Connection, Worker
 
 from pepper import hackathon_identity_app, app
 from scripts.rename_resumes import FixResumeCommand
+from scripts.pending_to_waitlisted import PendingToWaitlistedCommand
 
 manager = Manager(hackathon_identity_app)
 
@@ -20,6 +21,7 @@ manager.add_command('db', MigrateCommand)
 
 # add commands from the scripts directory
 manager.add_command('fixresumes', FixResumeCommand)
+manager.add_command('pending_to_waitlisted', PendingToWaitlistedCommand)
 
 
 @manager.command

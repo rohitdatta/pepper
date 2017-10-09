@@ -10,6 +10,7 @@ from pepper import settings
 from pepper.app import DB
 from pepper.users import User
 from pepper.utils import calculate_age
+from pepper import status
 
 
 def schedule():
@@ -39,7 +40,7 @@ def partner_list():
 def passbook():
     email = request.get_json()['email']
     user = User.query.filter_by(email=email).first()
-    if user is None or user.status != 'CONFIRMED':
+    if user is None or user.status != status.CONFIRMED:
         data = {'success': False}
     else:
         data = {'success': True,
@@ -72,7 +73,7 @@ def check_in():
             if user.checked_in:  # User is already checked in
                 message = 'Attendee is already checked in'
             else:
-                if user.status == 'CONFIRMED':
+                if user.status == status.CONFIRMED:
                     user.checked_in = True
                     DB.session.add(user)
                     DB.session.commit()
@@ -109,6 +110,7 @@ def check_in():
 
         return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email,
                        age=calculate_age(user.birthday), checked_in=user.checked_in,
-                       confirmed=user.status == 'CONFIRMED', birthday=datetime.date.strftime(user.birthday, '%m/%d/%Y'))
+                       confirmed=user.status == status.CONFIRMED,
+                       birthday=datetime.date.strftime(user.birthday, '%m/%d/%Y'))
     else:
         return jsonify(message='User does not exist'), 404

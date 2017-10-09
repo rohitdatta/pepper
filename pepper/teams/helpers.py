@@ -1,15 +1,17 @@
+from datetime import datetime
+
+from flask_login import current_user, login_required
+from flask import g, render_template, redirect, url_for, flash
+
 from models import Team
 from pepper.users.models import User
 from pepper.app import DB
 from pepper.utils import user_status_blacklist
-from datetime import datetime
-
-from flask.ext.login import current_user, login_required
-from flask import g, render_template, redirect, url_for, flash
+from pepper import status
 
 
 @login_required
-@user_status_blacklist('NEW')
+@user_status_blacklist(status.NEW)
 def join_team(request):
     if not request.form.get('join_tname'):
         flash('Please enter a team name.', 'warning')
@@ -45,7 +47,7 @@ def join_team(request):
 
 
 @login_required
-@user_status_blacklist('NEW')
+@user_status_blacklist(status.NEW)
 def create_team(request):
     if not request.form.get('create_tname'):
         flash('Please enter a team name.', 'warning')
@@ -82,7 +84,7 @@ def create_team(request):
 
 
 @login_required
-@user_status_blacklist('NEW')
+@user_status_blacklist(status.NEW)
 def leave_team(request):
     if current_user.team_id is None:
         flash('You were not part of a team', 'error')
@@ -113,7 +115,7 @@ def leave_team(request):
 
 
 @login_required
-@user_status_blacklist('NEW')
+@user_status_blacklist(status.NEW)
 def rename_team(request):
     if not current_user.is_leader:
         flash('Cannot rename team.', 'warning')
@@ -143,7 +145,7 @@ def rename_team(request):
 
 
 @login_required
-@user_status_blacklist('NEW')
+@user_status_blacklist(status.NEW)
 def remove_team(request):
     if not current_user.is_leader:
         flash('Cannot remove team.', 'warning')
