@@ -133,7 +133,7 @@ def accept_random(num_to_accept, include_waitlisted):
         #                user.email, html_content=html)
 
 
-def keen_add_event(user_id, event_type, count):
+def keen_add_event(user_id, event_type, count, event_time):
     user = User.query.filter_by(id=user_id).first()
     fmt = '%Y-%m-%dT%H:%M:%S.%f'
     try:
@@ -152,7 +152,7 @@ def keen_add_event(user_id, event_type, count):
                 'name': user.school_name
             },
             'keen': {
-                'timestamp': user.time_applied.strftime(fmt)
+                'timestamp': event_time.strftime(fmt)
             },
             'interests': user.interests,
             'skill_level': user.skill_level,

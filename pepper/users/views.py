@@ -16,6 +16,7 @@ from pytz import timezone
 import redis
 import requests
 from sqlalchemy.exc import DataError, IntegrityError
+from datetime import datetime
 
 tz = timezone('US/Central')
 
@@ -231,7 +232,7 @@ def extract_resume(first_name, last_name, resume_required=True):
 def complete_user_sign_up():
     current_user.status = 'PENDING'
     current_user.time_applied = datetime.utcnow()
-    worker_queue.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0)
+    worker_queue.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0, current_user.time_applied)
     try:
         DB.session.add(current_user)
         DB.session.commit()
@@ -317,9 +318,131 @@ def dashboard():
         return redirect(url_for('complete-mlh-registration'))
     if current_user.status == 'PENDING':
         return render_template('users/dashboard/pending.html', user=current_user)
+    elif current_user.status == 'ACCEPTED':
+        return redirect(url_for('accept-invite'))
+    elif current_user.status == 'SIGNING':
+        return redirect(url_for('sign'))
+    elif current_user.status == 'CONFIRMED':
+        return render_template('users/dashboard/confirmed.html', user=current_user)
+    elif current_user.status == 'DECLINED':
+        return render_template('users/dashboard/declined.html', user=current_user)
+    elif current_user.status == 'REJECTED':
+        return render_template('users/dashboard/rejected.html', user=current_user)
+    elif current_user.status == 'WAITLISTED':
+        return render_template('users/dashboard/waitlisted.html', user=current_user)
     if 'corp' in get_current_user_roles():
         return redirect(url_for('corp-dash'))
     return render_template('users/dashboard/dashboard.html', user=current_user)
+
+
+@login_required
+def accept():
+    if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
+        message = {
+            'NEW': "You haven't completed your application for {0}! "
+                   "Please submit your application before visiting this page!"
+                .format(settings.HACKATHON_NAME),
+            'PENDING': "You haven't been accepted to {0}! "
+                    "Please wait for your invitation before visiting this page!"
+                .format(settings.HACKATHON_NAME),
+            'CONFIRMED': "You've already accepted your invitation to {0}! "
+                        "We look forward to seeing you here!"
+                .format(settings.HACKATHON_NAME),
+            'REJECTED': "You've already rejected your {0} invitation. "
+                        "Unfortunately, for space considerations "
+                        "you cannot change your response."
+                .format(settings.HACKATHON_NAME),
+            None: "Corporate users cannot view this page."
+        }
+        if current_user.status in message:
+            flash(message[current_user.status], 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        return render_template('users/accept.html', user=current_user)
+    else:
+        if 'accept' in request.form:  # User has accepted the invite
+            current_user.status = 'SIGNING'
+            flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
+        else:
+            current_user.status = 'DECLINED'
+        DB.session.add(current_user)
+        DB.session.commit()
+        user_decision = 'confirmed' if current_user.status == 'SIGNING' else 'declined'
+        worker_queue.enqueue(batch.keen_add_event, current_user.id, user_decision, 0, datetime.utcnow())
+        return redirect(url_for('dashboard'))
+
+@login_required
+def sign():
+    date_fmt = '%B %d, %Y'
+    if current_user.status != 'SIGNING':  # they aren't allowed to accept their invitation
+        message = {
+            'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(
+                settings.HACKATHON_NAME),
+            'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
+                settings.HACKATHON_NAME),
+            'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
+                settings.HACKATHON_NAME),
+            'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
+                settings.HACKATHON_NAME),
+            None: "Corporate users cannot view this page."
+        }
+        if current_user.status in message:
+            flash(message[current_user.status], 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        today = datetime.now(tz).date()
+        return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
+    else:
+        relative_name = request.form.get('relative_name')
+        relative_email = request.form.get('relative_email')
+        relative_num = request.form.get('relative_num')
+
+        allergies = request.form.get('allergies')
+        medications = request.form.get('medications')
+        special_health_needs = request.form.get('special_health_needs')
+
+        medical_signature = request.form.get('medical_signature')
+        medical_date = request.form.get('medical_date')
+
+        indemnification_signature = request.form.get('indemnification_signature')
+        indemnification_date = request.form.get('indemnification_date')
+
+        photo_signature = request.form.get('photo_signature')
+        photo_date = request.form.get('photo_date')
+
+        ut_eid = request.form.get('ut_eid')
+
+        if None in (relative_name, relative_email, relative_num, medical_signature, medical_date,
+                    indemnification_signature, indemnification_date, photo_signature, photo_date):
+            flash('Must fill all required fields', 'error')
+            return redirect(request.url)
+        if current_user.school_id == 23:
+            if ut_eid == None:
+                flash('Must fill out UT EID')
+                return redirect(request.url)
+        signed_info = dict()
+        for key in (
+        'relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs',
+        'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
+            signed_info[key] = locals()[key]
+
+        for key in ('medical_date', 'indemnification_date', 'photo_date'):
+            signed_info[key] = datetime.strptime(locals()[key], date_fmt)
+        signed_info['user_id'] = current_user.id
+        waiver_info = Waiver(signed_info)
+        DB.session.add(waiver_info)
+        DB.session.commit()
+
+        current_user.status = 'CONFIRMED'
+        DB.session.add(current_user)
+        DB.session.commit()
+
+        worker_queue.enqueue(batch.keen_add_event, current_user.id, 'waivers_signed', 0, datetime.utcnow())
+
+        batch.send_attending_email(current_user)
+
+        flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
+        return redirect(url_for('dashboard'))
 
 
 @helpers.check_registration_opened
@@ -475,235 +598,235 @@ def confirm_account(token):
 """
 @login_required
 def dashboard():
-	if current_user.type == 'corporate':
-		return redirect(url_for('corp-dash'))
-	if current_user.type == 'admin':
-		return redirect(url_for('admin-dash'))
+    if current_user.type == 'corporate':
+        return redirect(url_for('corp-dash'))
+    if current_user.type == 'admin':
+        return redirect(url_for('admin-dash'))
 
-	if current_user.status == 'NEW':
-		update_user_data('MLH')
-		return redirect(url_for('confirm-registration'))
-	elif current_user.status == 'ACCEPTED':
-		return redirect(url_for('accept-invite'))
-	elif current_user.status == 'SIGNING':
-		return redirect(url_for('sign'))
-	elif current_user.status == 'CONFIRMED':
-		return render_template('users/dashboard/confirmed.html', user=current_user)
-	elif current_user.status == 'DECLINED':
-		return render_template('users/dashboard/declined.html', user=current_user)
-	elif current_user.status == 'REJECTED':
-		return render_template('users/dashboard/rejected.html', user=current_user)
-	elif current_user.status == 'WAITLISTED':
-		return render_template('users/dashboard/waitlisted.html', user=current_user)
-	elif current_user.status == 'ADMIN':
-		users = User.query.order_by(User.created.asc())
-		return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
-	return render_template('users/dashboard/pending.html', user=current_user)
+    if current_user.status == 'NEW':
+        update_user_data('MLH')
+        return redirect(url_for('confirm-registration'))
+    elif current_user.status == 'ACCEPTED':
+        return redirect(url_for('accept-invite'))
+    elif current_user.status == 'SIGNING':
+        return redirect(url_for('sign'))
+    elif current_user.status == 'CONFIRMED':
+        return render_template('users/dashboard/confirmed.html', user=current_user)
+    elif current_user.status == 'DECLINED':
+        return render_template('users/dashboard/declined.html', user=current_user)
+    elif current_user.status == 'REJECTED':
+        return render_template('users/dashboard/rejected.html', user=current_user)
+    elif current_user.status == 'WAITLISTED':
+        return render_template('users/dashboard/waitlisted.html', user=current_user)
+    elif current_user.status == 'ADMIN':
+        users = User.query.order_by(User.created.asc())
+        return render_template('users/dashboard/admin_dashboard.html', user=current_user, users=users)
+    return render_template('users/dashboard/pending.html', user=current_user)
 
 
 
 #  Refresh the MyMLH profile info
 @login_required
 def refresh_from_mlh():
-	user_info = helpers.get_mlh_user_data(current_user.access_token)
-	if 'data' in user_info:
-		current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
-		current_user.special_needs = user_info['data']['special_needs']
-		DB.session.add(current_user)
-		DB.session.commit()
-		return jsonify(dietary_restrictions=current_user.dietary_restrictions, special_needs=current_user.special_needs)
-	else:
-		response = jsonify(error='Unable to communicate with MLH')
-		response.status_code = 503
-		return response
+    user_info = helpers.get_mlh_user_data(current_user.access_token)
+    if 'data' in user_info:
+        current_user.dietary_restrictions = user_info['data']['dietary_restrictions']
+        current_user.special_needs = user_info['data']['special_needs']
+        DB.session.add(current_user)
+        DB.session.commit()
+        return jsonify(dietary_restrictions=current_user.dietary_restrictions, special_needs=current_user.special_needs)
+    else:
+        response = jsonify(error='Unable to communicate with MLH')
+        response.status_code = 503
+        return response
 
 # Editing of the attendee profile info after applying
 @login_required
 def edit_resume():
-	if current_user.status == 'NEW':
-		return redirect(url_for('dashboard'))
-	if request.method == 'GET':
-		# render template for editing resume
-		return render_template('users/dashboard/update_resume.html', user=current_user)
-	else:
-		# Update your resume
-		if 'resume' in request.files:
-			resume = request.files['resume']
-			if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
-				s3.Object(settings.S3_BUCKET_NAME,
-						  'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname,
-															  current_user.hashid)).put(Body=resume)
-			else:
-				flash('Resume must be in PDF format', 'error')
-				return redirect(request.url)
-		else:
-			flash('Please upload your resume', 'error')
-			return redirect(request.url)
-		flash('You successfully updated your resume', 'success')
-		return redirect(request.url)
+    if current_user.status == 'NEW':
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        # render template for editing resume
+        return render_template('users/dashboard/update_resume.html', user=current_user)
+    else:
+        # Update your resume
+        if 'resume' in request.files:
+            resume = request.files['resume']
+            if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
+                s3.Object(settings.S3_BUCKET_NAME,
+                          'resumes/{0}, {1} ({2}).pdf'.format(current_user.lname, current_user.fname,
+                                                              current_user.hashid)).put(Body=resume)
+            else:
+                flash('Resume must be in PDF format', 'error')
+                return redirect(request.url)
+        else:
+            flash('Please upload your resume', 'error')
+            return redirect(request.url)
+        flash('You successfully updated your resume', 'success')
+        return redirect(request.url)
 
 
 #  allow attendee to view their own resume
 @login_required
 def view_own_resume():
-	data_object = s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'
-							.format(current_user.lname, current_user.fname,
-									current_user.hashid)).get()
-	response = make_response(data_object['Body'].read())
-	response.headers['Content-Type'] = 'application/pdf'
-	return response
+    data_object = s3.Object(settings.S3_BUCKET_NAME, u'resumes/{0}, {1} ({2}).pdf'
+                            .format(current_user.lname, current_user.fname,
+                                    current_user.hashid)).get()
+    response = make_response(data_object['Body'].read())
+    response.headers['Content-Type'] = 'application/pdf'
+    return response
 
 
 @login_required
 def accept():
-	if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
-		message = {
-			'NEW': "You haven't completed your application for {0}! "
-				   "Please submit your application before visiting this page!"
-				.format(settings.HACKATHON_NAME),
-			'PENDING': "You haven't been accepted to {0}! "
-					"Please wait for your invitation before visiting this page!"
-				.format(settings.HACKATHON_NAME),
-			'CONFIRMED': "You've already accepted your invitation to {0}! "
-						"We look forward to seeing you here!"
-				.format(settings.HACKATHON_NAME),
-			'REJECTED': "You've already rejected your {0} invitation. "
-						"Unfortunately, for space considerations "
-						"you cannot change your response."
-				.format(settings.HACKATHON_NAME),
-			None: "Corporate users cannot view this page."
-		}
-		if current_user.status in message:
-			flash(message[current_user.status], 'error')
-		return redirect(url_for('dashboard'))
-	if request.method == 'GET':
-		return render_template('users/accept.html', user=current_user)
-	else:
-		if 'accept' in request.form:  # User has accepted the invite
-			current_user.status = 'SIGNING'
-			flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
-		else:
-			current_user.status = 'DECLINED'
-		DB.session.add(current_user)
-		DB.session.commit()
-		user_decision = 'confirmed' if current_user.status == 'SIGNING' else 'declined'
-		fmt = '%Y-%m-%dT%H:%M:%S.%f'
-		keen.add_event(user_decision, {
-			'date_of_birth': current_user.birthday.strftime(fmt),
-			'dietary_restrictions': current_user.dietary_restrictions,
-			'email': current_user.email,
-			'first_name': current_user.fname,
-			'last_name': current_user.lname,
-			'gender': current_user.gender,
-			'id': current_user.id,
-			'major': current_user.major,
-			'phone_number': current_user.phone_number,
-			'school': {
-				'id': current_user.school_id,
-				'name': current_user.school_name
-			},
-			'skill_level': current_user.skill_level,
-			'races': current_user.race.split(','),
-			'num_hackathons': current_user.num_hackathons,
-			'class_standing': current_user.class_standing,
-			'shirt_size': current_user.shirt_size,
-			'special_needs': current_user.special_needs
-		})
-		return redirect(url_for('dashboard'))
+    if current_user.status != 'ACCEPTED':  # they aren't allowed to accept their invitation
+        message = {
+            'NEW': "You haven't completed your application for {0}! "
+                   "Please submit your application before visiting this page!"
+                .format(settings.HACKATHON_NAME),
+            'PENDING': "You haven't been accepted to {0}! "
+                    "Please wait for your invitation before visiting this page!"
+                .format(settings.HACKATHON_NAME),
+            'CONFIRMED': "You've already accepted your invitation to {0}! "
+                        "We look forward to seeing you here!"
+                .format(settings.HACKATHON_NAME),
+            'REJECTED': "You've already rejected your {0} invitation. "
+                        "Unfortunately, for space considerations "
+                        "you cannot change your response."
+                .format(settings.HACKATHON_NAME),
+            None: "Corporate users cannot view this page."
+        }
+        if current_user.status in message:
+            flash(message[current_user.status], 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        return render_template('users/accept.html', user=current_user)
+    else:
+        if 'accept' in request.form:  # User has accepted the invite
+            current_user.status = 'SIGNING'
+            flash('You have successfully confirmed your invitation to {0}'.format(settings.HACKATHON_NAME))
+        else:
+            current_user.status = 'DECLINED'
+        DB.session.add(current_user)
+        DB.session.commit()
+        user_decision = 'confirmed' if current_user.status == 'SIGNING' else 'declined'
+        fmt = '%Y-%m-%dT%H:%M:%S.%f'
+        keen.add_event(user_decision, {
+            'date_of_birth': current_user.birthday.strftime(fmt),
+            'dietary_restrictions': current_user.dietary_restrictions,
+            'email': current_user.email,
+            'first_name': current_user.fname,
+            'last_name': current_user.lname,
+            'gender': current_user.gender,
+            'id': current_user.id,
+            'major': current_user.major,
+            'phone_number': current_user.phone_number,
+            'school': {
+                'id': current_user.school_id,
+                'name': current_user.school_name
+            },
+            'skill_level': current_user.skill_level,
+            'races': current_user.race.split(','),
+            'num_hackathons': current_user.num_hackathons,
+            'class_standing': current_user.class_standing,
+            'shirt_size': current_user.shirt_size,
+            'special_needs': current_user.special_needs
+        })
+        return redirect(url_for('dashboard'))
 
 
 # TODO: Break this up into smaller methods
 @login_required
 def sign():
-	date_fmt = '%B %d, %Y'
-	if current_user.status != 'SIGNING':  # they aren't allowed to accept their invitation
-		message = {
-			'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(
-				settings.HACKATHON_NAME),
-			'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
-				settings.HACKATHON_NAME),
-			'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
-				settings.HACKATHON_NAME),
-			'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
-				settings.HACKATHON_NAME),
-			None: "Corporate users cannot view this page."
-		}
-		if current_user.status in message:
-			flash(message[current_user.status], 'error')
-		return redirect(url_for('dashboard'))
-	if request.method == 'GET':
-		today = datetime.now(tz).date()
-		return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
-	else:
-		relative_name = request.form.get('relative_name')
-		relative_email = request.form.get('relative_email')
-		relative_num = request.form.get('relative_num')
+    date_fmt = '%B %d, %Y'
+    if current_user.status != 'SIGNING':  # they aren't allowed to accept their invitation
+        message = {
+            'NEW': "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(
+                settings.HACKATHON_NAME),
+            'PENDING': "You haven't been accepted to {0}! Please wait for your invitation before visiting this page!".format(
+                settings.HACKATHON_NAME),
+            'CONFIRMED': "You've already accepted your invitation to {0}! We look forward to seeing you here!".format(
+                settings.HACKATHON_NAME),
+            'REJECTED': "You've already rejected your {0} invitation. Unfortunately, for space considerations you cannot change your response.".format(
+                settings.HACKATHON_NAME),
+            None: "Corporate users cannot view this page."
+        }
+        if current_user.status in message:
+            flash(message[current_user.status], 'error')
+        return redirect(url_for('dashboard'))
+    if request.method == 'GET':
+        today = datetime.now(tz).date()
+        return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
+    else:
+        relative_name = request.form.get('relative_name')
+        relative_email = request.form.get('relative_email')
+        relative_num = request.form.get('relative_num')
 
-		allergies = request.form.get('allergies')
-		medications = request.form.get('medications')
-		special_health_needs = request.form.get('special_health_needs')
+        allergies = request.form.get('allergies')
+        medications = request.form.get('medications')
+        special_health_needs = request.form.get('special_health_needs')
 
-		medical_signature = request.form.get('medical_signature')
-		medical_date = request.form.get('medical_date')
+        medical_signature = request.form.get('medical_signature')
+        medical_date = request.form.get('medical_date')
 
-		indemnification_signature = request.form.get('indemnification_signature')
-		indemnification_date = request.form.get('indemnification_date')
+        indemnification_signature = request.form.get('indemnification_signature')
+        indemnification_date = request.form.get('indemnification_date')
 
-		photo_signature = request.form.get('photo_signature')
-		photo_date = request.form.get('photo_date')
+        photo_signature = request.form.get('photo_signature')
+        photo_date = request.form.get('photo_date')
 
-		ut_eid = request.form.get('ut_eid')
+        ut_eid = request.form.get('ut_eid')
 
-		if None in (relative_name, relative_email, relative_num, medical_signature, medical_date,
-					indemnification_signature, indemnification_date, photo_signature, photo_date):
-			flash('Must fill all required fields', 'error')
-			return redirect(request.url)
-		if current_user.school_id == 23:
-			if ut_eid == None:
-				flash('Must fill out UT EID')
-				return redirect(request.url)
-		signed_info = dict()
-		for key in (
-		'relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs',
-		'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
-			signed_info[key] = locals()[key]
+        if None in (relative_name, relative_email, relative_num, medical_signature, medical_date,
+                    indemnification_signature, indemnification_date, photo_signature, photo_date):
+            flash('Must fill all required fields', 'error')
+            return redirect(request.url)
+        if current_user.school_id == 23:
+            if ut_eid == None:
+                flash('Must fill out UT EID')
+                return redirect(request.url)
+        signed_info = dict()
+        for key in (
+        'relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs',
+        'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
+            signed_info[key] = locals()[key]
 
-		for key in ('medical_date', 'indemnification_date', 'photo_date'):
-			signed_info[key] = datetime.strptime(locals()[key], date_fmt)
-		signed_info['user_id'] = current_user.id
-		waiver_info = Waiver(signed_info)
-		DB.session.add(waiver_info)
-		DB.session.commit()
+        for key in ('medical_date', 'indemnification_date', 'photo_date'):
+            signed_info[key] = datetime.strptime(locals()[key], date_fmt)
+        signed_info['user_id'] = current_user.id
+        waiver_info = Waiver(signed_info)
+        DB.session.add(waiver_info)
+        DB.session.commit()
 
-		current_user.status = 'CONFIRMED'
-		DB.session.add(current_user)
-		DB.session.commit()
+        current_user.status = 'CONFIRMED'
+        DB.session.add(current_user)
+        DB.session.commit()
 
-		fmt = '%Y-%m-%dT%H:%M:%S.%f'
-		keen.add_event('waivers_signed', {
-			'date_of_birth': current_user.birthday.strftime(fmt),
-			'dietary_restrictions': current_user.dietary_restrictions,
-			'email': current_user.email,
-			'first_name': current_user.fname,
-			'last_name': current_user.lname,
-			'gender': current_user.gender,
-			'id': current_user.id,
-			'major': current_user.major,
-			'phone_number': current_user.phone_number,
-			'school': {
-				'id': current_user.school_id,
-				'name': current_user.school_name
-			},
-			'skill_level': current_user.skill_level,
-			'races': current_user.race.split(','),
-			'num_hackathons': current_user.num_hackathons,
-			'class_standing': current_user.class_standing,
-			'shirt_size': current_user.shirt_size,
-			'special_needs': current_user.special_needs
-		})
+        fmt = '%Y-%m-%dT%H:%M:%S.%f'
+        keen.add_event('waivers_signed', {
+            'date_of_birth': current_user.birthday.strftime(fmt),
+            'dietary_restrictions': current_user.dietary_restrictions,
+            'email': current_user.email,
+            'first_name': current_user.fname,
+            'last_name': current_user.lname,
+            'gender': current_user.gender,
+            'id': current_user.id,
+            'major': current_user.major,
+            'phone_number': current_user.phone_number,
+            'school': {
+                'id': current_user.school_id,
+                'name': current_user.school_name
+            },
+            'skill_level': current_user.skill_level,
+            'races': current_user.race.split(','),
+            'num_hackathons': current_user.num_hackathons,
+            'class_standing': current_user.class_standing,
+            'shirt_size': current_user.shirt_size,
+            'special_needs': current_user.special_needs
+        })
 
-		batch.send_attending_email(current_user)
+        batch.send_attending_email(current_user)
 
-		flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
-		return redirect(url_for('dashboard'))
+        flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
+        return redirect(url_for('dashboard'))
 """
