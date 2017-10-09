@@ -123,9 +123,9 @@ def send_email_to_users():
         user_id_set = set()
 
         statuses = request.form.getlist('status')
-        status_users = User.query.filter(or_(User.status.in_(statuses))).all()
+        status_users = User.query.filter(or_(User.status.in_(statuses))).all() if statuses else []
         checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
-        checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all()
+        checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all() if checkbox_user_ids else []
 
         for user in status_users:
             if user.id not in user_id_set:

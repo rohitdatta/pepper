@@ -41,6 +41,7 @@ def send_attending_email(user):
 
 
 def send_batch_email(content, subject, users):
+    g.log.info('Sending batch emails to {} users'.format(len(users)))
     lines = content.split('\r\n')
     msg_body = u""
     for line in lines:
