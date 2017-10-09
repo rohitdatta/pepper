@@ -1,31 +1,31 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-    <tr>
-        <td class="content-block">
-            Hey {{ user.fname }}!
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            We've got great news! You're invited to join us for {{ config.HACKATHON_NAME }}! We'll need you to accept
-            your invitation within 7 days of this email, otherwise we'll release your invitation to another student.
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Your attendance is <strong>NOT</strong> confirmed until you log onto <a
-                href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
-            confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline.
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Thanks, we can't wait to see you!
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Team {{ config.HACKATHON_NAME }}
-        </td>
-    </tr>
+	<tr>
+		<td class="content-block">
+			Hey {{ user.fname }}!
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			We've got great news! You're invited to join us for {{ config.HACKATHON_NAME }}! We'll need you to accept
+			your invitation within 7 days of this email, otherwise we'll release your invitation to another student.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Your attendance is <strong>NOT</strong> confirmed until you log onto <a
+				href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
+			confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Thanks, we can't wait to see you!
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Team {{ config.HACKATHON_NAME }}
+		</td>
+	</tr>
 {% endblock %}

@@ -1,27 +1,27 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-    <!-- manage_team.html -->
-    <script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/validate.js') }}"></script>
+	<!-- manage_team.html -->
+	<script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='js/validate.js') }}"></script>
 
-    <!-- Show form in order to manage team -->
-    <!-- Contains join and create team buttons/form -->
+	<!-- Show form in order to manage team -->
+	<!-- Contains join and create team buttons/form -->
 
-    <div class="center col-md-4 col-md-offset-4">
-        <h2>Join A Team</h2>
-        <h3>Ask your friend for their team name. (Case sensitive!)</h3>
-        <p>
-        <form method="POST" action="team" id="join">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="text" placeholder="Join Team Name" name="join_tname">
-            <button type="submit" name="button" value="join">Join Team</button>
-        </form>
-        <h2>Create A Team</h2>
-        <form method="POST" action="team" id="create">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="text" placeholder="Create Team Name" name="create_tname">
-            <button type="submit" name="button" value="create">Create Team</button>
-        </form>
-    </div>
+	<div class="center col-md-4 col-md-offset-4">
+		<h2>Join A Team</h2>
+		<h3>Ask your friend for their team name. (Case sensitive!)</h3>
+		<p>
+		<form method="POST" action="team" id="join">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="text" placeholder="Join Team Name" name="join_tname">
+			<button type="submit" name="button" value="join">Join Team</button>
+		</form>
+		<h2>Create A Team</h2>
+		<form method="POST" action="team" id="create">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="text" placeholder="Create Team Name" name="create_tname">
+			<button type="submit" name="button" value="create">Create Team</button>
+		</form>
+	</div>
 
 {% endblock %}

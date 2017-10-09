@@ -1,50 +1,50 @@
 {% extends 'layouts/head.html' %}
 
 {% macro nav_item(text, endpoint, a_classes='') %}
-    <li class="nav-item{% if active_page == endpoint %} active{% endif %}"><a class="nav-link {{ a_classes }}"
-                                                                              href="{{ url_for(endpoint) }}">{{ text }}</a>
-    </li>
+	<li class="nav-item{% if active_page == endpoint %} active{% endif %}"><a class="nav-link {{ a_classes }}"
+																			  href="{{ url_for(endpoint) }}">{{ text }}</a>
+	</li>
 {% endmacro %}
 
 {% block body %}
-    <noscript>
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <ul class=flashes>
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endwith %}
-    </noscript>
-    {% if g.user and g.user.is_authenticated %}
-        <nav class="header navbar navbar-toggleable">
-            <a class="navbar-brand" href="{{ url_for('landing') }}"><img
-                    src="{{ url_for('static', filename='branding/logo.svg') }}" width=183 height=50></a>
-            <ul class="nav navbar-nav pull-right">
-                {% block nav_items %}{% endblock %}
-                {{ nav_item('Logout', 'logout') }}
-            </ul>
-        </nav>
-    {% endif %}
+	<noscript>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+	</noscript>
+	{% if g.user and g.user.is_authenticated %}
+		<nav class="header navbar navbar-toggleable">
+			<a class="navbar-brand" href="{{ url_for('landing') }}"><img
+					src="{{ url_for('static', filename='branding/logo.svg') }}" width=183 height=50></a>
+			<ul class="nav navbar-nav pull-right">
+				{% block nav_items %}{% endblock %}
+				{{ nav_item('Logout', 'logout') }}
+			</ul>
+		</nav>
+	{% endif %}
 
-    <div class="container">
+	<div class="container">
 
-        <div class="content">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
+		<div class="content">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</div>
 
-    <footer class="footer">
-        <div class="col-md-6 col-md-offset-3">
-            <a href="https://freetailhackers.com"><img class="img-responsive center-block"
-                                                       src="{{ url_for('static', filename='branding/badge.svg') }}"
-                                                       width=50></a>
-            <p class="center">Interested in how this works? HackTX proudly open sourced <a
-                    href="https://github.com/rohitdatta/pepper" class="decorate">Pepper</a> for you to use at your own
-                hackathon.</p>
-        </div>
-    </footer>
+	<footer class="footer">
+		<div class="col-md-6 col-md-offset-3">
+			<a href="https://freetailhackers.com"><img class="img-responsive center-block"
+													   src="{{ url_for('static', filename='branding/badge.svg') }}"
+													   width=50></a>
+			<p class="center">Interested in how this works? HackTX proudly open sourced <a
+					href="https://github.com/rohitdatta/pepper" class="decorate">Pepper</a> for you to use at your own
+				hackathon.</p>
+		</div>
+	</footer>
 {% endblock body %}

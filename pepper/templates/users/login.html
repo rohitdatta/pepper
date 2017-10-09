@@ -1,25 +1,25 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="center col-md-6 col-md-offset-3">
-        <div class="login-logo">
-            <img src="{{ url_for('static', filename='branding/logo.svg') }}" width=300 height=80>
-        </div>
-        <h2>{{ config.HACKATHON_NAME }} Sign-in</h2>
-        <form action="" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="email" placeholder="Email" name="email" required>
-            <input type="password" placeholder="Password" name="password" required>
-            <div class="form-group">
-                <button type="submit">Sign in</button>
-            </div>
-        </form>
-        <a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
-        <a href="{{ url_for('sign-up') }}"><p>Don't have an account?</p></a>
-        <hr>
-        <p>Or sign in with</p>
-        <a href="{{ mlh_oauth_url }}" class="my-mlh-link">
-            <button type="submit">Sign in with MyMLH</button>
-        </a>
-    </div>
+	<div class="center col-md-6 col-md-offset-3">
+		<div class="login-logo">
+			<img src="{{ url_for('static', filename='branding/logo.svg') }}" width=300 height=80>
+		</div>
+		<h2>{{ config.HACKATHON_NAME }} Sign-in</h2>
+		<form action="" method="post">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="email" placeholder="Email" name="email" required>
+			<input type="password" placeholder="Password" name="password" required>
+			<div class="form-group">
+				<button type="submit">Sign in</button>
+			</div>
+		</form>
+		<a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
+		<a href="{{ url_for('sign-up') }}"><p>Don't have an account?</p></a>
+		<hr>
+		<p>Or sign in with</p>
+		<a href="{{ mlh_oauth_url }}" class="my-mlh-link">
+			<button type="submit">Sign in with MyMLH</button>
+		</a>
+	</div>
 {% endblock %}

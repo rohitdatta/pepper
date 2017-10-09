@@ -1,20 +1,20 @@
 {% extends 'layouts/admin_base.html' %}
 {% block content %}
-    <div class="container">
-        <h1>Add Volunteers</h1>
-        <form action="{{ url_for('add-volunteer') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="email" name="email" placeholder="Volunteer Email">
-            <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
-            </button>
-        </form>
-    </div>
-    <div class="container">
-        <h1>List of volunteers</h1>
-        {% for volunteer in volunteers %}
-            <ul class="row">
-                {{ volunteer.email }}
-            </ul>
-        {% endfor %}
-    </div>
+	<div class="container">
+		<h1>Add Volunteers</h1>
+		<form action="{{ url_for('add-volunteer') }}" method="POST">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="email" name="email" placeholder="Volunteer Email">
+			<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+			</button>
+		</form>
+	</div>
+	<div class="container">
+		<h1>List of volunteers</h1>
+		{% for volunteer in volunteers %}
+			<ul class="row">
+				{{ volunteer.email }}
+			</ul>
+		{% endfor %}
+	</div>
 {% endblock content %}

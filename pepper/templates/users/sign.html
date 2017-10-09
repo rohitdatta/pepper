@@ -1,186 +1,186 @@
 {% extends 'layouts/base.html' %}
 {% block imports %}
-    {#<script type="text/javascript" src="https://s3.amazonaws.com/cdn.hellosign.com/public/js/hellosign-embedded.LATEST.min.js"></script>#}
-    {#	<script>#}
-    {#	HelloSign.init('{{ config.HELLO_SIGN_CLIENT_ID }}');#}
-    {##}
-    {#	$(document).ready(function() {#}
-    {#		HelloSign.open({#}
-    {#			'url': '{{ sign_url }}',#}
-    {#			'debug': true,#}
-    {#			'allowCancel': true,#}
-    {#			'skipDomainVerification': true,#}
-    {#			messageListener: function(eventData) {#}
-    {#				// do something#}
-    {#			}#}
-    {#		});#}
-    {#	});#}
-    {#	</script>#}
+	{#<script type="text/javascript" src="https://s3.amazonaws.com/cdn.hellosign.com/public/js/hellosign-embedded.LATEST.min.js"></script>#}
+	{#	<script>#}
+	{#	HelloSign.init('{{ config.HELLO_SIGN_CLIENT_ID }}');#}
+	{##}
+	{#	$(document).ready(function() {#}
+	{#		HelloSign.open({#}
+	{#			'url': '{{ sign_url }}',#}
+	{#			'debug': true,#}
+	{#			'allowCancel': true,#}
+	{#			'skipDomainVerification': true,#}
+	{#			messageListener: function(eventData) {#}
+	{#				// do something#}
+	{#			}#}
+	{#		});#}
+	{#	});#}
+	{#	</script>#}
 {% endblock %}
 {% block content %}
-    <script src="{{ url_for('static', filename='js/accept.js') }}"></script>
-    <div class="col-md-6 col-md-offset-3">
-        <div class="center">
-            <h2>Glad You're Coming {{ user.fname }}!</h2>
-            <div class="large-text">
-                <p>UT Austin rules require us to collect some important information from you in case disaster strikes.
-                    In order to make check in as quick and easy as possible, we'll need you to provide us with some
-                    information before you can confirm your acceptance.</p>
-            </div>
-        </div>
+	<script src="{{ url_for('static', filename='js/accept.js') }}"></script>
+	<div class="col-md-6 col-md-offset-3">
+		<div class="center">
+			<h2>Glad You're Coming {{ user.fname }}!</h2>
+			<div class="large-text">
+				<p>UT Austin rules require us to collect some important information from you in case disaster strikes.
+					In order to make check in as quick and easy as possible, we'll need you to provide us with some
+					information before you can confirm your acceptance.</p>
+			</div>
+		</div>
 
-    </div>
-    <div class="sign top-buffer">
-        <form method="POST" action="{{ url_for('sign') }}">
-            <div class="col-md-12">
-                <h2>Medical Information</h2>
-                <p><span class="required"></span>Required Fields</p>
-                <div class="col-md-12">
-                    <h3 class="required">Emergency Contact</h3>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="text" name="relative_name" placeholder="Relative Name" class="required"
-                                   required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="email" name="relative_email" placeholder="Relative Email" class="required"
-                                   required>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="tel" name="relative_num" placeholder="Phone Number" class="required" required>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <h3>Health Information</h3>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input type="text" name="allergies" placeholder="Allergies">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="medications" placeholder="Medications">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="special_health_needs" placeholder="Special Health Needs">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <h3 class="required">Emergency Medical Authorization</h3>
-                    <div class="col-md-12">
-                        <p>I, {{ user.fname }} {{ user.lname }}, do hereby authorize The University of Texas at Austin
-                            and its agents or representatives to consent, on my behalf, to any medical/hospital care or
-                            treatment (including locations outside the U.S.) to be rendered upon the advice of any
-                            licensed physician. I agree to be responsible for all necessary charges incurred by any
-                            hospitalization or treatment rendered pursuant to this authorization.</p>
-                        <p>The effective dates of this authorization are {{ date }} to October 26, 2016. I am eighteen
-                            years of age or older, have read the above authorization, and confirm that the information
-                            contained therein is true and accurate. I agree that my electronic signature is the legally
-                            binding equivalent to my handwritten signature. Whenever I execute an electronic signature,
-                            it has the same validity and meaning as my handwritten signature. I will not, at any time in
-                            the future, repudiate the meaning of my electronic signature or claim that my electronic
-                            signature is not legally binding.</p>
-                        <p>By signing below, I accept the conditions of this agreement.</p>
-                        <div class="col-md-6">
-                            <input type="text" name="medical_signature" placeholder="Full Legal Name" class="required"
-                                   required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" value="{{ date }}" placeholder="Date" disabled>
-                            <input type="text" name="medical_date" value="{{ date }}" placeholder="Date"
-                                   style="display:none;">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <h2 class="required">Release and Indemnification Agreement</h2>
-                    <div class="col-md-12">
-                        <p>Description of Activity or Trip: Hackathon during the weekend of October 22-23, 2016 hosted
-                            by Freetail Hackers</p>
-                        <p>I, {{ user.fname }} {{ user.lname }}, am eighteen years of age or older and have voluntarily
-                            applied to participate in the above Activity or Trip. I acknowledge that the nature of the
-                            Activity or Trip may expose me to hazards or risks that may result in my illness, personal
-                            injury or death and I understand and appreciate the nature of such hazards and risks.</p>
+	</div>
+	<div class="sign top-buffer">
+		<form method="POST" action="{{ url_for('sign') }}">
+			<div class="col-md-12">
+				<h2>Medical Information</h2>
+				<p><span class="required"></span>Required Fields</p>
+				<div class="col-md-12">
+					<h3 class="required">Emergency Contact</h3>
+					<div class="row">
+						<div class="col-md-4">
+							<input type="text" name="relative_name" placeholder="Relative Name" class="required"
+								   required>
+						</div>
+						<div class="col-md-4">
+							<input type="email" name="relative_email" placeholder="Relative Email" class="required"
+								   required>
+						</div>
+						<div class="col-md-4">
+							<input type="tel" name="relative_num" placeholder="Phone Number" class="required" required>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<h3>Health Information</h3>
+					<div class="row">
+						<div class="col-md-4">
+							<input type="text" name="allergies" placeholder="Allergies">
+						</div>
+						<div class="col-md-4">
+							<input type="text" name="medications" placeholder="Medications">
+						</div>
+						<div class="col-md-4">
+							<input type="text" name="special_health_needs" placeholder="Special Health Needs">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<h3 class="required">Emergency Medical Authorization</h3>
+					<div class="col-md-12">
+						<p>I, {{ user.fname }} {{ user.lname }}, do hereby authorize The University of Texas at Austin
+							and its agents or representatives to consent, on my behalf, to any medical/hospital care or
+							treatment (including locations outside the U.S.) to be rendered upon the advice of any
+							licensed physician. I agree to be responsible for all necessary charges incurred by any
+							hospitalization or treatment rendered pursuant to this authorization.</p>
+						<p>The effective dates of this authorization are {{ date }} to October 26, 2016. I am eighteen
+							years of age or older, have read the above authorization, and confirm that the information
+							contained therein is true and accurate. I agree that my electronic signature is the legally
+							binding equivalent to my handwritten signature. Whenever I execute an electronic signature,
+							it has the same validity and meaning as my handwritten signature. I will not, at any time in
+							the future, repudiate the meaning of my electronic signature or claim that my electronic
+							signature is not legally binding.</p>
+						<p>By signing below, I accept the conditions of this agreement.</p>
+						<div class="col-md-6">
+							<input type="text" name="medical_signature" placeholder="Full Legal Name" class="required"
+								   required>
+						</div>
+						<div class="col-md-6">
+							<input type="text" value="{{ date }}" placeholder="Date" disabled>
+							<input type="text" name="medical_date" value="{{ date }}" placeholder="Date"
+								   style="display:none;">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<h2 class="required">Release and Indemnification Agreement</h2>
+					<div class="col-md-12">
+						<p>Description of Activity or Trip: Hackathon during the weekend of October 22-23, 2016 hosted
+							by Freetail Hackers</p>
+						<p>I, {{ user.fname }} {{ user.lname }}, am eighteen years of age or older and have voluntarily
+							applied to participate in the above Activity or Trip. I acknowledge that the nature of the
+							Activity or Trip may expose me to hazards or risks that may result in my illness, personal
+							injury or death and I understand and appreciate the nature of such hazards and risks.</p>
 
-                        <p>In consideration of my participation in the Activity or Trip, I hereby accept all risk to my
-                            health and of my injury or death that may result from such participation and I hereby
-                            release the University of Texas at Austin, its governing board, officers, employees and
-                            representatives from any and all liability to me, my personal representatives, estate,
-                            heirs, next of kin, and assigns for any and all claims and causes of action for loss of or
-                            damage to my property and for any and all illness or injury to my person, including my
-                            death, that may result from or occur during my participation in the Activity or Trip,
-                            whether caused by negligence of the University of Texas at Austin, its governing board,
-                            officers, employees, or representatives, or otherwise. I further agree to indemnify and hold
-                            harmless the University of Texas at Austin and its governing board, officers, employees, and
-                            representatives from liability for the injury or death of any person(s) and damage to
-                            property that may result from my negligent or intentional act or omission while
-                            participating in the described Activity or Trip.</p>
-                        <p><strong>I HAVE CAREFULLY READ THIS AGREEMENT AND UNDERSTAND IT TO BE A RELEASE OF ALL CLAIMS
-                            AND CAUSES OF ACTION FOR MY INJURY OR DEATH OR DAMAGE TO MY PROPERTY THAT OCCURS WHILE
-                            PARTICIPATING IN THE DESCRIBED ACTIVITY OR TRIP AND IT OBLIGATES ME TO INDEMNIFY THE PARTIES
-                            NAMED FOR ANY LIABILITY FOR INJURY OR DEATH OF ANY PERSON AND DAMAGE TO PROPERTY CAUSED BY
-                            MY NEGLIGENT OR INTENTIONAL ACT OR OMISSION.</strong>
-                        </p>
+						<p>In consideration of my participation in the Activity or Trip, I hereby accept all risk to my
+							health and of my injury or death that may result from such participation and I hereby
+							release the University of Texas at Austin, its governing board, officers, employees and
+							representatives from any and all liability to me, my personal representatives, estate,
+							heirs, next of kin, and assigns for any and all claims and causes of action for loss of or
+							damage to my property and for any and all illness or injury to my person, including my
+							death, that may result from or occur during my participation in the Activity or Trip,
+							whether caused by negligence of the University of Texas at Austin, its governing board,
+							officers, employees, or representatives, or otherwise. I further agree to indemnify and hold
+							harmless the University of Texas at Austin and its governing board, officers, employees, and
+							representatives from liability for the injury or death of any person(s) and damage to
+							property that may result from my negligent or intentional act or omission while
+							participating in the described Activity or Trip.</p>
+						<p><strong>I HAVE CAREFULLY READ THIS AGREEMENT AND UNDERSTAND IT TO BE A RELEASE OF ALL CLAIMS
+							AND CAUSES OF ACTION FOR MY INJURY OR DEATH OR DAMAGE TO MY PROPERTY THAT OCCURS WHILE
+							PARTICIPATING IN THE DESCRIBED ACTIVITY OR TRIP AND IT OBLIGATES ME TO INDEMNIFY THE PARTIES
+							NAMED FOR ANY LIABILITY FOR INJURY OR DEATH OF ANY PERSON AND DAMAGE TO PROPERTY CAUSED BY
+							MY NEGLIGENT OR INTENTIONAL ACT OR OMISSION.</strong>
+						</p>
 
-                        <p>I agree that my electronic signature is the legally binding equivalent to my handwritten
-                            signature. Whenever I execute an electronic signature, it has the same validity and meaning
-                            as my handwritten signature. I will not, at any time in the future, repudiate the meaning of
-                            my electronic signature or claim that my electronic signature is not legally binding.</p>
+						<p>I agree that my electronic signature is the legally binding equivalent to my handwritten
+							signature. Whenever I execute an electronic signature, it has the same validity and meaning
+							as my handwritten signature. I will not, at any time in the future, repudiate the meaning of
+							my electronic signature or claim that my electronic signature is not legally binding.</p>
 
-                        <div class="col-md-6">
-                            <input type="text" name="indemnification_signature" class="required"
-                                   placeholder="Full Legal Name" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="indemnification_date" value="{{ date }}" placeholder="Date"
-                                   disabled>
-                            <input type="text" name="indemnification_date" value="{{ date }}" placeholder="Date"
-                                   style="display: none;">
-                        </div>
-                    </div>
-                </div>
+						<div class="col-md-6">
+							<input type="text" name="indemnification_signature" class="required"
+								   placeholder="Full Legal Name" required>
+						</div>
+						<div class="col-md-6">
+							<input type="text" name="indemnification_date" value="{{ date }}" placeholder="Date"
+								   disabled>
+							<input type="text" name="indemnification_date" value="{{ date }}" placeholder="Date"
+								   style="display: none;">
+						</div>
+					</div>
+				</div>
 
-                <div class="col-md-12">
-                    <h2 class="required">Photograph Release Form</h2>
-                    <div class="col-md-12">
-                        <p>I hereby voluntarily permit and authorize The University of Texas System and its employees,
-                            agents, and personnel who are acting on behalf of The University of Texas System to post my
-                            photograph or video images of me. I understand that The University of Texas System and its
-                            employees, agents and personnel cannot warrant or guarantee that, on placement of my
-                            photograph or video image on a website, any further dissemination of my photograph or video
-                            image will be subject to University supervision or control. Accordingly, I release The
-                            University of Texas System, its employees, agents, personnel acting on its behalf, and Major
-                            League Hacking from any and all liability related to further dissemination of my photograph
-                            or video image.</p>
-                        <p>I agree that my electronic signature is the legally binding equivalent to my handwritten
-                            signature. Whenever I execute an electronic signature, it has the same validity and meaning
-                            as my handwritten signature. I will not, at any time in the future, repudiate the meaning of
-                            my electronic signature or claim that my electronic signature is not legally binding.</p>
+				<div class="col-md-12">
+					<h2 class="required">Photograph Release Form</h2>
+					<div class="col-md-12">
+						<p>I hereby voluntarily permit and authorize The University of Texas System and its employees,
+							agents, and personnel who are acting on behalf of The University of Texas System to post my
+							photograph or video images of me. I understand that The University of Texas System and its
+							employees, agents and personnel cannot warrant or guarantee that, on placement of my
+							photograph or video image on a website, any further dissemination of my photograph or video
+							image will be subject to University supervision or control. Accordingly, I release The
+							University of Texas System, its employees, agents, personnel acting on its behalf, and Major
+							League Hacking from any and all liability related to further dissemination of my photograph
+							or video image.</p>
+						<p>I agree that my electronic signature is the legally binding equivalent to my handwritten
+							signature. Whenever I execute an electronic signature, it has the same validity and meaning
+							as my handwritten signature. I will not, at any time in the future, repudiate the meaning of
+							my electronic signature or claim that my electronic signature is not legally binding.</p>
 
-                    </div>
+					</div>
 
-                    <div class="col-md-6">
-                        <input type="text" name="photo_signature" class="required" placeholder="Full Legal Name"
-                               required>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" name="photo_date" value="{{ date }}" placeholder="Date" disabled>
-                        <input type="text" name="photo_date" value="{{ date }}" placeholder="Date"
-                               style="display: none;">
-                    </div>
-                </div>
-                {% if user.school_id == 23 %}
-                    <div class="row">
-                        <div class="col-md-6 col-md-offset-3">
-                            <input type="text" name="ut_eid" placeholder="UT EID" class="required" required>
-                        </div>
-                    </div>
-                {% endif %}
-                <button type="submit" style="display: block;">Submit <i class="fa fa-arrow-circle-o-right"
-                                                                        aria-hidden="true"></i></button>
+					<div class="col-md-6">
+						<input type="text" name="photo_signature" class="required" placeholder="Full Legal Name"
+							   required>
+					</div>
+					<div class="col-md-6">
+						<input type="text" name="photo_date" value="{{ date }}" placeholder="Date" disabled>
+						<input type="text" name="photo_date" value="{{ date }}" placeholder="Date"
+							   style="display: none;">
+					</div>
+				</div>
+				{% if user.school_id == 23 %}
+					<div class="row">
+						<div class="col-md-6 col-md-offset-3">
+							<input type="text" name="ut_eid" placeholder="UT EID" class="required" required>
+						</div>
+					</div>
+				{% endif %}
+				<button type="submit" style="display: block;">Submit <i class="fa fa-arrow-circle-o-right"
+																		aria-hidden="true"></i></button>
 
-            </div>
+			</div>
 
-        </form>
-    </div>
+		</form>
+	</div>
 {% endblock %}

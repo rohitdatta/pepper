@@ -1,24 +1,24 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-    <tr>
-        <td class="content-block">
-            Hey {{ user.fname }}!
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            To confirm your account on {{ config.HACKATHON_NAME }}, please click <a
-                href="{{ link }}">this link</a>.
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Thanks,
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Team {{ config.HACKATHON_NAME }}
-        </td>
-    </tr>
+	<tr>
+		<td class="content-block">
+			Hey {{ user.fname }}!
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			To confirm your account on {{ config.HACKATHON_NAME }}, please click <a
+				href="{{ link }}">this link</a>.
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Thanks,
+		</td>
+	</tr>
+	<tr>
+		<td class="content-block">
+			Team {{ config.HACKATHON_NAME }}
+		</td>
+	</tr>
 {% endblock %}

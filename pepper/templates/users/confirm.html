@@ -1,187 +1,187 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
-    <div class="confirmation">
-        <div class="text-center">
-            <h2>Almost There!</h2>
-            <p>Please review your information</p>
-        </div>
-        <div class="row">
-            <div class="col-md-4 col-md-offset-4">
-                <table class="info">
-                    <col>
-                    <col>
-                    <tr class="border_bottom">
-                        <td>Name</td>
-                        <td>{{ user.fname }} {{ user.lname }}</td>
-                    </tr>
-                    <tr class="border_bottom">
-                        <td>Email</td>
-                        <td>{{ user.email }}</td>
-                    </tr>
-                    <tr>
-                        <td>Major</td>
-                        <td>{{ user.major }}</td>
-                    </tr>
-                    <tr>
-                        <td>Shirt Size</td>
-                        <td>{{ user.shirt_size }}</td>
-                    </tr>
-                    <tr>
-                        <td>Dietary Restrictions</td>
-                        <td>{{ user.dietary_restrictions }}</td>
-                    </tr>
-                    <tr>
-                        <td>Birthday</td>
-                        <td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
-                    </tr>
-                    <tr>
-                        <td>Gender</td>
-                        <td>{{ user.gender }}</td>
-                    </tr>
-                    <tr>
-                        <td>Phone Number</td>
-                        <td>{{ user.phone_number }}</td>
-                    </tr>
-                    <tr>
-                        <td>School</td>
-                        <td>{{ user.school_name }}</td>
-                    </tr>
-                    <tr>
-                        <td class="no-border">Special Needs</td>
-                        <td class="no-border">{{ user.special_needs }}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        <a href="{{ url_for('edit_profile') }}">
-            <button class="">Edit</button>
-        </a>
-        <hr>
-        <div class="col-md-8 col-md-offset-2">
-            <form action="{{ url_for('confirm-registration') }}" method="POST" enctype="multipart/form-data">
-                <p class="large-text"><span class="red">*</span> All items required</p>
-                <div class="row">
-                    <h3>Resume</h3>
-                    <div class="col-md-6 form-info">
-                        <p>Please upload your resume here. We'll be sharing this with our partners so you can get cool
-                            jobs, swag, and more! (PDFs only)</p>
-                    </div>
-                    <div class="col-md-6">
-                        <input type=file name="resume" accept="application/pdf">
-                    </div>
-                </div>
-                <div class="row">
-                    <h3>Additional Information</h3>
-                    <div class="col-md-6 form-info">
+	<script src="{{ url_for('static', filename='js/confirm.js') }}"></script>
+	<div class="confirmation">
+		<div class="text-center">
+			<h2>Almost There!</h2>
+			<p>Please review your information</p>
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-md-offset-4">
+				<table class="info">
+					<col>
+					<col>
+					<tr class="border_bottom">
+						<td>Name</td>
+						<td>{{ user.fname }} {{ user.lname }}</td>
+					</tr>
+					<tr class="border_bottom">
+						<td>Email</td>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr>
+						<td>Major</td>
+						<td>{{ user.major }}</td>
+					</tr>
+					<tr>
+						<td>Shirt Size</td>
+						<td>{{ user.shirt_size }}</td>
+					</tr>
+					<tr>
+						<td>Dietary Restrictions</td>
+						<td>{{ user.dietary_restrictions }}</td>
+					</tr>
+					<tr>
+						<td>Birthday</td>
+						<td>{{ user.birthday.strftime('%B %e, %Y') }}</td>
+					</tr>
+					<tr>
+						<td>Gender</td>
+						<td>{{ user.gender }}</td>
+					</tr>
+					<tr>
+						<td>Phone Number</td>
+						<td>{{ user.phone_number }}</td>
+					</tr>
+					<tr>
+						<td>School</td>
+						<td>{{ user.school_name }}</td>
+					</tr>
+					<tr>
+						<td class="no-border">Special Needs</td>
+						<td class="no-border">{{ user.special_needs }}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<a href="{{ url_for('edit_profile') }}">
+			<button class="">Edit</button>
+		</a>
+		<hr>
+		<div class="col-md-8 col-md-offset-2">
+			<form action="{{ url_for('confirm-registration') }}" method="POST" enctype="multipart/form-data">
+				<p class="large-text"><span class="red">*</span> All items required</p>
+				<div class="row">
+					<h3>Resume</h3>
+					<div class="col-md-6 form-info">
+						<p>Please upload your resume here. We'll be sharing this with our partners so you can get cool
+							jobs, swag, and more! (PDFs only)</p>
+					</div>
+					<div class="col-md-6">
+						<input type=file name="resume" accept="application/pdf">
+					</div>
+				</div>
+				<div class="row">
+					<h3>Additional Information</h3>
+					<div class="col-md-6 form-info">
 
-                        <p>At {{ config.HACKATHON_NAME }}, we work hard to make people feel welcome regardless of skill
-                            level and background. To help us accomplish this goal, we need to see how we’ve been
-                            doing.</p>
-                        <p>Please select <i>I choose not to disclose</i> if you do not wish to provide this information.
-                            It
-                            will not be considered in the application process or thereafter.</p>
-                    </div>
+						<p>At {{ config.HACKATHON_NAME }}, we work hard to make people feel welcome regardless of skill
+							level and background. To help us accomplish this goal, we need to see how we’ve been
+							doing.</p>
+						<p>Please select <i>I choose not to disclose</i> if you do not wish to provide this information.
+							It
+							will not be considered in the application process or thereafter.</p>
+					</div>
 
-                    <div class="col-md-6">
-                        <div class="control-group">
-                            <h4>Skill Level</h4>
-                            <label class="control control--radio">Have never programmed
-                                <input type="radio" name="skill-level" value="0"/>
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control control--radio">Have been programming for a week-a month
-                                <input type="radio" name="skill-level" value="1"/>
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control control--radio">Have been programming for 6 months
-                                <input type="radio" name="skill-level" value="2"/>
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control control--radio">Have been programming 1 year
-                                <input type="radio" name="skill-level" value="3"/>
-                                <div class="control__indicator"></div>
-                            </label>
-                            <label class="control control--radio">Have been programming > 1 year
-                                <input type="radio" name="skill-level" value="4"/>
-                                <div class="control__indicator"></div>
-                            </label>
-                        </div>
-                        <br>
-                        <div class="control-group">
-                            <h4>How many hackathons have you been to?</h4>
-                            <input type="number" class="number" name="num-hackathons" required min="0">
-                        </div>
-                        <div class="control-group">
-                            <h4>What is your class standing?</h4>
-                            <div class="select">
-                                <select name="class-standing">
-                                    <option value="Freshman">Freshman</option>
-                                    <option value="Sophomore">Sophomore</option>
-                                    <option value="Junior">Junior</option>
-                                    <option value="Senior">Senior</option>
-                                    <option value="Graduate">Graduate Student</option>
-                                    <option value="HS">High Schooler</option>
-                                </select>
-                                <div class="select__arrow"></div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="control-group">
-                            <h4>Interests</h4>
-                            <textarea name="interests" rows="5"
-                                      placeholder="Some examples: iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech"></textarea>
-                        </div>
-                        <br>
-                        <h4 class="two-col">What race(s) do you identify with?</h4>
-                        <label class="control control--checkbox">American Indian / Alaskan Native
-                            <input type="checkbox" name="race" class="other-race" value="AMERICAN_INDIAN_ALASKAN"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">Asian
-                            <input type="checkbox" name="race" class="other-race" value="ASIAN"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">Black and African American
-                            <input type="checkbox" name="race" class="other-race" value="BLACK_AFRICAN_AMERICAN"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">Hispanic or Latino
-                            <input type="checkbox" name="race" class="other-race" value="HISPANIC_LATINO"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">Native Hawaiian or Other Pacific Islander
-                            <input type="checkbox" name="race" class="other-race"
-                                   value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">White (Not of Hispanic Origin)
-                            <input type="checkbox" name="race" class="other-race" value="EUROPEAN_WHITE"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <label class="control control--checkbox">I choose not to disclose
-                            <input type="checkbox" name="race" class="no-race" value="NO_DISCLOSURE"/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <br>
-                        <p>We participate in Major League Hacking (MLH) as a MLH Member Event. You authorize us to share
-                            certain application/registration information for event administration, ranking, MLH
-                            administration, pre and post-event informational e-mails, and occasional messages about
-                            hackathons in line with the MLH Privacy Policy.</p>
-                        <label class="control control--checkbox">I agree
-                            <input type="checkbox" name="mlh" value="TRUE" required/>
-                            <div class="control__indicator"></div>
-                        </label>
-                        <br>
-                        <button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right"
-                                                                        aria-hidden="true"></i></button>
+					<div class="col-md-6">
+						<div class="control-group">
+							<h4>Skill Level</h4>
+							<label class="control control--radio">Have never programmed
+								<input type="radio" name="skill-level" value="0"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming for a week-a month
+								<input type="radio" name="skill-level" value="1"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming for 6 months
+								<input type="radio" name="skill-level" value="2"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming 1 year
+								<input type="radio" name="skill-level" value="3"/>
+								<div class="control__indicator"></div>
+							</label>
+							<label class="control control--radio">Have been programming > 1 year
+								<input type="radio" name="skill-level" value="4"/>
+								<div class="control__indicator"></div>
+							</label>
+						</div>
+						<br>
+						<div class="control-group">
+							<h4>How many hackathons have you been to?</h4>
+							<input type="number" class="number" name="num-hackathons" required min="0">
+						</div>
+						<div class="control-group">
+							<h4>What is your class standing?</h4>
+							<div class="select">
+								<select name="class-standing">
+									<option value="Freshman">Freshman</option>
+									<option value="Sophomore">Sophomore</option>
+									<option value="Junior">Junior</option>
+									<option value="Senior">Senior</option>
+									<option value="Graduate">Graduate Student</option>
+									<option value="HS">High Schooler</option>
+								</select>
+								<div class="select__arrow"></div>
+							</div>
+						</div>
+						<br>
+						<div class="control-group">
+							<h4>Interests</h4>
+							<textarea name="interests" rows="5"
+									  placeholder="Some examples: iOS Development, Android Development, Web Development, Hardware, Virtual Reality, Augmented Reality, Business side of programming, Finance/tech, Medicine/tech"></textarea>
+						</div>
+						<br>
+						<h4 class="two-col">What race(s) do you identify with?</h4>
+						<label class="control control--checkbox">American Indian / Alaskan Native
+							<input type="checkbox" name="race" class="other-race" value="AMERICAN_INDIAN_ALASKAN"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">Asian
+							<input type="checkbox" name="race" class="other-race" value="ASIAN"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">Black and African American
+							<input type="checkbox" name="race" class="other-race" value="BLACK_AFRICAN_AMERICAN"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">Hispanic or Latino
+							<input type="checkbox" name="race" class="other-race" value="HISPANIC_LATINO"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">Native Hawaiian or Other Pacific Islander
+							<input type="checkbox" name="race" class="other-race"
+								   value="NATIVE_HAWAIIAN_PACIFIC_ISLANDER"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">White (Not of Hispanic Origin)
+							<input type="checkbox" name="race" class="other-race" value="EUROPEAN_WHITE"/>
+							<div class="control__indicator"></div>
+						</label>
+						<label class="control control--checkbox">I choose not to disclose
+							<input type="checkbox" name="race" class="no-race" value="NO_DISCLOSURE"/>
+							<div class="control__indicator"></div>
+						</label>
+						<br>
+						<p>We participate in Major League Hacking (MLH) as a MLH Member Event. You authorize us to share
+							certain application/registration information for event administration, ranking, MLH
+							administration, pre and post-event informational e-mails, and occasional messages about
+							hackathons in line with the MLH Privacy Policy.</p>
+						<label class="control control--checkbox">I agree
+							<input type="checkbox" name="mlh" value="TRUE" required/>
+							<div class="control__indicator"></div>
+						</label>
+						<br>
+						<button type="submit" class="confirm">Submit <i class="fa fa-arrow-circle-o-right"
+																		aria-hidden="true"></i></button>
 
-                    </div>
-                    {#<hr>#}
+					</div>
+					{#<hr>#}
 
-                </div>
-            </form>
-        </div>
-    </div>
+				</div>
+			</form>
+		</div>
+	</div>
 {% endblock %}

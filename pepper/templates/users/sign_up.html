@@ -1,25 +1,25 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="center col-md-6 col-md-offset-3">
-        <div class="login-logo">
-            <img src="{{ url_for('static', filename='branding/logo.svg') }}" width=300 height=80>
-        </div>
-        <h2>Create an Account</h2>
-        <form action="" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="email" placeholder="Email" name="email" required>
-            <input type="password" placeholder="Password" name="password" required>
-            <input type="password" placeholder="Confirm Password" name="password-check" required>
-            <div class="form-group">
-                <button type="submit">Sign up</button>
-            </div>
-        </form>
-        <p>Already have an account? Log in <a href="{{ url_for('login') }}">here</a>.</p>
-        <hr>
-        <p>Or connect with</p>
-        <a href="{{ mlh_oauth_url }}" class="my-mlh-link">
-            <button type="submit">Sign up with MyMLH</button>
-        </a>
-    </div>
+	<div class="center col-md-6 col-md-offset-3">
+		<div class="login-logo">
+			<img src="{{ url_for('static', filename='branding/logo.svg') }}" width=300 height=80>
+		</div>
+		<h2>Create an Account</h2>
+		<form action="" method="post">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="email" placeholder="Email" name="email" required>
+			<input type="password" placeholder="Password" name="password" required>
+			<input type="password" placeholder="Confirm Password" name="password-check" required>
+			<div class="form-group">
+				<button type="submit">Sign up</button>
+			</div>
+		</form>
+		<p>Already have an account? Log in <a href="{{ url_for('login') }}">here</a>.</p>
+		<hr>
+		<p>Or connect with</p>
+		<a href="{{ mlh_oauth_url }}" class="my-mlh-link">
+			<button type="submit">Sign up with MyMLH</button>
+		</a>
+	</div>
 {% endblock %}

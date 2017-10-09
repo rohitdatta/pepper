@@ -1,16 +1,16 @@
 {% extends 'layouts/base.html' %}
 
 {% block content %}
-    <div class="confirmation">
-        <div class="text-center">
-            <h2>Almost There!</h2>
-            <p>Please fill out a few more items to complete your registration.</p>
-        </div>
-        <div class="col-md-8 col-md-offset-2">
-            <form action="" method="POST" enctype="multipart/form-data" id="edit-information">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                {% include 'users/complete_registration_form_fields.html' %}
-            </form>
-        </div>
-    </div>
+	<div class="confirmation">
+		<div class="text-center">
+			<h2>Almost There!</h2>
+			<p>Please fill out a few more items to complete your registration.</p>
+		</div>
+		<div class="col-md-8 col-md-offset-2">
+			<form action="" method="POST" enctype="multipart/form-data" id="edit-information">
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+				{% include 'users/complete_registration_form_fields.html' %}
+			</form>
+		</div>
+	</div>
 {% endblock %}

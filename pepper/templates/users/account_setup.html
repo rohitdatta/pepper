@@ -1,23 +1,23 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
-    <div style="margin-top: -50px;">
-        <img src="{{ url_for('static', filename='branding/logo.png') }}"
-             height="60" class="center-block">
-        <div class="large-text" style="margin-top: 20px;">
-            <p>Hi {{ user.fname }}! Thanks for joining us for {{ config.HACKATHON_NAME }}! my{{ config.HACKATHON_NAME }}
-                is built to be an easy way for you to filter through all our attendee resumes. If you have any
-                questions, feel free to reach out to your {{ config.HACKATHON_NAME }} representative to best help you.
-                Because our attendees also use my{{ config.HACKATHON_NAME }} for managing their own registration, you'll
-                want to make sure you bookmark the <a href="{{ url_for('corp-dash', _external=True) }}"
-                                                      class="decorate">corporate dashboard</a> for future usage. Once
-                you choose your password, we can get you set up.</p>
-        </div>
-        <form method="POST" action="">
-            <input type="text" name="fname" placeholder="First Name" value="{{ user.fname }}">
-            <input type="text" name="lname" placeholder="Last Name" value="{{ user.lname }}">
-            <input type="password" name="password" placeholder="Password">
-            <input type="password" name="password-check" placeholder="Verify Password">
-            <button type="submit" class="center-block">Submit</button>
-        </form>
-    </div>
+	<div style="margin-top: -50px;">
+		<img src="{{ url_for('static', filename='branding/logo.png') }}"
+			 height="60" class="center-block">
+		<div class="large-text" style="margin-top: 20px;">
+			<p>Hi {{ user.fname }}! Thanks for joining us for {{ config.HACKATHON_NAME }}! my{{ config.HACKATHON_NAME }}
+				is built to be an easy way for you to filter through all our attendee resumes. If you have any
+				questions, feel free to reach out to your {{ config.HACKATHON_NAME }} representative to best help you.
+				Because our attendees also use my{{ config.HACKATHON_NAME }} for managing their own registration, you'll
+				want to make sure you bookmark the <a href="{{ url_for('corp-dash', _external=True) }}"
+													  class="decorate">corporate dashboard</a> for future usage. Once
+				you choose your password, we can get you set up.</p>
+		</div>
+		<form method="POST" action="">
+			<input type="text" name="fname" placeholder="First Name" value="{{ user.fname }}">
+			<input type="text" name="lname" placeholder="Last Name" value="{{ user.lname }}">
+			<input type="password" name="password" placeholder="Password">
+			<input type="password" name="password-check" placeholder="Verify Password">
+			<button type="submit" class="center-block">Submit</button>
+		</form>
+	</div>
 {% endblock %}

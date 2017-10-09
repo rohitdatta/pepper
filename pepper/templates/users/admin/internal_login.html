@@ -1,12 +1,12 @@
 {% extends 'layouts/admin_base.html' %}
 {% block content %}
-    <div class="container">
-        <h1>Debug User</h1>
-        <h2>Admins can use this portal to log into any particular user when debugging</h2>
-        <form method="POST" action="">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <input type="text" name="id" placeholder="User ID">
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+	<div class="container">
+		<h1>Debug User</h1>
+		<h2>Admins can use this portal to log into any particular user when debugging</h2>
+		<form method="POST" action="">
+			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+			<input type="text" name="id" placeholder="User ID">
+			<button type="submit">Submit</button>
+		</form>
+	</div>
 {% endblock %}
