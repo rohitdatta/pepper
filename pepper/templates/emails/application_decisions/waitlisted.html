@@ -1,26 +1,26 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hey {{ user.fname }},
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks for applying to {{ config.HACKATHON_NAME }}! Unfortunately, at this time we can't accept you since we
-			have far too many enthusiastic hackers and not enough space. We still hope that circumstances may change,
-			allowing you to attend so we are placing you on our waitlist. Keep monitoring your email and we'll let you
-			know if anything changes.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks so much for your interest!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Team {{ config.HACKATHON_NAME }}
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hey {{ user.fname }},
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks for applying to {{ config.HACKATHON_NAME }}! Unfortunately, at this time we can't accept you since we
+            have far too many enthusiastic hackers and not enough space. We still hope that circumstances may change,
+            allowing you to attend so we are placing you on our waitlist. Keep monitoring your email and we'll let you
+            know if anything changes.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks so much for your interest!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Team {{ config.HACKATHON_NAME }}
+        </td>
+    </tr>
 {% endblock %}

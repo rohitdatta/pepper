@@ -1,25 +1,25 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hey {{ user.fname }},
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			We've got bad news. Unfortunately, we have run out of space and will be unable to accept you for HackTX this
-			year, so we have removed you from our waitlist. We'd love for you to join us for our spring hackathon or
-			HackTX next year.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks so much for your interest!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Team {{ config.HACKATHON_NAME }}
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hey {{ user.fname }},
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            We've got bad news. Unfortunately, we have run out of space and will be unable to accept you for HackTX this
+            year, so we have removed you from our waitlist. We'd love for you to join us for our spring hackathon or
+            HackTX next year.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks so much for your interest!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Team {{ config.HACKATHON_NAME }}
+        </td>
+    </tr>
 {% endblock %}

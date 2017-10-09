@@ -1,52 +1,52 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hey {{ user.fname }}!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			We've got great news! A spot opened up at {{ config.HACKATHON_NAME }} and we'd love to have you join us!
-			Since we're so close to the event, we'll need you to accept your invitation by 11:59 PM CDT on Friday,
-			October 21.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Your attendance is <strong>NOT</strong> confirmed until you log onto <a
-				href="https://my.hacktx.com">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
-			confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline. Once you
-			confirm, also check out our <a href="https://www.facebook.com/groups/1111939315556082/">Facebook group</a>
-			for attendees.
-		</td>
-	</tr>
-	{% if user.school_id != 23 %}
-		<tr>
-			<td class="content-block">
-				Freetail Hackers is proud to host HackTX 2016 this year at the Omni Hotel in Downtown Austin. For those
-				of you not based in Austin and requiring transportation to HackTX, we're providing buses for certain
-				cities. Buses will leave early morning on October 22nd for Austin and arrive in time for Registration
-				around 10:00am. They will head back for their respective cities Sunday October 23rd after the closing
-				ceremony around 4:00pm.
-			</td>
-		</tr>
-		<tr>
-			<td class="content-block">
-				If you would like to ride on these buses, please fill our <a
-					href="https://goo.gl/forms/QSlXZfBkHnKdWUg33">bus form</a>. Keep in mind seating is limited so buses
-				will be first come, first serve.
-			</td>
-		</tr>
-	{% endif %}
-	<tr>
-		<td class="content-block">
-			Thanks, we can't wait to see you!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Team {{ config.HACKATHON_NAME }}
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hey {{ user.fname }}!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            We've got great news! A spot opened up at {{ config.HACKATHON_NAME }} and we'd love to have you join us!
+            Since we're so close to the event, we'll need you to accept your invitation by 11:59 PM CDT on Friday,
+            October 21.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Your attendance is <strong>NOT</strong> confirmed until you log onto <a
+                href="https://my.hacktx.com">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
+            confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline. Once you
+            confirm, also check out our <a href="https://www.facebook.com/groups/1111939315556082/">Facebook group</a>
+            for attendees.
+        </td>
+    </tr>
+    {% if user.school_id != 23 %}
+        <tr>
+            <td class="content-block">
+                Freetail Hackers is proud to host HackTX 2016 this year at the Omni Hotel in Downtown Austin. For those
+                of you not based in Austin and requiring transportation to HackTX, we're providing buses for certain
+                cities. Buses will leave early morning on October 22nd for Austin and arrive in time for Registration
+                around 10:00am. They will head back for their respective cities Sunday October 23rd after the closing
+                ceremony around 4:00pm.
+            </td>
+        </tr>
+        <tr>
+            <td class="content-block">
+                If you would like to ride on these buses, please fill our <a
+                    href="https://goo.gl/forms/QSlXZfBkHnKdWUg33">bus form</a>. Keep in mind seating is limited so buses
+                will be first come, first serve.
+            </td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td class="content-block">
+            Thanks, we can't wait to see you!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Team {{ config.HACKATHON_NAME }}
+        </td>
+    </tr>
 {% endblock %}

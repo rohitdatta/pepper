@@ -1,55 +1,55 @@
 {% extends 'layouts/base.html' %}
 {% block imports %}
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
-	<script src="{{ url_for('static', filename='js/corp-search.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.6.2/chosen.jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/corp-search.js') }}"></script>
 {% endblock %}
 {% block content %}
-	<div class="search">
-		<h1>Search Attendees</h1>
-		<p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a
-			filter? Leave the field blank and we'll return all options from that field.</p>
-		<form method="POST" action="{{ url_for('search-results') }}">
-			<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-			{#	Schools#}
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					<select name="schools" multiple class="chosen-select" data-placeholder="Schools">
-						{% for school in schools %}
-							<option value="{{ school }}">{{ school }}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					<select name="majors" multiple class="chosen-select" data-placeholder="Majors">
-						{% for major in majors %}
-							<option value="{{ major }}">{{ major }}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					{#Class Standings#}
-					<select name="class_standings" multiple class="chosen-select" data-placeholder="Class Standings">
-						{% for class_standing in class_standings %}
-							<option value="{{ class_standing }}">{{ class_standing }}</option>
-						{% endfor %}
-					</select>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-6 col-md-offset-3">
-					{#Attended#}
-					<label class="control control--checkbox">Attended
-						<input type="checkbox" name="attended" value="true"/>
-						<div class="control__indicator"></div>
-					</label>
-				</div>
-			</div>
-			<button type="submit center-block ">Submit</button>
-		</form>
-	</div>
+    <div class="search">
+        <h1>Search Attendees</h1>
+        <p>You can search for attendees on the basis of their school, major, or class standing. Don't want to apply a
+            filter? Leave the field blank and we'll return all options from that field.</p>
+        <form method="POST" action="{{ url_for('search-results') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {#	Schools#}
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <select name="schools" multiple class="chosen-select" data-placeholder="Schools">
+                        {% for school in schools %}
+                            <option value="{{ school }}">{{ school }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <select name="majors" multiple class="chosen-select" data-placeholder="Majors">
+                        {% for major in majors %}
+                            <option value="{{ major }}">{{ major }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {#Class Standings#}
+                    <select name="class_standings" multiple class="chosen-select" data-placeholder="Class Standings">
+                        {% for class_standing in class_standings %}
+                            <option value="{{ class_standing }}">{{ class_standing }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    {#Attended#}
+                    <label class="control control--checkbox">Attended
+                        <input type="checkbox" name="attended" value="true"/>
+                        <div class="control__indicator"></div>
+                    </label>
+                </div>
+            </div>
+            <button type="submit center-block ">Submit</button>
+        </form>
+    </div>
 {% endblock %}

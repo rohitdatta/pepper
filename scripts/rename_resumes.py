@@ -10,13 +10,14 @@ import pepper.settings as settings
 from pepper.users.models import User
 from pepper.utils import s3_client
 
+
 class FixResumeCommand(Command):
     def fix_resumes(self):
         named_hashids = []
         named_resumes = defaultdict(list)
         none_hashids = set()
         paginator = s3_client.get_paginator('list_objects_v2')
-        page_iterator= paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
+        page_iterator = paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
 
         for page in page_iterator:
             for item in page['Contents']:
@@ -48,7 +49,6 @@ class FixResumeCommand(Command):
             if user.hashid in none_hashids:
                 new_resumes[user.hashid] = u'resumes/{}, {} ({}).pdf'.format(user.lname, user.fname, user.hashid)
 
-
         for hashid in none_hashids:
             if hashid in dont_touch:
                 continue
@@ -62,21 +62,19 @@ class FixResumeCommand(Command):
             print 'Deleting', 'resumes/None, None ({}).pdf'.format(hashid)
             self.delete_object('resumes/None, None ({}).pdf'.format(hashid))
 
-
     def copy_object(self, key, new_key):
-        s3_client.copy_object(Bucket=settings.S3_BUCKET_NAME, CopySource='/'.join([settings.S3_BUCKET_NAME, key]), Key=new_key)
-
+        s3_client.copy_object(Bucket=settings.S3_BUCKET_NAME, CopySource='/'.join([settings.S3_BUCKET_NAME, key]),
+                              Key=new_key)
 
     def delete_object(self, key):
         s3_client.delete_object(Bucket=settings.S3_BUCKET_NAME, Key=key)
-
 
     def print_stats(self):
         named_hashids = []
         named_resumes = defaultdict(list)
         none_hashids = set()
         paginator = s3_client.get_paginator('list_objects_v2')
-        page_iterator= paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
+        page_iterator = paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
 
         for page in page_iterator:
             for item in page['Contents']:
@@ -101,8 +99,7 @@ class FixResumeCommand(Command):
         print 'Set intersection:', len(repeats)
         dont_touch = {key: value for key, value in named_resumes.iteritems() if len(value) > 1}
         print "Don't touch these", len(dont_touch), 'hashids: ', dont_touch
-        
 
     def run(self):
-        #self.fix_resumes()
+        # self.fix_resumes()
         self.print_stats()

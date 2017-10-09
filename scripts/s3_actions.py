@@ -10,12 +10,11 @@ from pepper.utils import s3
 
 
 class S3Actions(Command):
-
     def get_all_resumes():
         all_hashids = []
         none_hashids = []
         paginator = s3.get_paginator('list_objects_v2')
-        page_iterator= paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
+        page_iterator = paginator.paginate(Bucket=settings.S3_BUCKET_NAME)
 
         for page in page_iterator:
             for item in page['Contents']:
@@ -30,7 +29,6 @@ class S3Actions(Command):
         print 'Have {} unique resumes'.format(len(set(all_hashids)))
         print 'Have {} None resumes'.format(len(none_hashids))
         print 'Have {} unique None resumes'.format(len(set(none_hashids)))
-
 
     def run():
         get_all_resumes()

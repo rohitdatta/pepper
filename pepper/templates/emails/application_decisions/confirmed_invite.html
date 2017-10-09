@@ -1,24 +1,24 @@
 {% extends 'emails/base.html' %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hey {{ user.fname }}!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks for confirming your invitation to {{ config.HACKATHON_NAME }}! As of now, there's nothing else we
-			need you to complete, but we'll be following up with more information as we get closer to the event.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			See you October 22!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Team {{ config.HACKATHON_NAME }}
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hey {{ user.fname }}!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks for confirming your invitation to {{ config.HACKATHON_NAME }}! As of now, there's nothing else we
+            need you to complete, but we'll be following up with more information as we get closer to the event.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            See you October 22!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Team {{ config.HACKATHON_NAME }}
+        </td>
+    </tr>
 {% endblock %}

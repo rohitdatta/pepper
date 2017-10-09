@@ -1,3 +1,3 @@
 $(function () {
-	$(".chosen-select").chosen();
+    $(".chosen-select").chosen();
 });

@@ -1,6 +1,6 @@
 {% extends 'emails/base.html' %}
 {% block email_schema %}
-	<script type="application/ld+json">
+    <script type="application/ld+json">
 	{
 	  "@context": "http://schema.org",
 	  "@type": "EmailMessage",
@@ -18,22 +18,26 @@
 			"url/googlePlus": "https://plus.google.com/b/106817110964597718723"
 		  }
 	}
-	</script>
+    </script>
 {% endblock %}
 {% block message %}
-	<tr>
-		<td class="content-block">
-			Hey {{ user.fname }}!
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your application. You'll receive another email when we have a status update, but you can always check your application status at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>. That's all we need from you for now, but if you have any questions, please email <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
-		</td>
-	</tr>
-	<tr>
-		<td class="content-block">
-			♥ Team {{ config.HACKATHON_NAME }}
-		</td>
-	</tr>
+    <tr>
+        <td class="content-block">
+            Hey {{ user.fname }}!
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            Thanks for applying to {{ config.HACKATHON_NAME }}! We've successfully received and processed your
+            application. You'll receive another email when we have a status update, but you can always check your
+            application status at <a href="{{ url_for('dashboard', _external=True) }}">my{{ config.HACKATHON_NAME }}</a>.
+            That's all we need from you for now, but if you have any questions, please email <a
+                href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }}</a>.
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            ♥ Team {{ config.HACKATHON_NAME }}
+        </td>
+    </tr>
 {% endblock %}
