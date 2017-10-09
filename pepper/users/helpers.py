@@ -3,7 +3,7 @@ import time
 import urllib2
 from urlparse import urlparse, urljoin
 
-from flask import render_template, url_for, redirect, request
+from flask import render_template, url_for, redirect, request, g
 import requests
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
@@ -30,7 +30,7 @@ def check_password(hashed, password):
 
 def send_recruiter_invite(user):
     # send invite to the recruiter
-    token = utils.s.dumps(user.email)
+    token = utils.serializer.dumps(user.email)
     url = url_for('new-user-setup', token=token, _external=True)
     txt = render_template('emails/corporate_welcome.txt', user=user, setup_url=url)
     html = render_template('emails/corporate_welcome.html', user=user, setup_url=url)

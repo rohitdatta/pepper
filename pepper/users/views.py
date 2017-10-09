@@ -56,8 +56,8 @@ def sign_up():
 
     login_user(user, remember=True)
     flash(
-        'You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX',
-        'success')
+        'You have created your {0} account. We sent you a verification email. You need to verify your email before we can accept you to {0}'.format(
+            settings.HACKATHON_NAME), 'success')
     return redirect(url_for('complete-registration'))
 
 
@@ -128,8 +128,8 @@ def callback():
             # don't send another email if they come back way later to add an mlh login
             batch.send_confirmation_email(user)
             flash(
-                'You have created your HackTX account. We sent you a verification email. You need to verify your email before we can accept you to HackTX',
-                'success')
+                'You have created your {0} account. We sent you a verification email. You need to verify your email before we can accept you to {0}'.format(
+                    settings.HACKATHON_NAME), 'success')
             g.log.info('Successfully created user')
             return redirect(url_for('complete-mlh-registration'))
         except IntegrityError:
