@@ -65,7 +65,6 @@ def configure_routes(app):
                      methods=['GET'])
 
     # API
-    """
     app.add_url_rule('/api/announcements', 'announcements', view_func=announcements.views.announcement_list,
                      methods=['GET'])
     app.add_url_rule('/api/announcements/create', 'create-announcement',
@@ -78,6 +77,7 @@ def configure_routes(app):
 
 
     # Corporate Portal
+    """
     app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
     app.add_url_rule('/corp/login/reset', 'corp-forgot-password', view_func=corporate.views.forgot_password,
                      methods=['GET', 'POST'])
