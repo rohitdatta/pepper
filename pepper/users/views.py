@@ -14,7 +14,7 @@ from pepper.app import DB, worker_queue
 from pepper.legal.models import Waiver
 from pepper.utils import calculate_age, get_current_user_roles, get_default_dashboard_for_role, \
     redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, \
-    user_status_whitelist
+    user_status_whitelist, user_extra_application_required
 
 tz = timezone('US/Central')
 
@@ -442,6 +442,31 @@ def sign():
 
         flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
         return redirect(url_for('dashboard'))
+
+
+@login_required
+@user_extra_application_required
+@user_status_whitelist(status.CONFIRMED)
+def additional_status():
+    if request.method == 'GET':
+        if current_user.campus_ambassador and current_user.is_campus_ambassador is not None:
+            if current_user.is_campus_ambassador:
+                campus_ambassador_status = True
+            else:
+                campus_ambassador_status = False
+        else:
+            campus_ambassador_status = None
+
+        if current_user.needs_travel_reimbursement and current_user.has_travel_reimbursement is not None:
+            if current_user.has_travel_reimbursement:
+                travel_reimbursement_status = True
+            else:
+                travel_reimbursement_status = False
+        else:
+            travel_reimbursement_status = None
+
+        return render_template('users/additional_status.html', campus_ambassador_status=campus_ambassador_status,
+                               travel_reimbursement_status=travel_reimbursement_status)
 
 
 @helpers.check_registration_opened

@@ -1,0 +1,125 @@
+{% extends 'layouts/user_base.html' %}
+{% block content %}
+    {% if campus_ambassador_status != None %}
+        <div class="container">
+            <h1>Campus Ambassador Status</h1>
+            <div class="large-text">
+                {% if campus_ambassador_status %}
+                    <p>Congratulations! You were selected to be a campus ambassador!</p>
+                    <p>
+                        Here are the responsibilities that you will need to fulfill in order to receive travel
+                        reimbursement, which is capped at $50:
+                    <ul>
+                        <li>
+                            Be a point of contact for your university and help other hackers out.
+                        </li>
+                        <li>
+                            We will share your email and Facebook account link with all the hackers
+                            from your university that were accepted.
+                        </li>
+                        <li>
+                            Answer questions about how a hackathon works and help to organize travel logistics.
+                        </li>
+                        <li>
+                            Follow the MLH Code of Conduct. Be gracious, kind, and inclusive to other hackers.
+                        </li>
+                        <li>
+                            If there are multiple campus ambassadors from your university, please get in contact with
+                            them
+                            and see if you can organize separate carpools in order to maximize the number of hackers
+                            from
+                            your university.
+                        </li>
+                        <li>
+                            Proof of receipts is required and also submit a project on Devpost during HackTX.
+                        </li>
+                        <li>
+                            You can pick up your reimbursement on Sunday, October 29 at HackTX. It will be in the form
+                            of an
+                            Amazon gift card.
+                        </li>
+                    </ul>
+                {% else %}
+                    <p>Thank you for taking the time to apply to be a campus ambassador. Unfortunately, the applicant
+                        pool
+                        was
+                        very competitive and there were limited spots open at different universities. We will not be
+                        able to
+                        offer you a spot as a campus ambassador.</p>
+                    <p>
+                        Here are are some of the factors for our decision that we found to be relevant across most
+                        applications:
+                    </p>
+                    <ul>
+                        <li>Lack of experience in hackathons. We want campus ambassadors to be able to answer questions
+                            from
+                            their
+                            fellow students about hackathons. If you have never been to a hackathon before, we chose
+                            another
+                            candidate who had more hackathon experience.
+                        </li>
+                        <li>We did not offer any UT Austin students the position of campus ambassador because the
+                            Freetail
+                            Hackers
+                            Outreach team (which organizes HackTX) already fulfills these duties. Campus Ambassadors are
+                            only given
+                            to universities outside of UT Austin. If you’d like to be more involved in outreach for
+                            HackTX,
+                            please
+                            apply to join our organizer team in December.
+                        </li>
+                        <li>Other applicants seemed to have larger reach in the community and took the time to explain
+                            how
+                            they
+                            supported their hacker community and first-timers.
+                        </li>
+                    </ul>
+                    <p>We invite you to apply again next year as a campus ambassador. Best of luck and
+                        thanks for applying!</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    {% if travel_reimbursement_status != None %}
+        <div class="container">
+            <h1>Travel Reimbursement Status</h1>
+            <div class="large-text">
+                {% if campus_ambassador_status %}
+                    <p>You have already been accepted for travel reimbursement because you're a campus ambassador.</p>
+                {% elif travel_reimbursement_status %}
+                    <p>Congratulations! You have been approved to receive travel reimbursement.</p>
+                    <p>Here are the responsibilities that you will need to fulfill in order to receive travel
+                        reimbursement,
+                        which is capped at $50:
+                    </p>
+                    <ul>
+                        <li>
+                            Follow the MLH Code of Conduct. Be gracious, kind, and inclusive to other hackers.
+                        </li>
+                        <li>
+                            Proof of receipts is required and also submit a project on Devpost during HackTX.
+                        </li>
+                        <li>
+                            You can pick up your reimbursement on Sunday, October 29 at HackTX. It will be in the form
+                            of an
+                            Amazon gift card.
+                        </li>
+                    </ul>
+                {% else %}
+                    <p>Thank you for taking the time to apply for travel reimbursement. Unfortunately, the applicant
+                        pool
+                        was very competitive and we will not be able to offer you travel reimbursement.</p>
+                    <p>Freetail Hackers will not be providing buses to universities due to low bus attendance last year.
+                        We
+                        felt it was a better use of funds to offer reimbursements. We apologize for any
+                        inconvenience.</p>
+                    <p>Some universities in Texas have campus ambassador(s). We recommend that you reach out to them to
+                        see
+                        if there is a university carpool.</p>
+                    <p>We invite you to apply again next year. Best of luck and
+                        thanks for applying!</p>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

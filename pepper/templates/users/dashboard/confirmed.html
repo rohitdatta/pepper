@@ -5,6 +5,11 @@
         <div class="large-text">
             <p>Thanks for confirming to go to {{ config.HACKATHON_NAME }} {{ user.fname }}! We can't wait to see you on
                 October 28nd!</p>
+            {% if current_user.campus_ambassador or current_user.needs_travel_reimbursement %}
+                <p>Click <a href="{{ url_for('additional-status') }}">here</a> to find out about your campus ambassador
+                    or
+                    travel reimbursement application status(es) if applied.</p>
+            {% endif %}
             <p>For now, you can kick back and relax. We'll send you an email as we get closer to the event that will
                 contain all the details you need. If you do have questions, feel free to shoot us an email at <a
                         href="mailto:{{ config.GENERAL_INFO_EMAIL }}"

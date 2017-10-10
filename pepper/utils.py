@@ -80,6 +80,16 @@ def user_status_whitelist(*statuses):
     return wrapper
 
 
+def user_extra_application_required(func):
+    @functools.wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not g.user.campus_ambassador and not g.user.needs_travel_reimbursement:
+            return redirect(url_for(get_default_dashboard_for_role()))
+        return func(*args, **kwargs)
+
+    return decorated_view
+
+
 def user_status_blacklist(*statuses):
     def wrapper(func):
         @functools.wraps(func)

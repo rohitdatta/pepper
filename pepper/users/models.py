@@ -13,6 +13,7 @@ class User(DB.Model, UserMixin):
 
     id = DB.Column(DB.Integer, primary_key=True)
     email = DB.Column(DB.String(128), unique=True)
+    confirmed = DB.Column(DB.Boolean)
     fname = DB.Column(DB.String(128))
     lname = DB.Column(DB.String(128))
     status = DB.Column(DB.String(255))
@@ -42,14 +43,15 @@ class User(DB.Model, UserMixin):
     race = DB.Column(DB.String(255))
     needs_travel_reimbursement = DB.Column(DB.Boolean)
     why_travel_reimbursement = DB.Column(DB.Text)
+    has_travel_reimbursement = DB.Column(DB.Boolean)
     workshops = DB.Column(DB.Text)
-    campus_ambassador = DB.Column(DB.Boolean)
     facebook_account = DB.Column(DB.String(100))
+    campus_ambassador = DB.Column(DB.Boolean)
     campus_ambassadors_application = DB.Column(DB.Text)
+    is_campus_ambassador = DB.Column(DB.Boolean)
     med_auth_signature_id = DB.Column(DB.String(255))
     waiver_signature_id = DB.Column(DB.String(255))
     time_applied = DB.Column(DB.DateTime)
-    confirmed = DB.Column(DB.Boolean)
 
     def __init__(self, info):
         if info['type'] == 'MLH':  # if creating a MyMLH user
