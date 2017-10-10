@@ -1,26 +1,39 @@
 {% extends 'emails/base.html' %}
 {% block message %}
     <tr>
-        <td class="content-block">
-            Hey {{ user.fname }},
-        </td>
+      <td class="content-block">
+        Hi {{ user.fname }} {{ user.lname }},
+      </td>
     </tr>
     <tr>
-        <td class="content-block">
-            Thanks for applying to {{ config.HACKATHON_NAME }}! Unfortunately, at this time we can't accept you since we
-            have far too many enthusiastic hackers and not enough space. We still hope that circumstances may change,
-            allowing you to attend so we are placing you on our waitlist. Keep monitoring your email and we'll let you
-            know if anything changes.
-        </td>
+      <td class="content-block">
+        Thank you for taking the time to apply to HackTX. You are waitlisted for HackTX.
+      </td>
     </tr>
     <tr>
-        <td class="content-block">
-            Thanks so much for your interest!
-        </td>
+      <td class="content-block">
+        Applications for HackTX are first-come, first-serve for teams and randomized for individuals. This decision is not a reflection of your resume or your experience level. We simply take that information to run our own internal metrics and share your resume with companies who are recruiting! Cross your fingers though! There will be a second round of acceptances on October 16th. If you live in the Austin metro area, we encourage you to try to walk-in on the day of HackTX, October 28.
+      </td>
     </tr>
     <tr>
-        <td class="content-block">
-            Team {{ config.HACKATHON_NAME }}
-        </td>
+      <td class="content-block">
+        How does walk-in work?
+        Our check-in for accepted hackers will run from about 10am-noon. If we still have extra spots (last year we had around 100 extra spots), you can try to get in as a waitlisted hacker around noon. An official schedule for walk-ins will come out on our website soon. You can also check our website on October 28, on which we will have a banner that states whether we have space for waitlisted hackers. This way, you won’t need to head all the way down to the Omni.
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        If you have any questions, feel free to reply to this email.
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        Thanks for applying!
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        &lt;3 Freetail Hackers
+      </td>
     </tr>
 {% endblock %}
