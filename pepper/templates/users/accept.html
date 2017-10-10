@@ -31,6 +31,7 @@
         </div>
         <div class="accept top-buffer">
             <form method="POST" action="{{ url_for('accept-invite') }}" enctype=multipart/form-data>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="col-md-12">
 
                     <div class="form-group">

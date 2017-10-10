@@ -35,3 +35,4 @@ RESUMES_LINK = os.getenv('RESUMES_LINK')
 REDIS_URL = os.getenv('REDIS_URL')
 RECOVER_SALT = os.getenv('RECOVER_SALT')
 MAX_BATCH_EMAILS = int(os.getenv('MAX_BATCH_EMAILS', '500'))
+SENT_ACCEPTANCES = os.getenv('SENT_ACCEPTANCES') in ['True', 'true', '1', 'yes']

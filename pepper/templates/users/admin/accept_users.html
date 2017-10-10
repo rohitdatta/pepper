@@ -5,58 +5,60 @@
     <script src="{{ url_for('static', filename='js/batch-modify.js') }}"></script>
 {% endblock %}
 {% block content %}
-    <div class="container">
-        <h1>User(s) With Verified Emails</h1>
-        <table id="user_table" class="display" cellspacing="0">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Status</th>
-                <th>Applied At</th>
-                <th>Email</th>
-                <th>Verified Email</th>
-                <th>Team ID</th>
-                <th>Joined Team At</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for user in users %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.fname }}</td>
-                    <td>{{ user.lname }}</td>
-                    <td>{{ user.status }}</td>
-                    <td>{{ user.time_applied }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.confirmed }}</td>
-                    <td>{{ user.team_id }}</td>
-                    <td>{{ user.time_team_join }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <form action="{{ url_for('batch-modify') }}" method="POST">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <p>Number of Users to Accept </p>
-            <input type="number" name="num_acceptance">
-            <p>Acceptance Heuristic</p>
-            <div class="select">
-                <select name="acceptance_heuristic">
-                    <option value="fifo">FIFO (first in, first out)</option>
-                    <option value="random">Random</option>
-                </select>
-                <div class="select__arrow"></div>
-            </div>
-            <label class="control control--checkbox">Include Waitlisted
-                <input type="checkbox" name="include_waitlisted" value="true"/>
-                <div class="control__indicator"></div>
-            </label>
-            <button type="submit" class="confirm">Accept User(s) <i class="fa fa-arrow-circle-o-right"
-                                                                    aria-hidden="true"></i>
-            </button>
-        </form>
+    <div class="data-table">
+      <h1 class="black-text">User(s) With Verified Emails</h1>
+      <table id="user_table" class="display" cellspacing="0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+            <th>Applied At</th>
+            <th>Email</th>
+            <th>Verified Email</th>
+            <th>Team ID</th>
+            <th>Joined Team At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.fname }}</td>
+            <td>{{ user.lname }}</td>
+            <td>{{ user.status }}</td>
+            <td>{{ user.time_applied }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.confirmed }}</td>
+            <td>{{ user.team_id }}</td>
+            <td>{{ user.time_team_join }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
+
+    <div class="spacing"></div>
+
+    <form action="{{ url_for('batch-modify') }}" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+      <p>Number of Users to Accept </p>
+      <input type="number" name="num_acceptance">
+      <p>Acceptance Heuristic</p>
+      <div class="select">
+        <select name="acceptance_heuristic">
+          <option value="fifo">FIFO (first in, first out)</option>
+          <option value="random">Random</option>
+        </select>
+        <div class="select__arrow"></div>
+      </div>
+      <label class="control control--checkbox">Include Waitlisted
+        <input type="checkbox" name="include_waitlisted" value="true"/>
+        <div class="control__indicator"></div>
+      </label>
+      <button type="submit" class="confirm">Accept User(s) <i class="fa fa-arrow-circle-o-right"
+                                                              aria-hidden="true"></i>
+      </button>
+    </form>
 {% endblock content %}

@@ -10,10 +10,10 @@ from pepper.app import DB, worker_queue
 from pepper.utils import send_email, serializer, timed_serializer
 
 
-def send_accepted_email(user):
-    html = render_template('emails/application_decisions/accepted.html', user=user)
-    worker_queue.enqueue(send_email, settings.GENERAL_INFO_EMAIL, 'Congrats! Your HackTX Invitation', user.email, None,
-                         html)
+def send_accepted_emails(users):
+    def generate_html(user):
+        return render_template('emails/application_decisions/accepted.html', user=user)
+    send_batch_emails_with_context(users, 'Congrats! Your HackTX Invitation', generate_html)
 
 
 def send_confirmation_email(user):
@@ -54,20 +54,21 @@ def send_batch_email(content, subject, users, needs_user_context):
     for line in lines:
         msg_body += u'<tr><td class="content-block">{}</td></tr>\n'.format(line)
     if needs_user_context:
-        email_contexts = []
-        for user in users:
+        def generate_html(user):
             html = render_template('emails/generic_message.html', content=msg_body)
-            html = render_template_string(html, user=user)
-            email_contexts.append((user.email, html))
-        for i in range(0, len(email_contexts), settings.MAX_BATCH_EMAILS):
-            worker_queue.enqueue(_send_batch_emails_with_context, subject,
-                                 email_contexts[i:i+settings.MAX_BATCH_EMAILS])
+            return render_template_string(html, user=user)
+
+        send_batch_emails_with_context(users, subject, generate_html)
     else:
-        emails = [user.email for user in users]
         html = render_template('emails/generic_message.html', content=msg_body)
         html = render_template_string(html)
-        for i in range(0, len(emails), settings.MAX_BATCH_EMAILS):
-            worker_queue.enqueue(_send_static_batch_emails, subject, html, emails[i:i+settings.MAX_BATCH_EMAILS])
+        send_batch_static_emails(users, subject, html)
+
+
+def send_batch_emails_with_context(users, subject, html_func):
+    for i in range(0, len(users), settings.MAX_BATCH_EMAILS):
+        email_contexts = [(user.email, html_func(user)) for user in users[i: i + settings.MAX_BATCH_EMAILS]]
+        worker_queue.enqueue(_send_batch_emails_with_context, subject, email_contexts)
 
 
 def _send_batch_emails_with_context(subject, email_contexts):
@@ -75,7 +76,13 @@ def _send_batch_emails_with_context(subject, email_contexts):
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
 
-def _send_static_batch_emails(subject, html_content, emails):
+def send_batch_static_emails(users, subject, html_content):
+    for i in range(0, len(users), settings.MAX_BATCH_EMAILS):
+        emails = [user.email for user in users[i: i + settings.MAX_BATCH_EMAILS]]
+        worker_queue.enqueue(_send_batch_static_emails, emails, subject, html_content)
+
+
+def _send_batch_static_emails(emails, subject, html_content):
     for email in emails:
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
@@ -87,19 +94,18 @@ def accept_fifo(num_to_accept, include_waitlisted):
     else:
         potential_users = User.query.filter(and_(User.status == status.PENDING), User.confirmed.is_(True))
 
-    accepted_users = potential_users.order_by(User.time_applied.asc()).limit(num_to_accept).all()
+    potential_users = potential_users.order_by(User.time_applied.asc()).all()
 
-    for user in accepted_users:
-        if user.status == status.WAITLISTED:
-            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
-        else:  # User should be in pending state, but catch all just in case
-            html = render_template('emails/application_decisions/accepted.html', user=user)
-        user.status = status.ACCEPTED
-        DB.session.add(user)
-        DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation"
-                   .format(settings.HACKATHON_NAME),
-                   user.email, html_content=html)
+    # get individuals
+    users = []
+    for user in potential_users:
+        if user.team is None or len(user.team.users) == 1:
+            users.append(user)
+            if len(users) == num_to_accept:
+                break
+
+    accept_users(users)
+
 
 
 def accept_random(num_to_accept, include_waitlisted):
@@ -109,18 +115,31 @@ def accept_random(num_to_accept, include_waitlisted):
     else:
         filtered_users = User.query.filter(and_(User.status == status.PENDING, User.confirmed.is_(True))).all()
 
-    accepted_users = random.sample(set(filtered_users), num_to_accept)
+    # get individuals
+    filtered_users = [user for user in filtered_users if user.team is None or len(user.team.users) == 1]
 
+    accept_users(random.sample(set(filtered_users), num_to_accept))
+
+
+def accept_users(accepted_users):
+    former_user_statuses = {}
     for user in accepted_users:
-        if user.status == status.WAITLISTED:
-            html = render_template('emails/application_decisions/accept_from_waitlist.html', user=user)
-        else:  # User should be in pending state, but catch all just in case
-            html = render_template('emails/application_decisions/accepted.html', user=user)
+        former_user_statuses[user.id] = user.status
         user.status = status.ACCEPTED
         DB.session.add(user)
         DB.session.commit()
-        send_email(settings.GENERAL_INFO_EMAIL, "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                   user.email, html_content=html)
+
+    def generate_html(user):
+        if former_user_statuses[user.id] == status.WAITLISTED:
+            return render_template('emails/application_decisions/accept_from_waitlist.html',
+                                   user=user)
+        # User should be in pending state, but catch all just in case
+        return render_template('emails/application_decisions/accepted.html', user=user)
+
+    send_batch_emails_with_context(accepted_users,
+                                  "You're In! {} Invitation".format(settings.HACKATHON_NAME),
+                                   generate_html)
+
 
 def keen_add_event(user_id, event_type, count, event_time):
     user = User.query.filter_by(id=user_id).first()

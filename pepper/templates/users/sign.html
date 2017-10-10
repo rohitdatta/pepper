@@ -32,6 +32,7 @@
     </div>
     <div class="sign top-buffer">
         <form method="POST" action="{{ url_for('sign') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="col-md-12">
                 <h2>Medical Information</h2>
                 <p><span class="required"></span>Required Fields</p>
@@ -73,7 +74,7 @@
                             treatment (including locations outside the U.S.) to be rendered upon the advice of any
                             licensed physician. I agree to be responsible for all necessary charges incurred by any
                             hospitalization or treatment rendered pursuant to this authorization.</p>
-                        <p>The effective dates of this authorization are {{ date }} to October 26, 2016. I am eighteen
+                        <p>The effective dates of this authorization are {{ date }} to October 31, 2017. I am eighteen
                             years of age or older, have read the above authorization, and confirm that the information
                             contained therein is true and accurate. I agree that my electronic signature is the legally
                             binding equivalent to my handwritten signature. Whenever I execute an electronic signature,
@@ -95,7 +96,7 @@
                 <div class="col-md-12">
                     <h2 class="required">Release and Indemnification Agreement</h2>
                     <div class="col-md-12">
-                        <p>Description of Activity or Trip: Hackathon during the weekend of October 22-23, 2016 hosted
+                        <p>Description of Activity or Trip: Hackathon during the weekend of October 28-29, 2017 hosted
                             by Freetail Hackers</p>
                         <p>I, {{ user.fname }} {{ user.lname }}, am eighteen years of age or older and have voluntarily
                             applied to participate in the above Activity or Trip. I acknowledge that the nature of the

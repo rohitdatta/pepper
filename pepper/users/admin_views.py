@@ -113,9 +113,9 @@ def batch_modify():
             return redirect(url_for('batch-modify'))
         else:
             if acceptance_heuristic == 'fifo':  # First in, first out
-                worker_queue.enqueue(batch.accept_fifo, num_acceptance, include_waitlisted)
+                batch.accept_fifo(num_acceptance, include_waitlisted)
             else:  # Randomly select num_acceptance users
-                worker_queue.enqueue(batch.accept_random, num_acceptance, include_waitlisted)
+                batch.accept_random(num_acceptance, include_waitlisted)
             flash('Successfully modified user statuses. However, this will take a while.'
                   ' Please refresh this page later to see the changes.', 'info')
             g.log.info('Batch acceptances have been queued')
@@ -125,34 +125,41 @@ def batch_modify():
 @login_required
 @roles_required('admin')
 def send_email_to_users():
-    all_users = User.query.all()
     if request.method == 'GET':
+        all_users = User.query.all()
         return render_template('users/admin/send_email.html', users=all_users)
-    else:
-        targeted_users = []
-        user_id_set = set()
 
-        statuses = request.form.getlist('status')
-        status_users = User.query.filter(or_(User.status.in_(statuses))).all() if statuses else []
-        checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
-        checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all() if checkbox_user_ids else []
-
-        for user in status_users:
-            if user.id not in user_id_set:
-                user_id_set.add(user.id)
-                targeted_users.append(user)
-
-        for user in checkbox_users:
-            if user.id not in user_id_set:
-                user_id_set.add(user.id)
-                targeted_users.append(user)
-
-        if len(targeted_users) > 0:
-            batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
-                                   targeted_users, request.form.get('user-context') == 'TRUE')
-
-        flash('Batch email(s) successfully sent', 'success')
+    if not request.form.get('content'):
+        flash('Please enter a message')
         return redirect(url_for('send-email'))
+    if not request.form.get('subject'):
+        flash('Please enter a subject')
+        return redirect(url_for('send-email'))
+
+    targeted_users = []
+    user_id_set = set()
+
+    statuses = request.form.getlist('status')
+    status_users = User.query.filter(or_(User.status.in_(statuses))).all() if statuses else []
+    checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
+    checkbox_users = User.query.filter(or_(User.id.in_(checkbox_user_ids))).all() if checkbox_user_ids else []
+
+    for user in status_users:
+        if user.id not in user_id_set:
+            user_id_set.add(user.id)
+            targeted_users.append(user)
+
+    for user in checkbox_users:
+        if user.id not in user_id_set:
+            user_id_set.add(user.id)
+            targeted_users.append(user)
+
+    if len(targeted_users) > 0:
+        batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
+                               targeted_users, request.form.get('user-context') == 'TRUE')
+
+    flash('Batch email(s) successfully sent', 'success')
+    return redirect(url_for('send-email'))
 
 
 @login_required
@@ -183,8 +190,6 @@ def reject_users():
         return redirect(url_for('reject-users'))
 
 
-@login_required
-@roles_required('admin')
 def get_pending_team_users():
     users = User.query.filter(
         and_(User.status == status.PENDING,
@@ -225,28 +230,29 @@ def get_pending_team_users():
 
 @login_required
 @roles_required('admin')
-def modify_users():
+def accept_teams():
     if request.method == 'GET':
         return render_template('users/admin/modify_users.html', users=get_pending_team_users())
-    elif request.method == 'POST':
-        selected_user_ids = [int(user_id) for user_id in request.form.getlist('user_ids')]
-        selected_users = User.query.filter(or_(User.id.in_(selected_user_ids))).all()
 
-        for user in selected_users:
-            previous_status = user.status
-            user.status = status.ACCEPTED
-            DB.session.add(user)
-            DB.session.commit()
-            g.log.info('Modifying user_id={} previous_status={} current_status={}'.format(user.id,
-                                                                                          previous_status,
-                                                                                          user.status))
-            batch.send_accepted_email(user)
+    selected_user_ids = [int(user_id) for user_id in request.form.getlist('user_ids')]
+    selected_users = User.query.filter(or_(User.id.in_(selected_user_ids))).all()
 
-        flash(
-            'Successfully accepted selected users. However, this will take a while.'
-            ' Please refresh this page later to see the remaining pending user(s).',
-            'info')
-        return render_template('users/admin/modify_users.html', users=get_pending_team_users())
+    for user in selected_users:
+        previous_status = user.status
+        user.status = status.ACCEPTED
+        DB.session.add(user)
+        DB.session.commit()
+        g.log.info('Modifying user_id={} previous_status={} current_status={}'.format(user.id,
+                                                                                      previous_status,
+                                                                                      user.status))
+
+    batch.send_accepted_emails(selected_users)
+
+    flash(
+        'Successfully accepted selected users. However, this will take a while.'
+        ' Please refresh this page later to see the remaining pending user(s).',
+        'info')
+    return redirect(url_for('accept-teams'))
 
 
 @login_required

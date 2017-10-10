@@ -33,10 +33,10 @@
     {#            <ul>{{ user.fname }} {{ user.lname }}</ul>#}
     {#        {% endfor %}#}
     {#    </div>#}
-    <div class="container">
-        <h1>Pending User(s) With Teams</h1>
-        <h3>Modifying users are currently <b>only for acceptances</b></h3>
-        <form id="batch_users" action="{{ url_for('modify-users') }}" method="POST">
+    <h1>Pending User(s) With Teams</h1>
+    <h3>Modifying users are currently <b>only for acceptances</b></h3>
+    <form id="batch_users" action="{{ url_for('accept-teams') }}" method="POST">
+        <div class="data-table">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <table id="user_table" class="display" cellspacing="0">
                 <thead>
@@ -68,9 +68,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <button type="submit" class="confirm">Accept User(s) <i class="fa fa-arrow-circle-o-right"
-                                                                    aria-hidden="true"></i>
-            </button>
-        </form>
-    </div>
+        </div>
+        <div class="spacing"></div>
+        <button type="submit" class="confirm">Accept User(s) <i class="fa fa-arrow-circle-o-right"
+                                                                aria-hidden="true"></i>
+        </button>
+    </form>
 {% endblock content %}
