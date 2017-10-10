@@ -87,6 +87,18 @@ def _send_batch_static_emails(emails, subject, html_content):
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
 
 
+
+def _filter_individuals(users):
+    filtered = []
+    for user in users:
+        if user.team is not None:
+            num_team_eligible = sum(1 for u in user.team.users if u.confirmed)
+            if num_team_eligible > 1:
+                continue
+        filtered.append(user)
+    return filtered
+
+
 def accept_fifo(num_to_accept, include_waitlisted):
     if include_waitlisted:
         potential_users = User.query.filter(
@@ -96,15 +108,7 @@ def accept_fifo(num_to_accept, include_waitlisted):
 
     potential_users = potential_users.order_by(User.time_applied.asc()).all()
 
-    # get individuals
-    users = []
-    for user in potential_users:
-        if user.team is None or len(user.team.users) == 1:
-            users.append(user)
-            if len(users) == num_to_accept:
-                break
-
-    accept_users(users)
+    accept_users(_filter_individuals(potential_users))
 
 
 
@@ -116,7 +120,7 @@ def accept_random(num_to_accept, include_waitlisted):
         filtered_users = User.query.filter(and_(User.status == status.PENDING, User.confirmed.is_(True))).all()
 
     # get individuals
-    filtered_users = [user for user in filtered_users if user.team is None or len(user.team.users) == 1]
+    filtered_users = _filter_individuals(filtered_users)
 
     accept_users(random.sample(set(filtered_users), num_to_accept))
 
