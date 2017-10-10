@@ -240,12 +240,13 @@ def accept_teams():
     for user in selected_users:
         previous_status = user.status
         user.status = status.ACCEPTED
-        DB.session.add(user)
-        DB.session.commit()
         g.log.info('Modifying user_id={} previous_status={} current_status={}'.format(user.id,
                                                                                       previous_status,
                                                                                       user.status))
 
+    for user in selected_users:
+        DB.session.add(user)
+    DB.session.commit()
     batch.send_accepted_emails(selected_users)
 
     flash(

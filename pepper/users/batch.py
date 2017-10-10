@@ -74,6 +74,7 @@ def send_batch_emails_with_context(users, subject, html_func):
 def _send_batch_emails_with_context(subject, email_contexts):
     for email, html_content in email_contexts:
         send_email(settings.GENERAL_INFO_EMAIL, subject, email, html_content=html_content)
+    print 'Sent email batch to {} users'.format(len(email_contexts))
 
 
 def send_batch_static_emails(users, subject, html_content):
