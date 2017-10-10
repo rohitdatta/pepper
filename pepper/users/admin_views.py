@@ -190,9 +190,9 @@ def reject_users():
         return redirect(url_for('reject-users'))
 
 
-def get_pending_team_users():
+def get_valid_teams():
     users = User.query.filter(
-        and_(User.status == status.PENDING,
+        and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED),
              User.team_id.isnot(None),
              User.time_team_join.isnot(None),
              User.confirmed.is_(True))).all()
@@ -232,7 +232,7 @@ def get_pending_team_users():
 @roles_required('admin')
 def accept_teams():
     if request.method == 'GET':
-        return render_template('users/admin/modify_users.html', users=get_pending_team_users())
+        return render_template('users/admin/modify_users.html', users=get_valid_teams())
 
     selected_user_ids = [int(user_id) for user_id in request.form.getlist('user_ids')]
     selected_users = User.query.filter(or_(User.id.in_(selected_user_ids))).all()
