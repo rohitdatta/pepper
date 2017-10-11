@@ -12,6 +12,7 @@ from rq import Connection, Worker
 from pepper import hackathon_identity_app, app
 from scripts.rename_resumes import FixResumeCommand
 from scripts.pending_to_waitlisted import PendingToWaitlistedCommand
+from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
 
 manager = Manager(hackathon_identity_app)
 
@@ -22,6 +23,7 @@ manager.add_command('db', MigrateCommand)
 # add commands from the scripts directory
 manager.add_command('fixresumes', FixResumeCommand)
 manager.add_command('pending_to_waitlisted', PendingToWaitlistedCommand)
+manager.add_command('print_confirm_email_token', PrintConfirmEmailTokenCommand)
 
 
 @manager.command
