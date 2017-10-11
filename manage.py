@@ -12,10 +12,7 @@ from rq import Connection, Worker
 from pepper import hackathon_identity_app, app
 from scripts.rename_resumes import FixResumeCommand
 from scripts.pending_to_waitlisted import PendingToWaitlistedCommand
-<<<<<<< Updated upstream
-=======
 from scripts.rename_schools import FixUsersSchoolNames
->>>>>>> Stashed changes
 from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
 
 manager = Manager(hackathon_identity_app)
