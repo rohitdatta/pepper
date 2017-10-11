@@ -4,7 +4,7 @@
         <h1>Invitation Confirmed</h1>
         <div class="large-text">
             <p>Thanks for confirming to go to {{ config.HACKATHON_NAME }} {{ user.fname }}! We can't wait to see you on
-                October 28nd!</p>
+                October 28th!</p>
             {% if current_user.campus_ambassador or current_user.needs_travel_reimbursement %}
                 <p>Click <a href="{{ url_for('additional-status') }}">here</a> to find out about your campus ambassador
                     or
