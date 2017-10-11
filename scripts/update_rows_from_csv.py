@@ -21,7 +21,7 @@ db_name = db_tokens[1].split('?')[0]
 
 connection = None
 
-rows = open(csv_path).read().split('\n')
+rows = [line.rstrip() for line in open(csv_path).readlines()]
 id_column, status_column = rows[0].split(',')
 
 try:
