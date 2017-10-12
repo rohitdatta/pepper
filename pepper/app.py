@@ -10,11 +10,16 @@ from flask_redis import Redis
 import sendgrid
 import settings
 import structlog
+from rq import Queue
+import redis
 
 DB = SQLAlchemy()
 redis_store = Redis()
 sg = sendgrid.SendGridAPIClient(apikey=settings.SENDGRID_API_KEY)
 cdn = CDN()
+redis_url = settings.REDIS_URL
+conn = redis.from_url(redis_url)
+q = Queue(connection=conn)
 
 import routes
 from users.models import User
