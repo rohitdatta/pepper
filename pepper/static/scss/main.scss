@@ -249,6 +249,9 @@ h1 {
   p {
     font-size: 20pt;
   }
+  li {
+    font-size: 15pt;
+  }
 }
 
 .top-buffer {
@@ -604,4 +607,13 @@ input[type=text].fullwidth {
 
 .context-menu--active {
     display: block;
+}
+
+.accept-reimbursement-button {
+  &:disabled {
+    background: green;
+  }
+  &:hover {
+    color: $hacktx-light;
+  }
 }

@@ -466,7 +466,23 @@ def additional_status():
             travel_reimbursement_status = None
 
         return render_template('users/additional_status.html', campus_ambassador_status=campus_ambassador_status,
-                               travel_reimbursement_status=travel_reimbursement_status)
+                               travel_reimbursement_status=travel_reimbursement_status, user=current_user)
+
+
+@login_required
+@user_status_whitelist(status.CONFIRMED)
+def accept_reimbursement():
+    if not current_user.has_travel_reimbursement:
+        flash('You are not authorized to do this action', 'error')
+        return redirect(url_for('dashboard'))
+    if current_user.accepted_travel_reimbursement:
+        flash('You have already accepted your travel reimbursement!', 'warning')
+    else:
+        g.log.info('Accepted travel reimbursement')
+        current_user.accepted_travel_reimbursement = True
+        DB.session.add(current_user)
+        DB.session.commit()
+    return redirect(url_for('additional-status'))
 
 
 @helpers.check_registration_opened
