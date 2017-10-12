@@ -44,6 +44,7 @@ class User(DB.Model, UserMixin):
     needs_travel_reimbursement = DB.Column(DB.Boolean)
     why_travel_reimbursement = DB.Column(DB.Text)
     has_travel_reimbursement = DB.Column(DB.Boolean)
+    accepted_travel_reimbursement = DB.Column(DB.Boolean)
     workshops = DB.Column(DB.Text)
     facebook_account = DB.Column(DB.String(100))
     campus_ambassador = DB.Column(DB.Boolean)
