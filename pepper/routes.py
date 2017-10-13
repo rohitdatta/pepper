@@ -34,6 +34,8 @@ def configure_routes(app):
                      methods=['GET'])
     app.add_url_rule('/accept_travel_reimbursement', 'accept-travel-reimbursement',
                      view_func=users.views.accept_reimbursement, methods=['POST'])
+    app.add_url_rule('/view_campus_ambassadors', 'view-campus-ambassadors',
+                     view_func=users.views.view_campus_ambassadors, methods=['GET'])
 
     # Team actions
     app.add_url_rule('/team', 'team', view_func=teams.views.team, methods=['GET', 'POST'])

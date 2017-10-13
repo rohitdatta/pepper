@@ -129,13 +129,11 @@
         <div class="travel-reimbursement-fields">
             <h4 class="required">Why do you think you deserve travel reimbursement?</h4>
             <textarea rows="5" name="why_travel_reimbursement"
-                      required>{% if not required and user.why_travel_reimbursement %}
-                {{ user.why_travel_reimbursement }}{% endif %}</textarea>
+                      required>{% if not required and user.why_travel_reimbursement %}{{ user.why_travel_reimbursement }}{% endif %}</textarea>
         </div>
         <h4>We will be hosting workshops both before and during HackTX. What kind of workshops would you want to
             see?</h4>
-        <textarea rows="5" name="workshops">{% if not required and user.workshops %}
-            {{ user.workshops }}{% endif %}</textarea>
+        <textarea rows="5" name="workshops">{% if not required and user.workshops %}{{ user.workshops }}{% endif %}</textarea>
         <br>
         <h4>Want guaranteed travel reimbursement? Sign up to be a Campus Ambassador for HackTX. Campus Ambassadors will
             help hype up HackTX at their respective campuses. In order to be eligible, you must have an active Facebook
@@ -161,8 +159,7 @@
             <br>
             <h4 class="required">Why do you think you are qualified to be a Campus Ambassador?</h4>
             <textarea rows="5" name="campus_ambassadors_application"
-                      required>{% if not required and user.campus_ambassadors_application %}
-                {{ user.campus_ambassadors_application }}{% endif %}</textarea>
+                      required>{% if not required and user.campus_ambassadors_application %}{{ user.campus_ambassadors_application }}{% endif %}</textarea>
         </div>
         <br>
         {% if required %}

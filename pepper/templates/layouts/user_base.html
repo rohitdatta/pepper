@@ -8,4 +8,7 @@
     {% if current_user.status == 'CONFIRMED' and (current_user.campus_ambassador or current_user.needs_travel_reimbursement) %}
         {{ nav_item('Additional Status(es)', 'additional-status') }}
     {% endif %}
+    {% if current_user.status == 'CONFIRMED' %}
+      {{ nav_item('Find a Campus Ambassador', 'view-campus-ambassadors') }}
+    {% endif %}
 {% endblock %}

@@ -639,6 +639,12 @@ def confirm_account(token):
                                    settings.GENERAL_INFO_EMAIL)), 401
 
 
+@login_required
+@user_status_whitelist('CONFIRMED')
+def view_campus_ambassadors():
+    ambassadors = User.query.filter_by(is_campus_ambassador=True, status='CONFIRMED').order_by(User.school_name).all()
+    return render_template('users/view_campus_ambassadors.html', ambassadors=ambassadors)
+
 """
 @login_required
 def dashboard():
