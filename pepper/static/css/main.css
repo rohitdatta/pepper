@@ -150,6 +150,8 @@ h1 {
 
 .large-text p {
   font-size: 20pt; }
+.large-text li {
+  font-size: 15pt; }
 
 .top-buffer {
   margin-top: 50px; }
@@ -409,5 +411,10 @@ input[type=text].fullwidth, form input.fullwidth[type=number], form textarea.ful
 
 .context-menu--active {
   display: block; }
+
+.accept-reimbursement-button:disabled {
+  background: green; }
+.accept-reimbursement-button:hover {
+  color: #bbb9ea; }
 
 /*# sourceMappingURL=main.css.map */

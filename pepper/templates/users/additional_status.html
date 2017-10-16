@@ -104,6 +104,18 @@
                             of an
                             Amazon gift card.
                         </li>
+                        <li>
+                          By clicking the button below, you understand what's required of you to receive travel reimbursement.
+                          {% if user.accepted_travel_reimbursement %}
+                          <br/>
+                          <button class="accept-reimbursement-button" disabled><i class="fa fa-check" aria-hidden="true"></i> I've accepted</button>
+                          {% else %}
+                          <form action="{{ url_for('accept-travel-reimbursement') }}" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit">I accept</button>
+                          </form>
+                          {% endif %}
+                        </li>
                     </ul>
                 {% else %}
                     <p>Thank you for taking the time to apply for travel reimbursement. Unfortunately, the applicant

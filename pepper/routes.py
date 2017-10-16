@@ -32,6 +32,10 @@ def configure_routes(app):
     app.add_url_rule('/accept/sign', 'sign', view_func=users.views.sign, methods=['GET', 'POST'])
     app.add_url_rule('/additional_status', 'additional-status', view_func=users.views.additional_status,
                      methods=['GET'])
+    app.add_url_rule('/accept_travel_reimbursement', 'accept-travel-reimbursement',
+                     view_func=users.views.accept_reimbursement, methods=['POST'])
+    app.add_url_rule('/view_campus_ambassadors', 'view-campus-ambassadors',
+                     view_func=users.views.view_campus_ambassadors, methods=['GET'])
 
     # Team actions
     app.add_url_rule('/team', 'team', view_func=teams.views.team, methods=['GET', 'POST'])

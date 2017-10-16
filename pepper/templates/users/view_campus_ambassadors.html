@@ -1,0 +1,22 @@
+{% extends 'layouts/user_base.html' %}
+{% block content %}
+<h1>Find Your Campus Ambassadors</h1>
+<table class="info">
+  <tr>
+    <td>School</td>
+    <td>First Name</td>
+    <td>Last Name</td>
+    <td>Email</td>
+    <td>Facebook Account</td>
+  </tr>
+  {% for ambassador in ambassadors %}
+  <tr>
+    <td>{{ ambassador.school_name }}</td>
+    <td>{{ ambassador.fname }}</td>
+    <td>{{ ambassador.lname }}</td>
+    <td><a href="mailto:{{ ambassador.email }}">{{ ambassador.email }}</a></td>
+    <td><a href="https://facebook.com/{{ ambassador.facebook_account }}">https://facebook.com/{{ ambassador.facebook_account }}<a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
