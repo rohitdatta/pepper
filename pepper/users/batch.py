@@ -11,9 +11,13 @@ from pepper.utils import send_email, serializer, timed_serializer
 
 
 def send_accepted_emails(users):
+
     def generate_html(user):
-        return render_template('emails/application_decisions/accepted.html', user=user)
-    send_batch_emails_with_context(users, 'Congrats! Your HackTX Invitation', generate_html)
+        return render_template('emails/application_decisions/round2.html', user=user)
+
+    send_batch_emails_with_context(
+        users, 'Your {} application decision'.format(settings.HACKATHON_NAME),
+        generate_html)
 
 
 def send_confirmation_email(user):
@@ -100,14 +104,28 @@ def accept_fifo(num_to_accept):
         User.time_applied.asc()).all()
     accept_users(_filter_individuals(potential_users)[:num_to_accept])
 
+    def generate_html(user):
+        return render_template('emails/application_decisions/round2.html', user=user)
+
+    send_batch_emails_with_context(
+        potential_users, "Your {} application decision".format(settings.HACKATHON_NAME),
+        generate_html)
+
 
 def accept_random(num_to_accept):
-    filtered_users = User.query.filter(User.status == status.WAITLISTED).all()
+    potential_users = User.query.filter(User.status == status.WAITLISTED).all()
 
     # get individuals
-    filtered_users = _filter_individuals(filtered_users)
+    filtered_users = _filter_individuals(potential_users)
 
     accept_users(random.sample(set(filtered_users), num_to_accept))
+
+    def generate_html(user):
+        return render_template('emails/application_decisions/round2.html', user=user)
+
+    send_batch_emails_with_context(
+        potential_users, "Your {} application decision".format(settings.HACKATHON_NAME),
+        generate_html)
 
 
 def accept_users(accepted_users):
@@ -117,16 +135,6 @@ def accept_users(accepted_users):
         user.status = status.ACCEPTED
         DB.session.add(user)
     DB.session.commit()
-
-    def generate_html(user):
-        if former_user_statuses[user.id] == status.WAITLISTED:
-            return render_template('emails/application_decisions/accept_from_waitlist.html',
-                                   user=user)
-        return render_template('emails/application_decisions/accepted.html', user=user)
-
-    send_batch_emails_with_context(accepted_users,
-                                  "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                                   generate_html)
 
 
 def keen_add_event(user_id, event_type, count, event_time):
