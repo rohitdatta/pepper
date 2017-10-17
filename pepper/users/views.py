@@ -27,6 +27,9 @@ def landing():
 @redirect_to_dashboard_if_authed
 @helpers.check_registration_opened
 def sign_up():
+    if settings.REGISTRATION_CLOSED:
+        flash('Registration has closed', 'error')
+        return redirect(url_for('landing'))
     if request.method == 'GET':
         return render_template("users/sign_up.html", mlh_oauth_url=helpers.mlh_oauth_url)
     email = request.form.get('email')

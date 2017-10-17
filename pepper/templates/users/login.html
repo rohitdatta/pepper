@@ -15,7 +15,9 @@
             </div>
         </form>
         <a href="{{ url_for('forgot-password') }}"><p>Forgot your password?</p></a>
+        {% if not config.REGISTRATION_CLOSED %}
         <a href="{{ url_for('sign-up') }}"><p>Don't have an account?</p></a>
+        {% endif %}
         <hr>
         <p>Or sign in with</p>
         <a href="{{ mlh_oauth_url }}" class="my-mlh-link">

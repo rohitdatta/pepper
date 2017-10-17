@@ -97,25 +97,23 @@ def debug_user():
 @login_required
 @roles_required('admin')
 def batch_modify():
-    users = User.query.filter(
-        and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED), User.confirmed.is_(True))).order_by(
-        User.time_applied.asc()).all()
     if request.method == 'GET':
+        users = User.query.filter(User.status == status.WAITLISTED).order_by(
+            User.time_applied.asc()).all()
         return render_template('users/admin/accept_users.html', users=users)
     elif request.method == 'POST':
         g.log.info('Starting batch acceptance')
         acceptance_heuristic = request.form.get('acceptance_heuristic')
         num_acceptance = int(request.form.get('num_acceptance'))
-        include_waitlisted = request.form.get('include_waitlisted', True) == 'true'
 
         if num_acceptance <= 0:
             flash('Invalid number for acceptance. Please try again.', 'error')
             return redirect(url_for('batch-modify'))
         else:
             if acceptance_heuristic == 'fifo':  # First in, first out
-                batch.accept_fifo(num_acceptance, include_waitlisted)
+                batch.accept_fifo(num_acceptance)
             else:  # Randomly select num_acceptance users
-                batch.accept_random(num_acceptance, include_waitlisted)
+                batch.accept_random(num_acceptance)
             flash('Successfully modified user statuses. However, this will take a while.'
                   ' Please refresh this page later to see the changes.', 'info')
             g.log.info('Batch acceptances have been queued')
@@ -192,38 +190,32 @@ def reject_users():
 
 def get_valid_teams():
     users = User.query.filter(
-        and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED),
+        and_(or_(User.status == status.WAITLISTED,
+                 User.status == status.ACCEPTED,
+                 User.status == status.SIGNING,
+                 User.status == status.CONFIRMED),
              User.team_id.isnot(None),
              User.time_team_join.isnot(None),
-             User.confirmed.is_(True))).all()
+             User.confirmed.is_(True))).order_by(User.time_team_join).all()
 
-    team_size_dict = defaultdict(int)
     team_structure_dict = defaultdict(list)
-    teams_sort_criteria = []
     sorted_users = []
 
     # Getting team count as well as grouping users by team_id
     for u in users:
-        team_size_dict[u.team_id] += 1
         team_structure_dict[u.team_id].append(u)
 
-    # Removing teams that only have 1 member
-    for team_id in team_structure_dict.keys():
-        if team_size_dict[team_id] <= 1:
+    # Removing teams that only have 1 member or have already been accepted
+    for team_id, members in team_structure_dict.items():
+        if len(members) <= 1 or all(member.status != status.WAITLISTED for member in members):
             team_structure_dict.pop(team_id, None)
 
-    # Getting the sorting criteria by extracting the 2nd member's time_team_join
-    for team_id in team_structure_dict.keys():
-        team_users = sorted(team_structure_dict[team_id], key=lambda k: k.time_team_join)
-        team_structure_dict[team_id] = team_users
-        teams_sort_criteria.append((team_users[1].time_team_join, team_id))
-
     # Sorting the teams by the 2nd member's time_team_join
-    teams_sort_criteria = sorted(teams_sort_criteria, key=lambda k: k[0])
+    sorted_teams = sorted(team_structure_dict.items(), key=lambda (k, v): v[1].time_team_join)
 
     # Inserting the teams into list
-    for (timestamp, team_id) in teams_sort_criteria:
-        sorted_users += team_structure_dict[team_id]
+    for team_id, members in sorted_teams:
+        sorted_users += [teammate for teammate in team_structure_dict[team_id] if teammate.status == 'WAITLISTED']
 
     return sorted_users
 
