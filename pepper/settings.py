@@ -25,6 +25,7 @@ S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
 REGISTRATION_OPEN = os.getenv('REGISTRATION_OPEN') in ['True', 'true', '1', 'yes']
+REGISTRATION_CLOSED = os.getenv('REGISTRATION_CLOSED') in ['True', 'true', '1', 'yes']
 LETS_ENCRYPT_PATH = os.getenv('LETS_ENCRYPT_PATH')
 LETS_ENCRYPT_PATH_CHALLENGE = os.getenv('LETS_ENCRYPT_PATH_CHALLENGE')
 CDN_URL = os.getenv('CDN_URL')

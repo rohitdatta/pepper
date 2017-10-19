@@ -11,9 +11,13 @@ from pepper.utils import send_email, serializer, timed_serializer
 
 
 def send_accepted_emails(users):
+
     def generate_html(user):
-        return render_template('emails/application_decisions/accepted.html', user=user)
-    send_batch_emails_with_context(users, 'Congrats! Your HackTX Invitation', generate_html)
+        return render_template('emails/application_decisions/round2.html', user=user)
+
+    send_batch_emails_with_context(
+        users, 'Your {} application decision'.format(settings.HACKATHON_NAME),
+        generate_html)
 
 
 def send_confirmation_email(user):
@@ -90,40 +94,38 @@ def _send_batch_static_emails(emails, subject, html_content):
 
 
 def _filter_individuals(users):
-    filtered = []
-    for user in users:
-        if user.team is not None:
-            num_team_eligible = sum(1 for u in user.team.users if u.confirmed)
-            if num_team_eligible > 1:
-                continue
-        filtered.append(user)
-    return filtered
+    import admin_views
+    team_ids = set(user.id for user in admin_views.get_valid_teams())
+    return [user for user in users if user.id not in team_ids]
 
 
-def accept_fifo(num_to_accept, include_waitlisted):
-    if include_waitlisted:
-        potential_users = User.query.filter(
-            and_(or_(User.status == status.WAITLISTED, User.status == status.PENDING), User.confirmed.is_(True)))
-    else:
-        potential_users = User.query.filter(and_(User.status == status.PENDING), User.confirmed.is_(True))
+def accept_fifo(num_to_accept):
+    potential_users = User.query.filter(User.status == status.WAITLISTED).order_by(
+        User.time_applied.asc()).all()
+    accept_users(_filter_individuals(potential_users)[:num_to_accept])
 
-    potential_users = potential_users.order_by(User.time_applied.asc()).all()
+    def generate_html(user):
+        return render_template('emails/application_decisions/round2.html', user=user)
 
-    accept_users(_filter_individuals(potential_users))
+    send_batch_emails_with_context(
+        potential_users, "Your {} application decision".format(settings.HACKATHON_NAME),
+        generate_html)
 
 
-
-def accept_random(num_to_accept, include_waitlisted):
-    if include_waitlisted:
-        filtered_users = User.query.filter(and_(or_(User.status == status.PENDING, User.status == status.WAITLISTED),
-                                                User.confirmed.is_(True))).all()
-    else:
-        filtered_users = User.query.filter(and_(User.status == status.PENDING, User.confirmed.is_(True))).all()
+def accept_random(num_to_accept):
+    potential_users = User.query.filter(User.status == status.WAITLISTED).all()
 
     # get individuals
-    filtered_users = _filter_individuals(filtered_users)
+    filtered_users = _filter_individuals(potential_users)
 
     accept_users(random.sample(set(filtered_users), num_to_accept))
+
+    def generate_html(user):
+        return render_template('emails/application_decisions/round2.html', user=user)
+
+    send_batch_emails_with_context(
+        potential_users, "Your {} application decision".format(settings.HACKATHON_NAME),
+        generate_html)
 
 
 def accept_users(accepted_users):
@@ -132,18 +134,7 @@ def accept_users(accepted_users):
         former_user_statuses[user.id] = user.status
         user.status = status.ACCEPTED
         DB.session.add(user)
-        DB.session.commit()
-
-    def generate_html(user):
-        if former_user_statuses[user.id] == status.WAITLISTED:
-            return render_template('emails/application_decisions/accept_from_waitlist.html',
-                                   user=user)
-        # User should be in pending state, but catch all just in case
-        return render_template('emails/application_decisions/accepted.html', user=user)
-
-    send_batch_emails_with_context(accepted_users,
-                                  "You're In! {} Invitation".format(settings.HACKATHON_NAME),
-                                   generate_html)
+    DB.session.commit()
 
 
 def keen_add_event(user_id, event_type, count, event_time):

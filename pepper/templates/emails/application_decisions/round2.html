@@ -1,0 +1,38 @@
+{% extends 'emails/base.html' %}
+{% block message %}
+<tr>
+  <td class="content-block">
+    Hey {{ user.fname }},
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Thank you for applying to {{ config.HACKATHON_NAME }}. The second round of application decisions are out now. You can check your status by logging in to <a href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a>.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    If you got accepted, congrats! You will need to fill out the forms on <a href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> to confirm that you are going. We hope to see you on October 28!
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    If you are still waitlisted, don't worry. This decision is not a reflection of your resume or your experience level. If you live in the Austin metro area, we encourage you to try to walk-in on the day of {{ config.HACKATHON_NAME }}, October 28. Please check the application status page for more details on how walk-ins work.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Please reply to this email if you have any questions.
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    Thanks for applying!
+  </td>
+</tr>
+<tr>
+  <td class="content-block">
+    &lt;3 Freetail Hackers
+  </td>
+</tr>
+{% endblock %}
