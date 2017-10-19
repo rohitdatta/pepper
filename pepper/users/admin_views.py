@@ -137,6 +137,8 @@ def send_email_to_users():
     targeted_users = []
     user_id_set = set()
 
+    from_name = request.form.get('from_name')
+
     statuses = request.form.getlist('status')
     status_users = User.query.filter(or_(User.status.in_(statuses))).all() if statuses else []
     checkbox_user_ids = [int(current_user_id) for current_user_id in request.form.getlist('user_ids')]
@@ -154,7 +156,8 @@ def send_email_to_users():
 
     if len(targeted_users) > 0:
         batch.send_batch_email(request.form.get('content'), request.form.get('subject'),
-                               targeted_users, request.form.get('user-context') == 'TRUE')
+                               targeted_users, request.form.get('user-context') == 'TRUE',
+                               from_name=from_name)
 
     flash('Batch email(s) successfully sent', 'success')
     return redirect(url_for('send-email'))

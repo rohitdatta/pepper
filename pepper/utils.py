@@ -124,9 +124,11 @@ def redirect_to_dashboard_if_authed(func):
     return decorated_view
 
 
-def send_email(from_email, subject, to_email, txt_content=None, html_content=None):
+def send_email(from_email, subject, to_email, txt_content=None, html_content=None, from_name=None):
+    if not from_name:
+        from_name = settings.HACKATHON_NAME
     mail = Mail()
-    mail.from_email = Email(from_email, settings.HACKATHON_NAME)
+    mail.from_email = Email(from_email, from_name)
     personalization = Personalization()
     personalization.add_to(Email(to_email))
     personalization.subject = subject
