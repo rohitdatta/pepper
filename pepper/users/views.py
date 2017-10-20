@@ -292,7 +292,7 @@ def extract_user_info(resume_required=False):
         'dietary_restrictions': request.form.get('dietary_restrictions'),
         'gender': request.form.get('gender'),
         'phone_number': request.form.get('phone_number'),
-        'special_needs': request.form.get('special_needs', ''),
+        'special_needs': request.form.get('special_needs', '').strip(),
         'school_name': request.form.get('school_name'),
     }
 

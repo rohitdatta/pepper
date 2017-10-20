@@ -14,6 +14,7 @@ from scripts.rename_resumes import FixResumeCommand
 from scripts.pending_to_waitlisted import PendingToWaitlistedCommand
 from scripts.rename_schools import FixUsersSchoolNames
 from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
+from scripts.strip_whitespace_from_special_needs import StripWhitespaceFromSpecialNeedsCommand
 
 manager = Manager(hackathon_identity_app)
 
@@ -26,6 +27,7 @@ manager.add_command('fixresumes', FixResumeCommand)
 manager.add_command('pending_to_waitlisted', PendingToWaitlistedCommand)
 manager.add_command('fixschools', FixUsersSchoolNames)
 manager.add_command('print_confirm_email_token', PrintConfirmEmailTokenCommand)
+manager.add_command('strip_whitespace_from_special_needs', StripWhitespaceFromSpecialNeedsCommand)
 
 
 @manager.command

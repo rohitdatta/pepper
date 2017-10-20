@@ -15,6 +15,7 @@
     <h1>Send Email</h1>
     <form id="batch_email" action="{{ url_for('send-email') }}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <input type="text" name="from_name" placeholder="From Name" value="{{ config.HACKATHON_NAME }}">
         <input type="text" name="subject" placeholder="Subject">
         <label class="control control--checkbox">This email needs user context.
             <input type="checkbox" name="user-context" value="TRUE"/>
