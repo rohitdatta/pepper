@@ -83,7 +83,6 @@ def configure_routes(app):
 
 
     # Corporate Portal
-    """
     app.add_url_rule('/corp/login', 'corp-login', view_func=corporate.views.login, methods=['GET', 'POST'])
     app.add_url_rule('/corp/login/reset', 'corp-forgot-password', view_func=corporate.views.forgot_password,
                      methods=['GET', 'POST'])
@@ -100,4 +99,3 @@ def configure_routes(app):
 
     app.add_url_rule('/corp/download/all-resumes', 'all-resume-download',
                      view_func=corporate.views.download_all_resumes, methods=['GET'])
-    """

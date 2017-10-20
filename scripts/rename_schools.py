@@ -1,31 +1,33 @@
 from pepper.users.models import User
 from flask_script import Command
-import operator
-from pepper.app import DB
-from collections import Counter
+from pepper.app import DB, redis_store
+from collections import Counter, defaultdict
 import redis
 
 class FixUsersSchoolNames(Command):
     def run(self):
-		r = redis.StrictRedis(host='localhost',port=6379,db=0)
 		all_colleges = []
 		all_users = User.query.filter_by(school_id=None).all()
 
-		edu_groups = {}
+		edu_groups = defaultdict(list)
 		non_edus = []
 
+		# Add edus:schools stuff
+		
 		for user in all_users:
 			if user.type == 'admin':
 				continue;
-			if not r.get(user.school_name) is None:
-				user.school_name = r.get(user.school_name)
+			if redis_store.get("incorrect_school_names:" + user.school_name) is not None:
+				user.school_name = redis_store.get("incorrect_school_names:" + user.school_name)
 				DB.session.add(user);
 				DB.session.commit();
 				continue;
 			if "edu" in user.email:
 				school_edu = user.email.split("@")
-				if not school_edu[1] in edu_groups.keys():
-					edu_groups[school_edu[1]] = [user]
+				if redis_store.get("email_to_school:" + school_edu[1]) is not None:
+					user.school_name = redis_store.get("email_to_school:" + school_edu[1])
+					DB.session.add(user);
+					DB.session.commit();
 				else:
 					edu_groups[school_edu[1]].append(user)
 			else: 
@@ -36,10 +38,7 @@ class FixUsersSchoolNames(Command):
 			for user in value:
 				count_schools_dict[user.school_name]+=1
 			sorted_schools_dict = count_schools_dict.most_common(5)
-			# sorted_schools_dict = sorted(count_schools_dict, key=count_schools_dict.get, reverse=True)[:5]
 			print(key)
-			# for x in sorted_schools_dict:
-			# 	print(x);
 			temp = 0
 
 			for x in sorted_schools_dict:
@@ -61,8 +60,9 @@ class FixUsersSchoolNames(Command):
 					else:
 						print('Invalid decision - Try again.')
 					print('\n')
+			redis_store.set("email_to_school:" + key, decided_name)
 			for user in value:
-				r.set(user.school_name,decided_name)
+				redis_store.set("incorrect_school_names:"+ user.school_name,decided_name)
 				user.school_name = decided_name
 				DB.session.add(user);
 			DB.session.commit();
@@ -70,8 +70,8 @@ class FixUsersSchoolNames(Command):
 			print('\n')
 
 		for user in non_edus:
-			if not r.get(user.school_name) is None:
-				user.school_name = r.get(user.school_name)
+			if redis_store.get("incorrect_school_names:" + user.school_name) is not None:
+				user.school_name = redis_store.get("incorrect_school_names:" + user.school_name)
 				DB.session.add(user);
 				DB.session.commit();
 				continue;
