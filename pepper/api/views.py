@@ -7,7 +7,7 @@ from flask import jsonify, request, Response
 import keen
 
 from pepper import settings
-from pepper.app import DB
+from pepper.app import DB, csrf
 from pepper.users import User
 from pepper.utils import calculate_age
 from pepper import status
@@ -37,6 +37,7 @@ def partner_list():
     return Response(json.dumps(data), mimetype='application/json')
 
 
+@csrf.exempt
 def passbook():
     email = request.get_json()['email']
     user = User.query.filter_by(email=email).first()
@@ -50,19 +51,23 @@ def passbook():
     return jsonify(data)
 
 
+@csrf.exempt
 def check_in():
     # Check if secret token matches
     if request.method == 'GET':
         email = urllib.unquote(request.args.get('email')).lower()
         volunteer_email = urllib.unquote(request.args.get('volunteer_email'))
+        secret = urllib.unquote(request.args.get('secret'))
     else:
         data = request.json
         email = data['email'].lower()
         volunteer_email = data['volunteer_email']
+        secret = data['secret']
 
-    # if data['secret'] != settings.CHECK_IN_SECRET:
-    # 	message = 'Unauthorized'
-    # 	return jsonify(message=message), 401
+    if secret != settings.CHECK_IN_SECRET:
+        message = 'Unauthorized'
+        return jsonify(message=message), 401
+
 
     # Get the user email and check them in
     user = User.query.filter_by(email=email).first()

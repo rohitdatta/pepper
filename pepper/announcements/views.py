@@ -1,4 +1,4 @@
-from pepper.app import DB
+from pepper.app import DB, csrf
 from flask import request, Response
 from models import Announcement
 from pepper import settings
@@ -17,6 +17,7 @@ def announcement_list():
     return Response(json.dumps(announcement_list), mimetype='application/json')
 
 
+@csrf.exempt
 def create_announcement():
     token = request.form.get('token')
     text = request.form.get('text')
