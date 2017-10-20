@@ -143,7 +143,7 @@ def corporate_search():
         lnames = DB.session.query(distinct(User.lname)).all()
         schools, majors, class_standings, fnames, lnames = [filter(lambda x: x[0] is not None, filter_list) for filter_list in
                                             [schools, majors, class_standings, fnames, lnames]]
-        schools, majors, class_standings, fnames, lname = [map(lambda x: x[0], filter_list) for filter_list in
+        schools, majors, class_standings, fnames, lnames = [map(lambda x: x[0], filter_list) for filter_list in
                                             [schools, majors, class_standings, fnames, lnames]]
         schools.sort()
         majors.sort()
@@ -163,7 +163,8 @@ def search_results():
     fnames = request.form.getlist('fnames')
     lnames = request.form.getlist('lnames')
     attended = request.form.get('attended')
-    users = User.query.filter(and_(User.status != status.NEW, User.type == 'MLH'))
+    # Change the filter? This is taking all users.    
+    users = User.query.filter()
     if schools:
         users = users.filter(User.school_name.in_(schools))
     if majors:
