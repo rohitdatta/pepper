@@ -15,7 +15,7 @@ class FixUsersSchoolNames(Command):
 		# Add edus:schools stuff
 		
 		for user in all_users:
-			if user.type == 'admin':
+			if user.type == 'admin' or user.status == 'NEW':
 				continue;
 			if redis_store.get("incorrect_school_names:" + user.school_name) is not None:
 				user.school_name = redis_store.get("incorrect_school_names:" + user.school_name)

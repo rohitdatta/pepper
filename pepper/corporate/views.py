@@ -164,7 +164,7 @@ def search_results():
     lnames = request.form.getlist('lnames')
     attended = request.form.get('attended')
     # Change the filter? This is taking all users.    
-    users = User.query.filter()
+    users = User.query.filter(and_(User.status != 'NEW', User.status != 'ADMIN'))
     if schools:
         users = users.filter(User.school_name.in_(schools))
     if majors:
