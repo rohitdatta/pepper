@@ -139,14 +139,18 @@ def corporate_search():
         schools = DB.session.query(distinct(User.school_name)).all()
         majors = DB.session.query(distinct(User.major)).all()
         class_standings = DB.session.query(distinct(User.class_standing)).all()
-        schools, majors, class_standings = [filter(lambda x: x[0] is not None, filter_list) for filter_list in
-                                            [schools, majors, class_standings]]
-        schools, majors, class_standings = [map(lambda x: x[0], filter_list) for filter_list in
-                                            [schools, majors, class_standings]]
+        fnames = DB.session.query(distinct(User.fname)).all()
+        lnames = DB.session.query(distinct(User.lname)).all()
+        schools, majors, class_standings, fnames, lnames = [filter(lambda x: x[0] is not None, filter_list) for filter_list in
+                                            [schools, majors, class_standings, fnames, lnames]]
+        schools, majors, class_standings, fnames, lnames = [map(lambda x: x[0], filter_list) for filter_list in
+                                            [schools, majors, class_standings, fnames, lnames]]
         schools.sort()
         majors.sort()
         class_standings.sort()
-        return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings)
+        fnames.sort()
+        lnames.sort()
+        return render_template('corporate/search.html', schools=schools, majors=majors, class_standings=class_standings, fnames=fnames, lnames=lnames)
 
 
 @corp_login_required
@@ -156,25 +160,34 @@ def search_results():
     schools = request.form.getlist('schools')
     class_standings = request.form.getlist('class_standings')
     majors = request.form.getlist('majors')
+    fnames = request.form.getlist('fnames')
+    lnames = request.form.getlist('lnames')
     attended = request.form.get('attended')
-    users = User.query.filter(and_(User.status != status.NEW, User.type == 'MLH'))
+    # Change the filter? This is taking all users.    
+    users = User.query.filter()
     if schools:
         users = users.filter(User.school_name.in_(schools))
     if majors:
         users = users.filter(User.major.in_(majors))
     if class_standings:
         users = users.filter(User.class_standing.in_(class_standings))
+    if fnames:
+        users = users.filter(User.fname.in_(fnames))
+    if lnames:
+        users = users.filter(User.lname.in_(lnames))
     if attended:
         users = users.filter(User.checked_in)
     users = users.all()
     end = time.time()
     search_time = end - start
     g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
-    g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2}, attended:{3} by'.format(schools, majors,
+    g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2}, fnames:{3}, lnames:{4}, attended:{5} by'.format(schools, majors,
                                                                                                        class_standings,
+                                                                                                       fnames,
+                                                                                                       lnames,
                                                                                                        attended))
     return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
-                           majors=majors, time=search_time)
+                           majors=majors, fnames=fnames, lnames=lnames, time=search_time)
 
 
 @corp_login_required
