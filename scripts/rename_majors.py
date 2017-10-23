@@ -30,8 +30,8 @@ class FixUsersMajors(Command):
 			print(user.major + " " + user.email)
 			print("0: Keep")
 			print("1: Change")
-			key = input('Enter number key: ')
-			if key == 1:
+			option = input('Enter number option: ')
+			if option == 1:
 				while True:
 					decided_major = raw_input('Enter major: ')
 					is_decide = raw_input('Do you want to use this major: ' + decided_major + ' - y/n?\n')

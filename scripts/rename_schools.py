@@ -45,9 +45,9 @@ class FixUsersSchoolNames(Command):
 				print("(" + str(temp) + "): " + x[0])
 				temp+=1
 			print("" + str(temp) + ": Customize Name")
-			key = input('Enter number key: ')
-			if key < len(sorted_schools_dict):
-				decided_name = sorted_schools_dict[key][0]
+			option = input('Enter number option: ')
+			if option < len(sorted_schools_dict):
+				decided_name = sorted_schools_dict[option][0]
 				print(decided_name)
 			else:
 				while True:
@@ -78,8 +78,8 @@ class FixUsersSchoolNames(Command):
 			print(user.school_name + " " + user.email)
 			print("0: Keep")
 			print("1: Change")
-			key = input('Enter number key: ')
-			if key == 1:
+			option = input('Enter number key: ')
+			if option == 1:
 				while True:
 					decided_name = raw_input('Enter school name: ')
 					is_decide = raw_input('Do you want to use this name: ' + decided_name + ' - y/n?\n')
