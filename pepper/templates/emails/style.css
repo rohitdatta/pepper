@@ -186,6 +186,10 @@ a {
     clear: both;
 }
 
+.red {
+  color: red;
+}
+
 /* -------------------------------------
 	ALERTS
 	Change the class depending on warning email, good email or bad email
