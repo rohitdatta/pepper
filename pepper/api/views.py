@@ -70,21 +70,27 @@ def check_in():
 
 
     # Get the user email and check them in
-    user = User.query.filter_by(email=email).first()
+    # TODO: when emails are normalized to lowercase, do the same here
+    matched_users = User.query.filter(User.email.ilike(email)).all()
+    user = max(matched_users, key=lambda u: status.STATUS_LEVEL[u.status]) if matched_users else None
     if user is not None:
         message = 'Found user'
+        bday = user.birthday
         if request.method == 'POST':
             # check the user in
             if user.checked_in:  # User is already checked in
                 message = 'Attendee is already checked in'
             else:
-                if user.status == status.CONFIRMED:
+                if user.status == status.CONFIRMED or user.status == status.SIGNING:
                     user.checked_in = True
                     DB.session.add(user)
                     DB.session.commit()
-                    fmt = '%Y-%m-%dT%H:%M:%S.%f'
+                    # removed strftime call because it breaks on years before 1900 which we didn't sanitize
+                    # fmt = '%Y-%m-%dT%H:%M:%S.%f'
+                    formatted_birthday = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:06d}'.format(
+                        bday.year, bday.month, bday.day, 0, 0, 0, 0)
                     keen.add_event('check_in', {
-                        'date_of_birth': user.birthday.strftime(fmt),
+                        'date_of_birth': formatted_birthday,
                         'dietary_restrictions': user.dietary_restrictions,
                         'email': user.email,
                         'first_name': user.fname,
@@ -113,9 +119,10 @@ def check_in():
                     message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
                     # return back success to the check in app
 
+        formatted_birthday = '{:02d}/{:02d}/{:04d}'.format(bday.month, bday.day, bday.year)
         return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email,
-                       age=calculate_age(user.birthday), checked_in=user.checked_in,
-                       confirmed=user.status == status.CONFIRMED,
-                       birthday=datetime.date.strftime(user.birthday, '%m/%d/%Y'))
+                       age=calculate_age(bday), checked_in=user.checked_in,
+                       status=user.status,
+                       birthday=formatted_birthday)
     else:
         return jsonify(message='User does not exist'), 404
