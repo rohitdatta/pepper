@@ -1,15 +1,15 @@
 [
   {
     "id": 0,
-    "name": "9:30 AM",
+    "name": "10 AM",
     "eventsList": [
       {
         "id": 0,
         "name": "Check In",
         "type": "talk",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 09:30:00",
-        "endDate": "2015-10-22 11:45:00",
+        "startDate": "2017-10-28 10:00:00",
+        "endDate": "2017-10-28 12:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -22,15 +22,15 @@
   },
   {
     "id": 1,
-    "name": "11 AM",
+    "name": "11:30 AM",
     "eventsList": [
       {
         "id": 1,
         "name": "Opening Ceremony",
         "type": "talk",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 11:00:00",
-        "endDate": "2015-10-22 11:50:00",
+        "startDate": "2017-10-28 11:30:00",
+        "endDate": "2017-10-28 12:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -50,8 +50,8 @@
         "name": "Hacking Begins",
         "type": "dev",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 12:00:00",
-        "endDate": "2015-10-23 12:00:00",
+        "startDate": "2017-10-28 12:00:00",
+        "endDate": "2017-10-29 12:00:00",
         "location": {
           "building": "Omni",
           "level": "",
@@ -65,33 +65,33 @@
         "name": "Matchmaking Session",
         "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 12:00:00",
-        "endDate": "2015-10-23 12:30:00",
+        "startDate": "2017-10-28 12:00:00",
+        "endDate": "2017-10-29 12:30:00",
         "location": {
           "building": "Omni",
           "level": "",
           "room": "Workshop Rooms"
         },
-        "description": "Come meet other hackers to join as a team!",
+        "description": "The hacking begins! Hacking will end Sunday at noon.",
         "speakerList": []
       }
     ]
   },
   {
     "id": 3,
-    "name": "12:30 PM",
+    "name": "1 PM",
     "eventsList": [
       {
         "id": 4,
         "name": "Lunch",
         "type": "food",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 12:30:00",
-        "endDate": "2015-10-22 13:30:00",
+        "startDate": "2017-10-28 13:00:00",
+        "endDate": "2017-10-28 13:30:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Austin Ballroom"
+          "room": "Atrium"
         },
         "description": "Lunch!",
         "speakerList": []
@@ -100,141 +100,177 @@
   },
   {
     "id": 4,
-    "name": "2:00 PM",
+    "name": "2:30 PM",
     "eventsList": [
       {
         "id": 5,
-        "name": "Workshop",
-        "type": "education",
+        "name": "Ice Cream",
+        "type": "food",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 14:00:00",
-        "endDate": "2015-10-22 15:00:00",
+        "startDate": "2017-10-28 14:30:00",
+        "endDate": "2017-10-28 15:00:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Graffiti Park Lounge"
+          "room": "Atrium"
         },
-        "description": "Workshop hosted by JPMorgan Chase & Co.",
-        "speakerList": []
-      },
-      {
-        "id": 6,
-        "name": "Workshop",
-        "type": "education",
-        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 14:00:00",
-        "endDate": "2015-10-22 15:00:00",
-        "location": {
-          "building": "Omni",
-          "level": "",
-          "room": "Microsoft Lounge"
-        },
-        "description": "Workshop hosted by Microsoft.",
+        "description": "Come enjoy ice cream!",
         "speakerList": []
       }
     ]
   },
   {
     "id": 5,
-    "name": "3:30 PM",
+    "name": "3 PM",
     "eventsList": [
       {
-        "id": 7,
-        "name": "Workshop",
+        "id": 6,
+        "name": "Building Intelligent Bots Workshop",
         "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 15:30:00",
-        "endDate": "2015-10-22 17:00:00",
+        "startDate": "2017-10-28 15:00:00",
+        "endDate": "2017-10-28 16:00:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Graffiti Park Lounge"
+          "room": "Senate"
         },
-        "description": "Workshop hosted by Affirm and A16Z.",
+        "description": "Workshop presented by Microsoft.",
         "speakerList": []
       }
     ]
   },
   {
     "id": 6,
-    "name": "5:00 PM",
+    "name": "4 PM",
     "eventsList": [
       {
-        "id": 8,
-        "name": "WiCS/MACS Meetup",
-        "type": "talk",
+        "id": 7,
+        "name": "OAuth 2 Workshop",
+        "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 17:00:00",
-        "endDate": "2015-10-22 17:30:00",
+        "startDate": "2017-10-28 16:00:00",
+        "endDate": "2017-10-28 17:00:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Workshop Rooms"
+          "room": "Congress"
         },
-        "description": "",
+        "description": "Workshop presented by Citi.",
         "speakerList": []
       }
     ]
   },
   {
     "id": 7,
-    "name": "6:30 PM",
+    "name": "5:30 PM",
     "eventsList": [
       {
-        "id": 9,
-        "name": "Dinner",
-        "type": "food",
+        "id": 8,
+        "name": "Capital Factory VR Demo",
+        "type": "education",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 18:30:00",
-        "endDate": "2015-10-22 19:00:00",
+        "startDate": "2017-10-28 17:30:00",
+        "endDate": "2017-10-28 18:30:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Austin Ballroom"
+          "room": "Senate"
         },
-        "description": "Dinner!",
+        "description": "Demo virtual reality! Presented by Capital Factory.",
         "speakerList": []
       }
     ]
   },
   {
     "id": 8,
-    "name": "7:30 PM",
+    "name": "7 PM",
     "eventsList": [
       {
-        "id": 10,
-        "name": "Microsoft Fireside Chat",
-        "type": "talk",
+        "id": 9,
+        "name": "Dinner",
+        "type": "food",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 19:30:00",
-        "endDate": "2015-10-22 20:00:00",
+        "startDate": "2017-10-28 19:00:00",
+        "endDate": "2017-10-28 20:00:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Longhorn Ballroom"
+          "room": "Atrium"
         },
-        "description": "Fireside chat with Microsoft.",
+        "description": "Dinner is served!",
+        "speakerList": []
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "8:30 PM",
+    "eventsList": [
+      {
+        "id": 10,
+        "name": "Cup Stacking",
+        "type": "dev",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2017-10-28 20:30:00",
+        "endDate": "2017-10-28 21:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Workshop Rooms"
+        },
+        "description": "Compete in cup stacking presented by MLH!",
         "speakerList": []
       }
     ]
   },
   {
     "id": 9,
-    "name": "9:00 PM",
+    "name": "11:00 PM",
     "eventsList": [
       {
         "id": 11,
-        "name": "1517 Fireside Chat",
+        "name": "Hackathon Organizer Meet Up",
         "type": "talk",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2015-10-22 21:00:00",
-        "endDate": "2015-10-22 21:30:00",
+        "startDate": "2017-10-28 23:00:00",
+        "endDate": "2017-10-28 23:30:00",
         "location": {
           "building": "Omni",
           "level": "",
-          "room": "Longhorn Ballroom"
+          "room": "TBA"
         },
-        "description": "Fireside chat with 1517.",
+        "description": "Host a hackathon? Meet up with Freetail Hackers!",
+        "speakerList": []
+      },
+      {
+        "id": 12,
+        "name": "Costume Contest",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2017-10-28 23:00:00",
+        "endDate": "2017-10-28 23:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Senate"
+        },
+        "description": "Show off your costume and enter for a chance to win a PS4!",
+        "speakerList": []
+      },
+      {
+        "id": 13,
+        "name": "Game Night",
+        "type": "talk",
+        "imageUrl": "https://hacktx.com/images/app-event-banner.png",
+        "startDate": "2017-10-28 23:00:00",
+        "endDate": "2017-10-28 23:30:00",
+        "location": {
+          "building": "Omni",
+          "level": "",
+          "room": "Congress"
+        },
+        "description": "Come play board games!",
         "speakerList": []
       }
     ]
