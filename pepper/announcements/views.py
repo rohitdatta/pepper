@@ -5,6 +5,9 @@ from pepper import settings
 from datetime import datetime
 import requests
 import json
+from pytz import timezone
+
+cst = timezone('US/Central')
 
 
 def announcement_list():
@@ -22,6 +25,8 @@ def create_announcement():
     token = request.form.get('token')
     text = request.form.get('text')
     ts = datetime.fromtimestamp(float(request.form.get('timestamp')))
+    from_tz = timezone('UTC')
+    ts = from_tz.localize(ts).astimezone(cst)
     if request.form.get('token') != settings.SLACK_TOKEN:
         return 'Unauthorized', 401
     send_notification = text.startswith('<!channel>')
