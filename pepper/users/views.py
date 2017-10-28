@@ -108,6 +108,9 @@ def callback():
             g.log = g.log.bind(email=user_info['data']['email'])
             user = User.query.filter_by(email=user_info['data']['email']).first()
             if user is None:
+                if settings.REGISTRATION_CLOSED:
+                    flash('Registration has closed', 'error')
+                    return redirect(url_for('login'))
                 if settings.REGISTRATION_OPEN:
                     g.log.info('Creating a new user from MLH info')
                     user = User(user_info)
