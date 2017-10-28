@@ -77,6 +77,7 @@ def check_in():
     user = max(matched_users, key=lambda u: status.STATUS_LEVEL[u.status]) if matched_users else None
     if user is not None:
         waiver = Waiver.query.filter_by(user_id=user.id).first()
+        requires_eid = user.school_id == 23 and not waiver.ut_eid
         message = 'Found user'
         bday = user.birthday
         if request.method == 'POST':
@@ -86,10 +87,12 @@ def check_in():
             else:
                 if user.status == status.CONFIRMED or user.status == status.SIGNING:
                     # we didn't sanitize schools, so some students slipped by without giving us their EIDs
-                    if eid:
+                    user.checked_in = True
+                    if eid and requires_eid:
                         waiver.ut_eid = eid
                         DB.session.add(waiver)
-                    user.checked_in = True
+                        DB.session.commit()
+                        requires_eid = False
                     DB.session.add(user)
                     DB.session.commit()
                     batch.keen_add_event(user.id, 'check_in', datetime.utcnow())
@@ -102,6 +105,6 @@ def check_in():
         return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email,
                        age=calculate_age(bday), checked_in=user.checked_in,
                        status=user.status, birthday=formatted_birthday,
-                       requires_eid=user.school_id == 23 and not waiver.ut_eid)
+                       requires_eid=requires_eid)
     else:
         return jsonify(message='User does not exist'), 404
