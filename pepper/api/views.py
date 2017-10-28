@@ -77,7 +77,7 @@ def check_in():
     user = max(matched_users, key=lambda u: status.STATUS_LEVEL[u.status]) if matched_users else None
     if user is not None:
         waiver = Waiver.query.filter_by(user_id=user.id).first()
-        requires_eid = user.school_id == 23 and not waiver.ut_eid
+        requires_eid = user.school_id == 23 and waiver and not waiver.ut_eid
         message = 'Found user'
         bday = user.birthday
         if request.method == 'POST':
@@ -85,7 +85,7 @@ def check_in():
             if user.checked_in:  # User is already checked in
                 message = 'Attendee is already checked in'
             else:
-                if user.status == status.CONFIRMED or user.status == status.SIGNING:
+                if user.status == status.CONFIRMED:
                     # we didn't sanitize schools, so some students slipped by without giving us their EIDs
                     if eid and requires_eid:
                         waiver.ut_eid = eid
