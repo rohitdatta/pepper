@@ -16,6 +16,7 @@ from pepper.utils import calculate_age, get_current_user_roles, get_default_dash
     redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, \
     user_status_whitelist, user_extra_application_required
 
+
 tz = timezone('US/Central')
 
 
@@ -376,9 +377,30 @@ def accept():
         return redirect(url_for('dashboard'))
 
 
+def extract_waiver_info(user):
+    signed_info = {}
+    for key in (
+            'relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs',
+            'medical_signature', 'medical_date', 'indemnification_signature',
+            'indemnification_date', 'photo_signature', 'photo_date', 'ut_eid'):
+        signed_info[key] = request.form.get(key)
+    required_fields = ['relative_name', 'relative_email', 'relative_num', 'medical_signature',
+                       'medical_date', 'indemnification_signature', 'indemnification_date',
+                       'photo_signature', 'photo_date']
+    if None in [signed_info[key] for key in required_fields]:
+        return {'error': 'Must fill all required fields'}
+    if user.school_id == 23:
+        if signed_info['ut_eid'] == None:
+            return {'error': 'Must fill out UT EID'}
+
+    date_fmt = '%B %d, %Y'
+    for key in ('medical_date', 'indemnification_date', 'photo_date'):
+        signed_info[key] = datetime.strptime(signed_info[key], date_fmt)
+    signed_info['user_id'] = user.id
+    return signed_info
+
 @login_required
 def sign():
-    date_fmt = '%B %d, %Y'
     if current_user.status not in [status.ADMIN, status.SIGNING]:  # they aren't allowed to accept their invitation
         message = {
             status.NEW: "You haven't completed your application for {0}! Please submit your application before visiting this page!".format(
@@ -395,54 +417,23 @@ def sign():
             flash(message[current_user.status], 'error')
         return redirect(url_for('dashboard'))
     if request.method == 'GET':
+        date_fmt = '%B %d, %Y'
         today = datetime.now(tz).date()
         return render_template('users/sign.html', user=current_user, date=today.strftime(date_fmt))
     else:
-        relative_name = request.form.get('relative_name')
-        relative_email = request.form.get('relative_email')
-        relative_num = request.form.get('relative_num')
-
-        allergies = request.form.get('allergies')
-        medications = request.form.get('medications')
-        special_health_needs = request.form.get('special_health_needs')
-
-        medical_signature = request.form.get('medical_signature')
-        medical_date = request.form.get('medical_date')
-
-        indemnification_signature = request.form.get('indemnification_signature')
-        indemnification_date = request.form.get('indemnification_date')
-
-        photo_signature = request.form.get('photo_signature')
-        photo_date = request.form.get('photo_date')
-
-        ut_eid = request.form.get('ut_eid')
-
-        if None in (relative_name, relative_email, relative_num, medical_signature, medical_date,
-                    indemnification_signature, indemnification_date, photo_signature, photo_date):
-            flash('Must fill all required fields', 'error')
+        signed_info = extract_waiver_info(current_user)
+        if 'error' in signed_info:
+            flash(signed_info['error'], 'error')
             return redirect(request.url)
-        if current_user.school_id == 23:
-            if ut_eid == None:
-                flash('Must fill out UT EID')
-                return redirect(request.url)
-        signed_info = dict()
-        for key in (
-                'relative_name', 'relative_email', 'relative_num', 'allergies', 'medications', 'special_health_needs',
-                'medical_signature', 'indemnification_signature', 'photo_signature', 'ut_eid'):
-            signed_info[key] = locals()[key]
-
-        for key in ('medical_date', 'indemnification_date', 'photo_date'):
-            signed_info[key] = datetime.strptime(locals()[key], date_fmt)
-        signed_info['user_id'] = current_user.id
-        waiver_info = Waiver(signed_info)
-        DB.session.add(waiver_info)
+        waiver = Waiver(signed_info)
+        DB.session.add(waiver)
         DB.session.commit()
 
         current_user.status = status.CONFIRMED
         DB.session.add(current_user)
         DB.session.commit()
 
-        batch.keen_add_event(current_user.id, 'waivers_signed', datetime.utcnow())
+        batch.keen_add_event(current_user.id, 'waivers_signed', waiver.time_signed)
 
         batch.send_attending_email(current_user)
 

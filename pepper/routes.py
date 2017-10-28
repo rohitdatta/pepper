@@ -63,6 +63,8 @@ def configure_routes(app):
                      methods=['GET', 'POST'])
     app.add_url_rule('/admin/check-in', 'manual-check-in',
                      view_func=users.admin_views.check_in_manual, methods=['GET', 'POST'])
+    app.add_url_rule('/admin/sign/<user_id>', 'check-in-sign',
+                     view_func=users.admin_views.check_in_sign, methods=['GET', 'POST'])
     app.add_url_rule('/admin/check-in-post', 'manual-check-in-post',
                      view_func=users.admin_views.check_in_post, methods=['POST'])
     app.add_url_rule('/admin/set-mlh-id', 'set-mlh-id', view_func=users.admin_views.set_mlh_id,

@@ -1,8 +1,10 @@
 from collections import defaultdict
+from datetime import datetime
 
 from flask import flash, g, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required, login_user
 import keen
+from pytz import timezone
 import redis
 from rq.job import Job
 from sqlalchemy import and_, or_
@@ -10,10 +12,14 @@ from sqlalchemy import and_, or_
 import batch
 import helpers
 from models import User, UserRole
-from views import logout_user
+from views import extract_waiver_info, logout_user
 from pepper import settings, status
 from pepper.app import DB, worker_queue
+from pepper.legal import Waiver
 from pepper.utils import calculate_age, roles_required, send_email
+
+
+tz = timezone('US/Central')
 
 
 def initial_create():
@@ -259,17 +265,59 @@ def check_in_manual():
     else:
         email = request.form.get('email')
         user = User.query.filter_by(email=email).first()
+
+        def error(mesg):
+            flash(mesg, 'error')
+            return redirect(request.url)
+
+        if user is None:
+            return error('User not found')
+
         age = calculate_age(user.birthday)
-        if age < 18 or user.status != status.CONFIRMED or user.checked_in:
-            if age < 18:
-                flash('User under 18', 'error')
-            if user.status != status.CONFIRMED:
-                flash('User not confirmed', 'error')
-            if user.checked_in:
-                flash('User is already checked in', 'error')
-            return render_template('layouts/error.html',
-                                   message="Unable to check in user"), 401
-        return render_template('users/admin/confirm_check_in.html', user=user, age=age)
+        if age < 18:
+            return error('User under 18')
+        if user.status not in [status.CONFIRMED, status.SIGNING]:
+            return error('User not confirmed')
+        if user.checked_in:
+            return error('User is already checked in')
+        if user.status == status.SIGNING:
+            return redirect(url_for('check-in-sign', user_id=user.id))
+        requires_eid = user.school_id == 23 and not Waiver.query.filter_by(user_id=user.id).first().ut_eid
+        return render_template('users/admin/confirm_check_in.html', user=user, age=age,
+                               requires_eid=requires_eid)
+
+
+@login_required
+@roles_required('admin')
+def check_in_sign(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        flash('User does not exist', 'error')
+        return redirect(url_for('manual-check-in'))
+    if request.method == 'GET':
+        date_fmt = '%B %d, %Y'
+        today = datetime.now(tz).date()
+        return render_template('users/sign.html', user=user, date=today.strftime(date_fmt),
+                               check_in=True)
+
+    signed_info = extract_waiver_info(user)
+    if 'error' in signed_info:
+        flash(signed_info['error'], 'error')
+        return redirect(request.url)
+    waiver = Waiver(signed_info)
+    DB.session.add(waiver)
+    DB.session.commit()
+
+    user.status = status.CONFIRMED
+    DB.session.add(user)
+    DB.session.commit()
+
+    batch.keen_add_event(user.id, 'waivers_signed', waiver.time_signed)
+    flash("You've successfully confirmed your invitation to {}".format(settings.HACKATHON_NAME), 'success')
+
+    age = calculate_age(user.birthday)
+    return render_template('users/admin/confirm_check_in.html', user=user, age=age,
+                           requires_eid=False)
 
 
 @login_required
@@ -277,34 +325,17 @@ def check_in_manual():
 def check_in_post():
     email = request.form.get('email')
     user = User.query.filter_by(email=email).first()
+    if user.school_id == 23:
+        waiver = Waiver.query.filter_by(user_id=user.id).first()
+        if not waiver.ut_eid:
+            eid = request.form.get('eid')
+            waiver.ut_eid = eid
+            DB.session.add(waiver)
+            DB.session.commit()
     user.checked_in = True
+    DB.session.add(user)
     DB.session.commit()
-    fmt = '%Y-%m-%dT%H:%M:%S.%f'
-    keen.add_event('check_in', {
-        'date_of_birth': user.birthday.strftime(fmt),
-        'dietary_restrictions': user.dietary_restrictions,
-        'email': user.email,
-        'first_name': user.fname,
-        'last_name': user.lname,
-        'gender': user.gender,
-        'id': user.id,
-        'major': user.major,
-        'phone_number': user.phone_number,
-        'school': {
-            'id': user.school_id,
-            'name': user.school_name
-        },
-        'keen': {
-            'timestamp': user.time_applied.strftime(fmt)
-        },
-        'interests': user.interests,
-        'skill_level': user.skill_level,
-        'races': user.race,
-        'num_hackathons': user.num_hackathons,
-        'class_standing': user.class_standing,
-        'shirt_size': user.shirt_size,
-        'special_needs': user.special_needs
-    })
+    batch.keen_add_event(user.id, 'check_in', datetime.utcnow())
     flash('Checked in {0} {1}'.format(user.fname, user.lname), 'success')
     return redirect(url_for('manual-check-in'))
 

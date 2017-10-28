@@ -87,12 +87,12 @@ def check_in():
             else:
                 if user.status == status.CONFIRMED or user.status == status.SIGNING:
                     # we didn't sanitize schools, so some students slipped by without giving us their EIDs
-                    user.checked_in = True
                     if eid and requires_eid:
                         waiver.ut_eid = eid
                         DB.session.add(waiver)
                         DB.session.commit()
                         requires_eid = False
+                    user.checked_in = True
                     DB.session.add(user)
                     DB.session.commit()
                     batch.keen_add_event(user.id, 'check_in', datetime.utcnow())
