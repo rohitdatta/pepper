@@ -136,62 +136,48 @@ def accept_users(accepted_users):
     DB.session.commit()
 
 
-def keen_add_event(user_id, event_type, count, event_time):
-    user = User.query.filter_by(id=user_id).first()
-    fmt = '%Y-%m-%dT%H:%M:%S.%f'
+def _keen_add_event(event_type, data, count):
     try:
-        keen.add_event(event_type, {
-            'date_of_birth': user.birthday.strftime(fmt),
-            'dietary_restrictions': user.dietary_restrictions,
-            'email': user.email,
-            'first_name': user.fname,
-            'last_name': user.lname,
-            'gender': user.gender,
-            'id': user.id,
-            'major': user.major,
-            'phone_number': user.phone_number,
-            'school': {
-                'id': user.school_id,
-                'name': user.school_name
-            },
-            'keen': {
-                'timestamp': event_time.strftime(fmt)
-            },
-            'interests': user.interests,
-            'skill_level': user.skill_level,
-            'races': user.race,
-            'num_hackathons': user.num_hackathons,
-            'class_standing': user.class_standing,
-            'shirt_size': user.shirt_size,
-            'special_needs': user.special_needs
-        })
+        keen.add_event(event_type, data)
         print 'success'
     except Exception as e:
         print e
-        if count < 3:
-            worker_queue.enqueue(keen_add_event, user_id, event_type, count + 1)
+        if count < settings.KEEN_MAX_RETRIES:
+            worker_queue.enqueue(_keen_add_event, event_type, data, count + 1)
         else:
             print 'Keen failed too many times, {}'.format(event_type)
-            # else:
-            #     #user decision
-            #     keen.add_event(event_type, {
-            #         'date_of_birth': user.birthday.strftime(fmt),
-            #         'dietary_restrictions': user.dietary_restrictions,
-            #         'email': user.email,
-            #         'first_name': user.fname,
-            #         'last_name': user.lname,
-            #         'gender': user.gender,
-            #         'id': user.id,
-            #         'major': user.major,
-            #         'phone_number': user.phone_number,
-            #         'school': {
-            #             'id': user.school_id,
-            #             'name': user.school_name
-            #         },
-            #         'skill_level': user.skill_level,
-            #         'races': user.race.split(','),
-            #         'num_hackathons': user.num_hackathons,
-            #         'class_standing': user.class_standing,
-            #         'shirt_size': user.shirt_size,
-            #         'special_needs': current_user.special_needs
-            #     })
+
+
+def keen_add_event(user_id, event_type, event_time):
+    user = User.query.filter_by(id=user_id).first()
+    bday = user.birthday
+    fmt = '%Y-%m-%dT%H:%M:%S.%f'
+    # removed strftime call because it breaks on years before 1900 which we didn't sanitize
+    formatted_birthday = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:06d}'.format(
+        bday.year, bday.month, bday.day, 0, 0, 0, 0)
+    data = {
+        'date_of_birth': formatted_birthday,
+        'dietary_restrictions': user.dietary_restrictions,
+        'email': user.email,
+        'first_name': user.fname,
+        'last_name': user.lname,
+        'gender': user.gender,
+        'id': user.id,
+        'major': user.major,
+        'phone_number': user.phone_number,
+        'school': {
+            'id': user.school_id,
+            'name': user.school_name
+            },
+        'keen': {
+            'timestamp': event_time.strftime(fmt)
+            },
+        'interests': user.interests,
+        'skill_level': user.skill_level,
+        'races': user.race,
+        'num_hackathons': user.num_hackathons,
+        'class_standing': user.class_standing,
+        'shirt_size': user.shirt_size,
+        'special_needs': user.special_needs
+    }
+    worker_queue.enqueue(_keen_add_event, event_type, data, 0)

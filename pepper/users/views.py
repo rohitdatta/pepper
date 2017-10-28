@@ -10,7 +10,7 @@ import batch
 import helpers
 from models import User
 from pepper import settings, status
-from pepper.app import DB, worker_queue
+from pepper.app import DB
 from pepper.legal.models import Waiver
 from pepper.utils import calculate_age, get_current_user_roles, get_default_dashboard_for_role, \
     redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, \
@@ -236,7 +236,7 @@ def extract_resume(first_name, last_name, resume_required=True):
 def complete_user_sign_up():
     current_user.status = status.WAITLISTED if settings.SENT_ACCEPTANCES else status.PENDING
     current_user.time_applied = datetime.utcnow()
-    worker_queue.enqueue(batch.keen_add_event, current_user.id, 'sign_ups', 0, current_user.time_applied)
+    batch.keen_add_event(current_user.id, 'sign_ups', current_user.time_applied)
     try:
         DB.session.add(current_user)
         DB.session.commit()
@@ -372,7 +372,7 @@ def accept():
         DB.session.add(current_user)
         DB.session.commit()
         user_decision = status.CONFIRMED if current_user.status == status.SIGNING else status.DECLINED
-        worker_queue.enqueue(batch.keen_add_event, current_user.id, user_decision, 0, datetime.utcnow())
+        batch.keen_add_event(current_user.id, user_decision, datetime.utcnow())
         return redirect(url_for('dashboard'))
 
 
@@ -442,7 +442,7 @@ def sign():
         DB.session.add(current_user)
         DB.session.commit()
 
-        worker_queue.enqueue(batch.keen_add_event, current_user.id, 'waivers_signed', 0, datetime.utcnow())
+        batch.keen_add_event(current_user.id, 'waivers_signed', datetime.utcnow())
 
         batch.send_attending_email(current_user)
 

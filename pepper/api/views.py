@@ -1,14 +1,15 @@
 import json
 import os
 import urllib
-import datetime
+from datetime import datetime
 
 from flask import jsonify, request, Response
 import keen
 
 from pepper import settings
-from pepper.app import DB, csrf
-from pepper.users import User
+from pepper.app import DB, csrf, worker_queue
+from pepper.legal import Waiver
+from pepper.users import User, batch
 from pepper.utils import calculate_age
 from pepper import status
 
@@ -63,6 +64,7 @@ def check_in():
         email = data['email'].lower()
         volunteer_email = data['volunteer_email']
         secret = data['secret']
+        eid = data.get('eid')
 
     if secret != settings.CHECK_IN_SECRET:
         message = 'Unauthorized'
@@ -74,6 +76,7 @@ def check_in():
     matched_users = User.query.filter(User.email.ilike(email)).all()
     user = max(matched_users, key=lambda u: status.STATUS_LEVEL[u.status]) if matched_users else None
     if user is not None:
+        waiver = Waiver.query.filter_by(user_id=user.id).first()
         message = 'Found user'
         bday = user.birthday
         if request.method == 'POST':
@@ -82,38 +85,14 @@ def check_in():
                 message = 'Attendee is already checked in'
             else:
                 if user.status == status.CONFIRMED or user.status == status.SIGNING:
+                    # we didn't sanitize schools, so some students slipped by without giving us their EIDs
+                    if eid:
+                        waiver.ut_eid = eid
+                        DB.session.add(waiver)
                     user.checked_in = True
                     DB.session.add(user)
                     DB.session.commit()
-                    # removed strftime call because it breaks on years before 1900 which we didn't sanitize
-                    # fmt = '%Y-%m-%dT%H:%M:%S.%f'
-                    formatted_birthday = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:06d}'.format(
-                        bday.year, bday.month, bday.day, 0, 0, 0, 0)
-                    keen.add_event('check_in', {
-                        'date_of_birth': formatted_birthday,
-                        'dietary_restrictions': user.dietary_restrictions,
-                        'email': user.email,
-                        'first_name': user.fname,
-                        'last_name': user.lname,
-                        'gender': user.gender,
-                        'id': user.id,
-                        'major': user.major,
-                        'phone_number': user.phone_number,
-                        'school': {
-                            'id': user.school_id,
-                            'name': user.school_name
-                        },
-                        'keen': {
-                            'timestamp': user.time_applied.strftime(fmt)
-                        },
-                        'interests': user.interests,
-                        'skill_level': user.skill_level,
-                        'races': user.race,
-                        'num_hackathons': user.num_hackathons,
-                        'class_standing': user.class_standing,
-                        'shirt_size': user.shirt_size,
-                        'special_needs': user.special_needs
-                    })
+                    batch.keen_add_event(user.id, 'check_in', datetime.utcnow())
                     message = 'Attendee successfully checked in'
                 else:
                     message = 'Attendee has not been confirmed to attend {}'.format(settings.HACKATHON_NAME)
@@ -122,7 +101,7 @@ def check_in():
         formatted_birthday = '{:02d}/{:02d}/{:04d}'.format(bday.month, bday.day, bday.year)
         return jsonify(name="{0} {1}".format(user.fname, user.lname), school=user.school_name, email=user.email,
                        age=calculate_age(bday), checked_in=user.checked_in,
-                       status=user.status,
-                       birthday=formatted_birthday)
+                       status=user.status, birthday=formatted_birthday,
+                       requires_eid=user.school_id == 23 and not waiver.ut_eid)
     else:
         return jsonify(message='User does not exist'), 404
