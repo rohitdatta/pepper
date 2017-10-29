@@ -320,8 +320,8 @@
         "name": "Hoppy Hour",
         "type": "talk",
         "imageUrl": "https://hacktx.com/images/app-event-banner.png",
-        "startDate": "2017-10-29 08:00:00",
-        "endDate": "2017-10-29 09:00:00",
+        "startDate": "2017-10-29 09:00:00",
+        "endDate": "2017-10-29 10:00:00",
         "location": {
           "building": "Omni",
           "level": "",
