@@ -65,6 +65,7 @@
                   <th>Verified Email</th>
                   <th>Needs Travel Reimbursement</th>
                   <th>Got Travel Reimbursement</th>
+                  <th>Checked In</th>
               </tr>
               </thead>
               <tbody>
@@ -79,6 +80,7 @@
                       <td class="data-item" name="confirmed">{{ user.confirmed }}</td>
                       <td class="data-item" name="travel-reimbursement">{{ user.needs_travel_reimbursement }}</td>
                       <td class="data-item" name="has-travel-reimbursement">{{ user.has_travel_reimbursement }}</td>
+                      <td class="data-item" name="checked-in">{{ user.checked_in }}</td>
                   </tr>
               {% endfor %}
               </tbody>
