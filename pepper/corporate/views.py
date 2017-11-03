@@ -50,7 +50,7 @@ def new_user_setup(token):
         return render_template('layouts/error.html', title='Invalid Link', message="That's an invalid link"), 401
 
     if request.method == 'GET':
-        return render_template('users/account_setup.html', user=user)
+        return render_template('corporate/account_setup.html', user=user)
     else:
         if user:
             if request.form.get('password') == request.form.get('password-check'):
@@ -161,7 +161,6 @@ def search_results():
     class_standings = request.form.getlist('class_standings')
     majors = request.form.getlist('majors')
     name = request.form.get('name')
-    # lnames = request.form.getlist('lnames')
     attended = request.form.get('attended')
     # Change the filter? This is taking all users.    
     users = User.query.filter(and_(User.status != 'NEW', User.status != 'ADMIN'))

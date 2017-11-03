@@ -1,8 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% block content %}
     <div style="margin-top: -50px;">
-        <img src="{{ url_for('static', filename='branding/logo.png') }}"
-             height="60" class="center-block">
         <div class="large-text" style="margin-top: 20px;">
             <p>Hi {{ user.fname }}! Thanks for joining us for {{ config.HACKATHON_NAME }}! my{{ config.HACKATHON_NAME }}
                 is built to be an easy way for you to filter through all our attendee resumes. If you have any
@@ -13,6 +11,7 @@
                 you choose your password, we can get you set up.</p>
         </div>
         <form method="POST" action="">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type="text" name="fname" placeholder="First Name" value="{{ user.fname }}">
             <input type="text" name="lname" placeholder="Last Name" value="{{ user.lname }}">
             <input type="password" name="password" placeholder="Password">

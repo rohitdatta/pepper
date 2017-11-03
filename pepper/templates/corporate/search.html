@@ -11,7 +11,13 @@
             filter? Leave the field blank and we'll return all options from that field.</p>
         <form method="POST" action="{{ url_for('search-results') }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            {#	Schools#}
+            <div class="row">
+              <div class="col-md-6 col-md-offset-3">
+                <div class="text-container">
+                  <input type="text" placeholder="Name" name="name" class="corp-text-box">
+                </div>
+              </div>
+            </div>
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
                     <select name="schools" multiple class="chosen-select" data-placeholder="Schools">
@@ -32,7 +38,6 @@
             </div>
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                    {#Class Standings#}
                     <select name="class_standings" multiple class="chosen-select" data-placeholder="Class Standings">
                         {% for class_standing in class_standings %}
                             <option value="{{ class_standing }}">{{ class_standing }}</option>
@@ -42,28 +47,6 @@
             </div>
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
-                    {#First Name#}
-{#                    <select name="fnames" multiple class="chosen-select" data-placeholder="First Names">#}
-{#                        {% for fname in fnames %}#}
-{#                            <option value="{{ fname }}">{{ fname }}</option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                    {#Last Name#}
-            <input type="text" placeholder="Name" name="name">
-{#                    <select name="lnames" multiple class="chosen-select" data-placeholder="Last Names">#}
-{#                        {% for lname in lnames %}#}
-{#                            <option value="{{ lname }}">{{ lname }}</option>#}
-{#                        {% endfor %}#}
-{#                    </select>#}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3">
-                    {#Attended#}
                     <label class="control control--checkbox">Attended
                         <input type="checkbox" name="attended" value="true"/>
                         <div class="control__indicator"></div>
