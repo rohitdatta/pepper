@@ -2,7 +2,7 @@ import time
 
 from flask import request, render_template, flash, redirect, url_for, g, make_response
 from flask_login import login_user, current_user
-from sqlalchemy import distinct, and_
+from sqlalchemy import distinct, and_, select, or_
 
 from helpers import check_password
 from pepper.users import User
@@ -160,8 +160,8 @@ def search_results():
     schools = request.form.getlist('schools')
     class_standings = request.form.getlist('class_standings')
     majors = request.form.getlist('majors')
-    fnames = request.form.getlist('fnames')
-    lnames = request.form.getlist('lnames')
+    name = request.form.get('name')
+    # lnames = request.form.getlist('lnames')
     attended = request.form.get('attended')
     # Change the filter? This is taking all users.    
     users = User.query.filter(and_(User.status != 'NEW', User.status != 'ADMIN'))
@@ -171,23 +171,18 @@ def search_results():
         users = users.filter(User.major.in_(majors))
     if class_standings:
         users = users.filter(User.class_standing.in_(class_standings))
-    if fnames:
-        users = users.filter(User.fname.in_(fnames))
-    if lnames:
-        users = users.filter(User.lname.in_(lnames))
+    if name:
+        users = users.filter((User.fname + ' ' + User.lname).ilike('%{}%'.format(name)))
+
     if attended:
         users = users.filter(User.checked_in)
     users = users.all()
     end = time.time()
     search_time = end - start
     g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
-    g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2}, fnames:{3}, lnames:{4}, attended:{5} by'.format(schools, majors,
-                                                                                                       class_standings,
-                                                                                                       fnames,
-                                                                                                       lnames,
-                                                                                                       attended))
+    g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2}, attended:{3} by'.format(schools, majors, class_standings,  attended))
     return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
-                           majors=majors, fnames=fnames, lnames=lnames, time=search_time)
+                           majors=majors, time=search_time)
 
 
 @corp_login_required
