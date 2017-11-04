@@ -188,15 +188,25 @@ def search_results():
 @roles_required('admin', 'corp')
 def view_resume():
     hashid = request.args.get('id')
+    if hashid is None:
+        flash('Please specify a user', 'error')
+        return redirect(url_for('corp-search'))
     user = User.get_with_hashid(hashid)
+    if user is None:
+        flash('We could not find this user', 'error')
+        return redirect(url_for('corp-search'))
     g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
     g.log.info('Resume for {0} {1} <{2}> viewed by'.format(user.fname, user.lname, user.email))
-    data_object = s3.Object(settings.S3_BUCKET_NAME,
-                            u'resumes/{0}, {1} ({2}).pdf'.format(user.lname, user.fname, user.hashid)).get()
-    User.get_with_hashid(hashid)
-    response = make_response(data_object['Body'].read())
-    response.headers['Content-Type'] = 'application/pdf'
-    return response
+    resume_name = u'resumes/{0}, {1} ({2}).pdf'.format(user.lname, user.fname, user.hashid)
+    try:
+        data_object = s3.Object(settings.S3_BUCKET_NAME, resume_name).get()
+        response = make_response(data_object['Body'].read())
+        response.headers['Content-Type'] = 'application/pdf'
+        return response
+    except:
+        g.log.info('error retrieving resume "{}"'.format(resume_name))
+        flash('No resume for this user found', 'error')
+        return redirect(url_for('corp-search'))
 
 
 @corp_login_required
