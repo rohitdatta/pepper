@@ -1,4 +1,11 @@
 {% extends 'layouts/base.html' %}
+
+{% block imports %}
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dataTable.css') }}">
+<script src="{{ url_for('static', filename='js/corp-results.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     <div class="results">
         <div class="row">
@@ -7,32 +14,36 @@
                 <span class="action-button"><a href="{{ url_for('corp-search') }}"><button style="margin-top:20px;">New Search</button></a></span>
             </div>
         </div>
-        About {{ users|length }} results ({{ time|round(5) }} seconds)
+        Found {{ users|length }} results ({{ time|round(5) }} seconds)
+        <div class="spacing"></div>
         {% if users|length > 0 %}
-            <table class="info">
+            <table id="result-table" class="info">
+              <thead>
                 <tr>
                     <td>Name</td>
                     <td>Class Standing</td>
                     <td>Major(s)</td>
                     <td>School</td>
-                    <td>Resume Link</td>
-                    <td style="text-align: center;">Attended</td>
+                    <td class="center">Attended</td>
+                    <td class="center">Resume Link</td>
                 </tr>
-                <col>
+              </thead>
+              <tbody>
                 {% for user in users %}
-                    <tr class="border_bottom">
-                        <td width="15%">{{ user.fname }} {{ user.lname }}</td>
+                    <tr>
+                        <td>{{ user.fname }} {{ user.lname }}</td>
                         <td>{{ user.class_standing }}</td>
-                        <td width="25%">{{ user.major }}</td>
-                        <td width="25%">{{ user.school_name }}</td>
-                        <td><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate" target="_blank">View
+                        <td>{{ user.major }}</td>
+                        <td>{{ user.school_name }}</td>
+                        <td class="center">{% if user.checked_in %}
+                          {# use check/no check as hidden strings so sorting in the datatable works #}
+                          <i class="fa fa-check-circle" aria-hidden="true"><span class="hidden">check</span></i>{% else %}
+                            <i class="fa fa-times-circle" aria-hidden="true"><span class="hidden">no check</span></i>{% endif %}</td>
+                        <td class="center"><a href="{{ url_for('resume-view', id=user.hashid) }}" class="decorate" target="_blank">View
                             Resume</a></td>
-                        <td style="text-align: center;">{% if user.checked_in %}
-                            <i class="fa fa-check-circle" aria-hidden="true"></i>{% else %}
-                            <i class="fa fa-times-circle" aria-hidden="true"></i>{% endif %}</td>
-
                     </tr>
                 {% endfor %}
+              </tbody>
             </table>
         {% else %}
             <div class="large-text">

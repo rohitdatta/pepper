@@ -1,19 +1,5 @@
 @import 'https://fonts.googleapis.com/css?family=Josefin+Sans:400,700';
-
-$dark: #22215b;
-$light: #009999;
-$freetail-blue: #00a8ff;
-$freetail-tan: #EAF0CE;
-$hacktx-light: #bbb9ea;
-$hacktx-yellow: #ffaa3a;
-$hacktx-light-red: #dc0925;
-$hacktx-red: #ff0b63;
-$hacktx-gradient: linear-gradient(135deg, $hacktx-yellow, $hacktx-red);
-$freetail-red: #E45243;
-$hacktx-light-blue: #5983A0;
-$sans-serif-font: Josefin Sans, sans-serif;
-$desktop-width: 992px;
-$hacktx-gray: #bfbfbf;
+@import 'constants';
 
 body {
   background: $dark;
