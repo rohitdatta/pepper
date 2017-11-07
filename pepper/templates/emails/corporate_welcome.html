@@ -2,7 +2,7 @@
 {% block message %}
     <tr>
         <td class="content-block">
-            Hi {{ user.fname }}!
+            Hi {{ user.fname or user.email }}!
         </td>
     </tr>
     <tr>
