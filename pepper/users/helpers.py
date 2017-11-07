@@ -29,6 +29,9 @@ def check_password(hashed, password):
 
 
 def send_recruiter_invite(user):
+    g.log.info('Sending a recruiter invite for user {}'.format(user.id))
+    if settings.DEBUG:
+        return
     # send invite to the recruiter
     token = utils.serializer.dumps(user.email)
     url = url_for('new-user-setup', token=token, _external=True)

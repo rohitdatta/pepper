@@ -66,8 +66,8 @@ def create_corp_user():
         return render_template('users/admin/create_corporate_user.html', unverified=unverified_users)
     else:
         # Build a user based on the request form
-        user_data = {'fname': request.form['fname'],
-                     'lname': request.form['lname'],
+        user_data = {'fname': request.form.get('fname'),
+                     'lname': request.form.get('lname'),
                      'email': request.form['email'].lower(),
                      'type': 'corporate'}
         user = User(user_data)

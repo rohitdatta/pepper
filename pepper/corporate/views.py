@@ -42,6 +42,12 @@ def new_user_setup(token):
     try:
         email = serializer.loads(token)
         user = User.query.filter_by(email=email).first()
+        if user is None:
+            flash('This user does not exist', 'error')
+            return redirect(url_for('landing'))
+        if user.type not in ['admin', 'corporate']:
+            flash('You are not authorized to view this page', 'error')
+            return redirect(url_for('landing'))
         if user.password is not None:
             flash('User has already been setup. If you need to change the password, please reset your password.',
                   'error')
