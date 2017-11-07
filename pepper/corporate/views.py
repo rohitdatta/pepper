@@ -146,7 +146,7 @@ def corporate_search():
         schools, majors, class_standings, fnames, lnames = [map(lambda x: x[0], filter_list) for filter_list in
                                             [schools, majors, class_standings, fnames, lnames]]
         schools.sort()
-        majors.sort()
+        majors = sorted(set(single_major for major in majors for single_major in major.split(', ')))
         class_standings.sort()
         fnames.sort()
         lnames.sort()
@@ -163,11 +163,11 @@ def search_results():
     name = request.form.get('name')
     attended = request.form.get('attended')
     # Change the filter? This is taking all users.    
-    users = User.query.filter(and_(User.status != 'NEW', User.status != 'ADMIN'))
+    users = User.query.filter(and_(User.status != 'NEW', User.status != 'ADMIN', User.type != 'corporate'))
     if schools:
         users = users.filter(User.school_name.in_(schools))
     if majors:
-        users = users.filter(User.major.in_(majors))
+        users = users.filter(or_(User.major.like('%{}%'.format(major)) for major in majors))
     if class_standings:
         users = users.filter(User.class_standing.in_(class_standings))
     if name:
