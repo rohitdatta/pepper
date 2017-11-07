@@ -179,7 +179,7 @@ def search_results():
     end = time.time()
     search_time = end - start
     g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
-    g.log.info('Search made for schools:{0} , majors:{1}, class_standings:{2}, attended:{3} by'.format(schools, majors, class_standings,  attended))
+    g.log.info('Search made for name: {}, schools:{}, majors:{}, class_standings:{}, attended:{} by'.format(name, schools, majors, class_standings, attended))
     return render_template('corporate/results.html', users=users, schools=schools, class_standings=class_standings,
                            majors=majors, time=search_time)
 
@@ -212,4 +212,6 @@ def view_resume():
 @corp_login_required
 @roles_required('admin', 'corp')
 def download_all_resumes():
-    return redirect(settings.RESUMES_LINK, code=200)
+    g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
+    g.log.info('Clicked download all resumes link')
+    return redirect(settings.RESUMES_LINK)
