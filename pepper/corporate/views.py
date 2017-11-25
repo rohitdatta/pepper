@@ -6,7 +6,7 @@ from sqlalchemy import distinct, and_, select, or_
 
 from helpers import check_password
 from pepper.users import User
-from pepper.utils import corp_login_required, roles_required, s3, serializer, timed_serializer, send_email
+from pepper.utils import corp_login_required, roles_required, s3, s3_client, serializer, timed_serializer, send_email
 from pepper import settings, status
 from pepper.app import DB
 from pepper.users.helpers import hash_pwd
@@ -220,4 +220,17 @@ def view_resume():
 def download_all_resumes():
     g.log = g.log.bind(name='{0} {1} <{2}>'.format(current_user.fname, current_user.lname, current_user.email))
     g.log.info('Clicked download all resumes link')
-    return redirect(settings.RESUMES_LINK)
+    try:
+        # attempt to give the user temporary access to resume zip in s3 bucket
+        url = s3_client.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={
+                'Bucket': settings.S3_BUCKET_NAME,
+                'Key': 'resumes.zip',
+            }
+        )
+        return redirect(url)
+    except:
+        # use a 3rd party storage like Box to host resume zip if it's not on s3
+        g.log.info('no resume zip on s3 found, redirecting to resume link')
+        return redirect(settings.RESUMES_LINK)
