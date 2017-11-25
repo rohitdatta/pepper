@@ -1,6 +1,9 @@
 import os
 
-DEBUG = os.getenv('DEBUG') in ['True', 'true', '1', 'yes']
+def _getbool(variable_name):
+    return os.getenv(variable_name) in ['True', 'true', '1', 'yes']
+
+DEBUG = _getbool('DEBUG')
 if DEBUG:
     SQLALCHEMY_ECHO = True
 
@@ -24,8 +27,9 @@ MAILGUN_PUB_KEY = os.getenv('MAILGUN_PUB_KEY')
 S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
-REGISTRATION_OPEN = os.getenv('REGISTRATION_OPEN') in ['True', 'true', '1', 'yes']
-REGISTRATION_CLOSED = os.getenv('REGISTRATION_CLOSED') in ['True', 'true', '1', 'yes']
+REGISTRATION_OPEN = _getbool('REGISTRATION_OPEN')
+REGISTRATION_CLOSED = _getbool('REGISTRATION_CLOSED')
+HACKATHON_ENDED = _getbool('HACKATHON_ENDED')
 LETS_ENCRYPT_PATH = os.getenv('LETS_ENCRYPT_PATH')
 LETS_ENCRYPT_PATH_CHALLENGE = os.getenv('LETS_ENCRYPT_PATH_CHALLENGE')
 CDN_URL = os.getenv('CDN_URL')
@@ -36,5 +40,5 @@ RESUMES_LINK = os.getenv('RESUMES_LINK')
 REDIS_URL = os.getenv('REDIS_URL')
 RECOVER_SALT = os.getenv('RECOVER_SALT')
 MAX_BATCH_EMAILS = int(os.getenv('MAX_BATCH_EMAILS', '500'))
-SENT_ACCEPTANCES = os.getenv('SENT_ACCEPTANCES') in ['True', 'true', '1', 'yes']
+SENT_ACCEPTANCES = _getbool('SENT_ACCEPTANCES')
 KEEN_MAX_RETRIES = int(os.getenv('KEEN_MAX_RETRIES', '3'))
