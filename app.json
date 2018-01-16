@@ -1,0 +1,146 @@
+{
+    "name": "Pepper",
+    "description": "A hackathon management system",
+    "repository": "https://github.com/hacktx/pepper",
+    "keywords": [
+        "hackathon",
+        "Flask",
+        "Python",
+        "postgresql"
+    ],
+    "success_url": "/admin/initial-create",
+    "addons": [
+        "heroku-postgresql:hobby-dev",
+        "heroku-redis:hobby-dev"
+    ],
+    "env": {
+        "SECRET_KEY": {
+            "description": "Secret key to generate secret URLs for the application.",
+            "generator": "secret",
+            "required": true
+        },
+        "RECOVER_SALT": {
+            "description": "Salt for password recovery URL generator",
+            "generator": "secret",
+            "required": true
+        },
+        "RESUME_HASH_SALT": {
+            "description": "Salt for resume hash generator.",
+            "generator": "secret",
+            "required": true
+        },
+        "CHECK_IN_SECRET": {
+            "description": "Secret used to verify check-in requests.",
+            "generator": "secret",
+            "required": true
+        },
+        "BASE_URL": {
+            "description": "The base URL where this application is being hosted.",
+            "required": true
+        },
+        "LOG_LEVEL": {
+            "description": "The severity of log messages to output. Options are debug, info, warning, error, and critical.",
+            "value": "debug",
+            "required": false
+        },
+        "REDIS_LOG_LEVEL": {
+            "description": "The severity of log messages to output from redis. Options are debug, info, warning, error, and critical.",
+            "value": "debug",
+            "required": false
+        },
+        "DEBUG": {
+            "description": "A flag to indicate that various external actions should be disabled.",
+            "value": "false",
+            "required": false
+        },
+        "HACKATHON_NAME": {
+            "description": "Name of the hackathon this instance is hosting.",
+            "required": true
+        },
+        "SENT_ACCEPTANCES": {
+            "description": "A flag to indicate that the first round of acceptance emails has been sent out",
+            "value": "false",
+            "required": true
+        },
+        "REGISTRATION_OPEN": {
+            "description": "A flag to indicate that registration is open.",
+            "value": "false",
+            "required": true
+        },
+        "REGISTRATION_CLOSED": {
+            "description": "A flag to indicate that registration had opened but has now closed.",
+            "value": "false",
+            "required": true
+        },
+        "CHECK_IN_ENABLED": {
+            "description": "A flag to indicate that check-in is enabled.",
+            "value": "true",
+            "required": true
+        },
+        "RESUMES_LINK": {
+            "description": "Link to a zip file of collected resumes for the corporate portal",
+            "required": false
+        },
+        "MLH_APPLICATION_ID": {
+            "description": "MLH Application ID for MLH OAuth flow.",
+            "required": false
+        },
+        "MLH_SECRET": {
+            "description": "MLH Secret for MLH OAuth flow.",
+            "required": false
+        },
+        "SENDGRID_API_KEY": {
+            "description": "API key to send emails with Sendgrid.",
+            "required": false
+        },
+        "GENERAL_INFO_EMAIL": {
+            "description": "The email address to send emails as.",
+            "required": false
+        },
+        "SLACK_TOKEN": {
+            "description": "The secret token for the Slack integration used to send out announcements.",
+            "required": false
+        },
+        "S3_BUCKET_NAME": {
+            "description": "Name of the AWS S3 bucket to store resumes.",
+            "required": false
+        },
+        "AWS_ACCESS_KEY": {
+            "description": "AWS access key used to access S3.",
+            "required": false
+        },
+        "AWS_SECRET_KEY": {
+            "description": "AWS secret key used to access S3.",
+            "required": false
+        },
+        "CDN_URL": {
+            "description": "Domain of the CDN used to serve the app's static assets.",
+            "required": false
+        },
+        "FIREBASE_KEY": {
+            "description": "Key for Firebase which is used to send announcements as push notifications to mobile apps.",
+            "required": false
+        },
+        "KEEN_PROJECT_ID": {
+            "description": "Project ID for Keen IO, which is used to store events",
+            "required": false
+        },
+        "KEEN_WRITE_KEY": {
+            "description": "Write key for Keen IO, which is used to store events",
+            "required": false
+        }
+    },
+    "formation": {
+        "web": {
+            "quantity": 1,
+            "size": "free"
+        },
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
+    },
+    "scripts": {
+        "postdeploy": "python manage.py db upgrade"
+    }
+}

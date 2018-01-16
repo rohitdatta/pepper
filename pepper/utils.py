@@ -10,7 +10,7 @@ from sendgrid.helpers.mail import *
 from premailer import transform
 from datetime import date
 
-resume_hash = Hashids(min_length=8, salt=settings.HASHIDS_SALT)
+resume_hash = Hashids(min_length=8, salt=settings.RESUME_HASH_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
                     aws_secret_access_key=settings.AWS_SECRET_KEY)
 s3_client = boto3.client(

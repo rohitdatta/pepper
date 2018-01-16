@@ -54,7 +54,7 @@ def passbook():
 
 @csrf.exempt
 def check_in():
-    if settings.HACKATHON_ENDED:
+    if not settings.CHECK_IN_ENABLED:
         return jsonify(message='{} is over. This endpoint is closed'.format(settings.HACKATHON_NAME)), 405
     # Check if secret token matches
     if request.method == 'GET':

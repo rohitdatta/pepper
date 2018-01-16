@@ -1,10 +1,17 @@
 # Pepper
 
-Pepper is a hackathon application designed to work with MyMLH for sign in. Using virtualenv is highly suggested to manage the dependencies.
+Pepper is a hackathon application designed to work with MyMLH for sign in.
 
 **This application is under active development and remains in beta. These setup instructions are in no way complete and will be edited once a final version is released. If you have trouble setting it up, please contact me for help.**
 
-## Getting Started
+## Quickstart
+
+You can deploy this application on Heroku.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+
+## Local Development
 It is highly recommended to use a virtualenv to manage dependencies.
 1. Create a PostgreSQL database named `pepper`
 2. Run `pip install -r requirements.txt`
@@ -14,9 +21,12 @@ It is highly recommended to use a virtualenv to manage dependencies.
     SERVICE_NAME=Pepper
     DEBUG=True
     DATABASE_URL='postgresql://Rohit@127.0.0.1:5432/pepper'
-    NONCE_SECRET='y0urS3cr3tH3r3'
-    HASHIDS_SALT='ur salt here'
+    RESUME_HASH_SALT='ur salt here'
     SECRET_KEY='a0th3rS3cr3tH3r3'
+    CHECK_IN_SECRET='another secret here'
+    REGISTRATION_OPEN=True
+    REGISTRATION_CLOSED=True
+    CHECK_IN_ENABLED=True
     SENDGRID_API_KEY=''
     HACKATHON_NAME='HackTX'
     MLH_APPLICATION_ID=''
@@ -30,15 +40,12 @@ It is highly recommended to use a virtualenv to manage dependencies.
     AWS_SECRET_KEY=''
     KEEN_PROJECT_ID=''
     KEEN_WRITE_KEY=''
-    REGISTRATION_OPEN=True
     LETS_ENCRYPT_PATH=''
     LETS_ENCRYPT_PATH_CHALLENGE=''
     CDN_URL=''
-    FALLBACK_LOCAL_REGISTER=False
-    CHECK_IN_SECRET=''
     FIREBASE_KEY=''
     RESUMES_LINK=''
-    REDISTOGO_URL='127.0.0.1:6379'
+    REDIS_URL='127.0.0.1:6379'
 ```
 4. Making sure PostgreSQL is running, set up the tables by running `python manage.py db upgrade`
 5. Run the server by running `python manage.py runserver`
