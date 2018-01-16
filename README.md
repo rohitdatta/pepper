@@ -24,7 +24,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     RESUME_HASH_SALT='ur salt here'
     SECRET_KEY='a0th3rS3cr3tH3r3'
     CHECK_IN_SECRET='another secret here'
-    REGISTRATION_OPEN=True
+    REGISTRATION_OPENED=True
     REGISTRATION_CLOSED=True
     CHECK_IN_ENABLED=True
     SENDGRID_API_KEY=''

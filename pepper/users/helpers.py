@@ -54,7 +54,7 @@ def get_mlh_user_data(access_token):
 def check_registration_opened(func):
     @functools.wraps(func)
     def decorated_view(*args, **kwargs):
-        if settings.REGISTRATION_OPEN:
+        if settings.REGISTRATION_OPENED:
             return func(*args, **kwargs)
         return redirect(url_for('landing'))
 

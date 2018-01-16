@@ -67,8 +67,8 @@
             "value": "false",
             "required": true
         },
-        "REGISTRATION_OPEN": {
-            "description": "A flag to indicate that registration is open.",
+        "REGISTRATION_OPENED": {
+            "description": "A flag to indicate that registration has opened before.",
             "value": "false",
             "required": true
         },

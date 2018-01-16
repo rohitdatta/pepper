@@ -112,7 +112,7 @@ def callback():
                 if settings.REGISTRATION_CLOSED:
                     flash('Registration has closed', 'error')
                     return redirect(url_for('login'))
-                if settings.REGISTRATION_OPEN:
+                if settings.REGISTRATION_OPENED:
                     g.log.info('Creating a new user from MLH info')
                     user = User(user_info)
                 else:
