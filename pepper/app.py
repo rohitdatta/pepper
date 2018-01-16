@@ -144,5 +144,6 @@ def create_app():
     app.config['CDN_HTTPS'] = True
     cdn.init_app(app)
 
-    SSLify(app)
+    if settings.REQUIRE_SSL:
+        SSLify(app)
     return app

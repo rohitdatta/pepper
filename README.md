@@ -31,6 +31,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     HACKATHON_NAME='HackTX'
     MLH_APPLICATION_ID=''
     MLH_SECRET=''
+    REQUIRE_SSL=False
     BASE_URL='http://127.0.0.1:5000/'
     GENERAL_INFO_EMAIL='hello@hacktx.com'
     SLACK_TOKEN=''

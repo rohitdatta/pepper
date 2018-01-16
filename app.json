@@ -38,14 +38,19 @@
             "description": "The base URL where this application is being hosted.",
             "required": true
         },
+        "REQUIRE_SSL": {
+            "description": "A flag indicating that all requests to the app are redirected to HTTPS. Note that if the DEBUG flag is true, then SSL will never be forced.",
+            "value": "true",
+            "required": true
+        },
         "LOG_LEVEL": {
             "description": "The severity of log messages to output. Options are debug, info, warning, error, and critical.",
-            "value": "debug",
+            "value": "info",
             "required": false
         },
         "REDIS_LOG_LEVEL": {
             "description": "The severity of log messages to output from redis. Options are debug, info, warning, error, and critical.",
-            "value": "debug",
+            "value": "info",
             "required": false
         },
         "DEBUG": {
