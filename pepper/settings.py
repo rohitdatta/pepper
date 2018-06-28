@@ -18,7 +18,6 @@ SERVICE_NAME = os.getenv('SERVICE_NAME') or 'Pepper'
 SECRET_KEY = os.getenv('SECRET_KEY')
 RESUME_HASH_SALT = os.getenv('RESUME_HASH_SALT')
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-HACKATHON_NAME = os.getenv('HACKATHON_NAME')
 MLH_APPLICATION_ID = os.getenv('MLH_APPLICATION_ID')
 MLH_SECRET = os.getenv('MLH_SECRET')
 BASE_URL = os.getenv('BASE_URL')
@@ -42,3 +41,18 @@ RECOVER_SALT = os.getenv('RECOVER_SALT')
 MAX_BATCH_EMAILS = int(os.getenv('MAX_BATCH_EMAILS', '500'))
 SENT_ACCEPTANCES = _getbool('SENT_ACCEPTANCES')
 KEEN_MAX_RETRIES = int(os.getenv('KEEN_MAX_RETRIES', '3'))
+
+
+# Event Specifc Config
+# HACKATHON_NAME = os.getenv('HACKATHON_NAME')
+HACKATHON_NAME = "HackTX"
+EVENT_NAME = "HackTX 2018"
+EVENT_YEAR = "2018"
+EVENT_START = "October 28"
+EVENT_COMPLETE_DURATION = "October 28-29, 2018"
+MEDICAL_AUTHORIZATION_END = "October 31, 2018"
+EVENT_VENUE = ""
+EVENT_LOCATION = "Austin, TX"
+EVENT_FACEBOOK_GROUP = "https://www.facebook.com/groups/1111939315556082/"
+
+# static assets in pepper/static

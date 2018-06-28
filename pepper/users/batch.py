@@ -1,7 +1,6 @@
 import random
 
 from flask import render_template, render_template_string, url_for, g
-from sqlalchemy import and_, or_
 import keen
 
 from models import User

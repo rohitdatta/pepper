@@ -74,7 +74,7 @@
                             treatment (including locations outside the U.S.) to be rendered upon the advice of any
                             licensed physician. I agree to be responsible for all necessary charges incurred by any
                             hospitalization or treatment rendered pursuant to this authorization.</p>
-                        <p>The effective dates of this authorization are {{ date }} to October 31, 2017. I am eighteen
+                        <p>The effective dates of this authorization are {{ date }} to {{ config.MEDICAL_AUTHORIZATION_END }}. I am eighteen
                             years of age or older, have read the above authorization, and confirm that the information
                             contained therein is true and accurate. I agree that my electronic signature is the legally
                             binding equivalent to my handwritten signature. Whenever I execute an electronic signature,
@@ -96,7 +96,7 @@
                 <div class="col-md-12">
                     <h2 class="required">Release and Indemnification Agreement</h2>
                     <div class="col-md-12">
-                        <p>Description of Activity or Trip: Hackathon during the weekend of October 28-29, 2017 hosted
+                        <p>Description of Activity or Trip: Hackathon during the weekend of {{ config.EVENT_COMPLETE_DURATION }} hosted
                             by Freetail Hackers</p>
                         <p>I, {{ user.fname }} {{ user.lname }}, am eighteen years of age or older and have voluntarily
                             applied to participate in the above Activity or Trip. I acknowledge that the nature of the

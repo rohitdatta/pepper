@@ -15,17 +15,17 @@
     <tr>
         <td class="content-block">
             Your attendance is <strong>NOT</strong> confirmed until you log onto <a
-                href="https://my.hacktx.com">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
+                href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
             confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline. Once you
-            confirm, also check out our <a href="https://www.facebook.com/groups/1111939315556082/">Facebook group</a>
+            confirm, also check out our <a href="{{ config.EVENT_FACEBOOK_GROUP }}">Facebook group</a>
             for attendees.
         </td>
     </tr>
     {% if user.school_id != 23 %}
         <tr>
             <td class="content-block">
-                Freetail Hackers is proud to host HackTX 2016 this year at the Omni Hotel in Downtown Austin. For those
-                of you not based in Austin and requiring transportation to HackTX, we're providing buses for certain
+                Freetail Hackers is proud to host {{ config.EVENT_NAME }} this year at the Omni Hotel in Downtown Austin. For those
+                of you not based in Austin and requiring transportation to {{ config.HACKATHON_NAME }}, we're providing buses for certain
                 cities. Buses will leave early morning on October 22nd for Austin and arrive in time for Registration
                 around 10:00am. They will head back for their respective cities Sunday October 23rd after the closing
                 ceremony around 4:00pm.

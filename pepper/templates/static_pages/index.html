@@ -4,7 +4,7 @@
         <img class="hacktx-logo img-responsive center-block" src="{{ url_for('static', filename='branding/logo.svg') }}"
              height="200" width="750"/>
         <div class="spacing"></div>
-        <div class="center"><h2>Austin, TX | October 28-29, 2017</h2></div>
+        <div class="center"><h2>{{ config.EVENT_LOCATION }} | {{ config.EVENT_COMPLETE_DURATION }}</h2></div>
         <div class="spacing"></div>
         <div class="container">
           {% if config.REGISTRATION_CLOSED %}
