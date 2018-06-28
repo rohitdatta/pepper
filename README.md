@@ -50,6 +50,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
 ```
 4. Making sure PostgreSQL is running, set up the tables by running `python manage.py db upgrade`
 5. Run the server by running `python manage.py runserver`
+6. Startup atleast one worker by running `python manage.py runworker` simulatenously.
 
 ## Explanation of Services
 
