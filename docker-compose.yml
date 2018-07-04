@@ -1,19 +1,27 @@
-web:
-  build: .
-  command: bash -c "python manage.py db upgrade && python manage.py runserver"
-  expose:
-    - "5000"
-  links:
-   - redis
-   - postgres
-redis:
-    image: redis
-    expose:
-      - "6379"
-postgres:
-    image: postgres
-    restart: always
-    expose:
-      - "5432"
-    environment:
-      - POSTGRES_DB=pepper
+version: '3'
+services:
+    web:
+        build: .
+        command: bash -c "python manage.py db upgrade && python manage.py run"
+        ports:
+            - "5000:5000"
+        depends_on:
+            - redis
+            - postgres
+        volumes:
+            - .:/app
+    
+    worker:
+        build: .
+        command: bash -c "python manage.py runworker"
+        depends_on:
+            - redis
+    
+    redis:
+        image: redis
+    
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            - POSTGRES_DB=pepper

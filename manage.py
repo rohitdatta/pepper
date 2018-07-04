@@ -42,8 +42,8 @@ def runworker():
 
 
 @manager.command
-def run(port=5000):
-    hackathon_identity_app.run(port=int(port))
+def run(port=5000, host='0.0.0.0'):
+    hackathon_identity_app.run(port=int(port), host=host)
 
 
 @manager.shell

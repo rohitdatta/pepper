@@ -52,6 +52,9 @@ It is highly recommended to use a virtualenv to manage dependencies.
 5. Run the server by running `python manage.py runserver`
 6. Startup atleast one worker by running `python manage.py runworker` simulatenously.
 
+### Docker setup (Beta):
+`docker-compose up`
+
 ## Explanation of Services
 
 HackTX is a tremendous undertaking and as a result Pepper was built from the ground up to be incredibly powerful.
