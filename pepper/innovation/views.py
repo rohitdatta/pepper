@@ -5,11 +5,9 @@ from flask import request, jsonify, redirect
 from flask_login import current_user, login_required
 
 
-# function called first time user attempts to use client app,
-# authorizing pepper to send their data.
+# sends the current user's full name and database id to the callback provided by the url
 @login_required
 def auth_user():
-    print("HEY")
     app_id = request.args.get('app_id')
     callback = request.args.get('callback')
 
