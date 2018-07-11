@@ -47,6 +47,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     FIREBASE_KEY=''
     RESUMES_LINK=''
     REDIS_URL='127.0.0.1:6379'
+    INNOVATION_PORTAL_KEY=''
 ```
 4. Making sure PostgreSQL is running, set up the tables by running `python manage.py db upgrade`
 5. Run the server by running `python manage.py runserver`
