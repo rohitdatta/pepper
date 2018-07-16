@@ -488,7 +488,6 @@ form :-moz-placeholder {
 .header {
   padding: 10px 10px 0 10px;
   width: 100%;
-  background-color: #4A78BA;
   position: fixed;
   min-height: 80px;
   z-index: 99;
