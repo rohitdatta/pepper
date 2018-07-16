@@ -51,16 +51,6 @@ def get_mlh_user_data(access_token):
     return requests.get('https://my.mlh.io/api/v2/user.json', params={'access_token': access_token}).json()
 
 
-def check_registration_opened(func):
-    @functools.wraps(func)
-    def decorated_view(*args, **kwargs):
-        if settings.REGISTRATION_OPENED:
-            return func(*args, **kwargs)
-        return redirect(url_for('landing'))
-
-    return decorated_view
-
-
 def update_user_info(user, user_info, commit=False):
     for key, value in user_info.items():
         setattr(user, key, value)

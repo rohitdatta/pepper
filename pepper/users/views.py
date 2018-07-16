@@ -26,8 +26,10 @@ def landing():
 
 
 @redirect_to_dashboard_if_authed
-@helpers.check_registration_opened
 def sign_up():
+    if not settings.REGISTRATION_OPENED:
+        flash('Registration is not open yet, check back soon! :)', 'error')
+        return redirect(url_for('landing'))
     if settings.REGISTRATION_CLOSED:
         flash('Registration has closed', 'error')
         return redirect(url_for('landing'))
@@ -481,8 +483,6 @@ def accept_reimbursement():
         DB.session.commit()
     return redirect(url_for('additional-status'))
 
-
-@helpers.check_registration_opened
 @redirect_to_dashboard_if_authed
 def login():
     if request.method == 'GET':
