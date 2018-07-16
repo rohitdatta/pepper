@@ -436,16 +436,12 @@ form textarea {
   -moz-appearance: none;
   appearance: none;
   outline: 0;
-  width: 250px;
   margin: 0 auto 10px auto;
-  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.4);
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
   padding: 10px 15px;
   margin-bottom: 10px;
-  display: block;
-  color: #FFF;
   -webkit-transition-duration: 0.25s;
   transition-duration: 0.25s;
   font-weight: 300;
@@ -469,10 +465,6 @@ form textarea:focus {
 }
 form textarea:invalid {
   box-shadow: none;
-}
-form textarea:focus {
-  width: 100%;
-  height: 10em;
 }
 form ::-webkit-input-placeholder {
   /* Chrome */
