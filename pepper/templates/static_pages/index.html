@@ -7,7 +7,7 @@
         <div class="center"><h2>{{ config.EVENT_LOCATION }} | {{ config.EVENT_COMPLETE_DURATION }}</h2></div>
         <div class="spacing"></div>
         <div class="container">
-          {% if not config.REGISTRATION_OPEN %}
+          {% if not config.REGISTRATION_OPENED %}
           <a href="{{ url_for('sign-up') }}">
             <button class="col-md-2 col-md-offset-5 col-xs-4 col-xs-offset-4 submit text-center register-now title-buttons">
               <span class="hint--bottom" aria-label="Sign Up">SIGN UP</span>
