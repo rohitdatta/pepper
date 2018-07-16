@@ -55,6 +55,9 @@ It is highly recommended to use a virtualenv to manage dependencies.
 ### Docker setup (Beta):
 `docker-compose up`
 
+### Compile CSS:
+`sass --watch pepper/static/scss/:pepper/static/css`
+
 ## Explanation of Services
 
 HackTX is a tremendous undertaking and as a result Pepper was built from the ground up to be incredibly powerful.
