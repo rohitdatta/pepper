@@ -8,8 +8,7 @@ from flask_login import current_user, login_required
 # function called first time user attempts to use client app,
 # authorizing pepper to send their data.
 @login_required
-def auth_user():
-    print("HEY")
+def auth():
     app_id = request.args.get('app_id')
     callback = request.args.get('callback')
 
