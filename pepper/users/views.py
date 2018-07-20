@@ -505,7 +505,7 @@ def login():
         return redirect(url_for('login'))
     login_user(user, remember=True)
     flash('Logged in successfully!', 'success')
-    return redirect(url_for(get_default_dashboard_for_role()))
+    return redirect(request.args.get('next')) or redirect(url_for(get_default_dashboard_for_role()))
 
 
 def logout():

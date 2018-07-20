@@ -24,3 +24,4 @@ flask-cdn
 structlog
 pytz
 rq
+validators
