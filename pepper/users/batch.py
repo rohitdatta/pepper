@@ -150,10 +150,11 @@ def _keen_add_event(event_type, data, count):
 def keen_add_event(user_id, event_type, event_time):
     user = User.query.filter_by(id=user_id).first()
     bday = user.birthday
+    print(bday)
     fmt = '%Y-%m-%dT%H:%M:%S.%f'
     # removed strftime call because it breaks on years before 1900 which we didn't sanitize
-    formatted_birthday = '{:04d}-{:02d}-{:02d}T{:02d}:{:02d}:{:02d}.{:06d}'.format(
-        bday.year, bday.month, bday.day, 0, 0, 0, 0)
+    formatted_birthday = '{}-{}-{}T{:02d}:{:02d}:{:02d}.{:06d}'.format(
+        bday[0:3], bday[5:6], bday[7:8], 0, 0, 0, 0)
     data = {
         'date_of_birth': formatted_birthday,
         'dietary_restrictions': user.dietary_restrictions,
