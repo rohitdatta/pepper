@@ -7,7 +7,7 @@ from pepper import status
 
 
 @login_required
-@user_status_blacklist(status.NEW)
+@user_status_blacklist(status.NEW, status.LATE)
 def team():
     if request.method == 'GET':
         if current_user.team_id is None:

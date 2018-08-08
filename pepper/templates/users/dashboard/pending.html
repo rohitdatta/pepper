@@ -40,13 +40,18 @@
     <div class="text-center col-md-8 col-md-offset-2">
         <h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
         <div class="large-text">
-            <p>There are two ways to get accepted into HackTX. One way is to be on one of the earliest created teams in
-                the <a href="{{ url_for('team') }}">Manage Team</a> tab in the first round of acceptances. The second
-                way is to get in as an individual through the lottery afterwards. Teams must have at least two members
-                to be considered for the first round.</p>
-            {% if user.team_id is none %}
-                <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we
-                    decide to send acceptances, you will only be eligible to get in through the lottery!</p>
+            {% if user.status == 'PENDING' %}
+                <p>There are two ways to get accepted into HackTX. One way is to be on one of the earliest created teams in
+                    the <a href="{{ url_for('team') }}">Manage Team</a> tab in the first round of acceptances. The second
+                    way is to get in as an individual through the lottery afterwards. Teams must have at least two members
+                    to be considered for the first round.</p>
+                {% if user.team_id is none %}
+                    <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we
+                        decide to send acceptances, you will only be eligible to get in through the lottery!</p>
+                {% endif %}
+            {% else %}
+                <p>Unfortunately, you have registered too late for regular acceptance into {{ config.HACKATHON_NAME }}. 
+                    You can still be accepted if you complete our puzzle challenge over here.
             {% endif %}
             {% if not user.confirmed %}
                 </div>
