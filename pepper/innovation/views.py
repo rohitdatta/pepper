@@ -17,7 +17,6 @@ def auth():
     elif callback is None or not validators.url(callback):
         return jsonify({'error': 'Invalid callback provided'}), 422
     elif current_user.status == 'NEW':
-        print("YOOOOOOOO")
         flash('You must finish registering before starting the puzzle challenge', 'warning')
         return redirect(url_for(get_default_dashboard_for_role()))
     else:
