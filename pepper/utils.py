@@ -1,7 +1,7 @@
 import requests
 import settings
 import functools
-from flask import g, redirect, url_for
+from flask import g, redirect, url_for, request
 from hashids import Hashids
 import boto3
 from itsdangerous import URLSafeTimedSerializer, URLSafeSerializer
@@ -9,6 +9,7 @@ import sendgrid
 from sendgrid.helpers.mail import *
 from premailer import transform
 from datetime import date
+from urlparse import urlparse, urljoin
 
 resume_hash = Hashids(min_length=8, salt=settings.RESUME_HASH_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -148,3 +149,9 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 def calculate_age(dob):
     today = date.today()
     return today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and (ref_url.netloc == test_url.netloc)
