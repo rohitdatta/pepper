@@ -55,6 +55,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
 
 ### Docker setup (Beta):
 `docker-compose up`
+If you change requirements: `docker-compose build`
 
 ### Compile CSS:
 `sass --watch pepper/static/scss/:pepper/static/css`
