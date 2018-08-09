@@ -1,4 +1,4 @@
-import announcements, users, corporate, api, volunteer, teams
+import announcements, users, corporate, api, volunteer, teams, innovation
 
 
 def configure_routes(app):
@@ -101,3 +101,5 @@ def configure_routes(app):
 
     app.add_url_rule('/corp/download/all-resumes', 'all-resume-download',
                      view_func=corporate.views.download_all_resumes, methods=['GET'])
+    app.add_url_rule('/innovation/auth', 'innovation-auth', view_func=innovation.views.auth, methods=['GET'])
+    app.add_url_rule('/innovation/get-user-info', 'innovation-user-info', view_func=innovation.views.get_user_info, methods=['GET'])

@@ -2,7 +2,9 @@
 {% block nav_items %}
     {% if not required %}
         {{ nav_item('Home', 'dashboard') }}
-        {{ nav_item('Manage Team', 'team') }}
+        {% if current_user.status != 'LATE' %}
+            {{ nav_item('Manage Team', 'team') }}
+        {% endif %}
         {{ nav_item('Edit Profile', 'edit-profile') }}
     {% endif %}
     {% if current_user.status == 'CONFIRMED' and (current_user.campus_ambassador or current_user.needs_travel_reimbursement) %}

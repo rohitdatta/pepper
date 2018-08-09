@@ -6,7 +6,9 @@ REJECTED = 'REJECTED'
 DECLINED = 'DECLINED'
 SIGNING = 'SIGNING'
 CONFIRMED = 'CONFIRMED'
+LATE = 'LATE'   # Not applicable for regular method of acceptance. Must be accepted through puzzle challenge
 ADMIN = 'ADMIN'
+
 
 STATUS_LEVEL = {
     NEW: 0,
@@ -17,5 +19,6 @@ STATUS_LEVEL = {
     DECLINED: 5,
     SIGNING: 6,
     CONFIRMED: 7,
+    LATE: 8,
     ADMIN: 999,
 }

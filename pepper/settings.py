@@ -41,6 +41,7 @@ RECOVER_SALT = os.getenv('RECOVER_SALT')
 MAX_BATCH_EMAILS = int(os.getenv('MAX_BATCH_EMAILS', '500'))
 SENT_ACCEPTANCES = _getbool('SENT_ACCEPTANCES')
 KEEN_MAX_RETRIES = int(os.getenv('KEEN_MAX_RETRIES', '3'))
+INNOVATION_PORTAL_KEY = os.getenv('INNOVATION_PORTAL_KEY')
 
 
 # Event Specifc Config

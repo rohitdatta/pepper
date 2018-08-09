@@ -5,6 +5,7 @@ import redis
 import requests
 from sqlalchemy.exc import DataError, IntegrityError
 from datetime import datetime
+from urlparse import urlparse, urljoin
 
 import batch
 import helpers
@@ -14,7 +15,7 @@ from pepper.app import DB
 from pepper.legal.models import Waiver
 from pepper.utils import calculate_age, get_current_user_roles, get_default_dashboard_for_role, \
     redirect_to_dashboard_if_authed, roles_required, s3, serializer, timed_serializer, user_status_blacklist, \
-    user_status_whitelist, user_extra_application_required
+    user_status_whitelist, user_extra_application_required, is_safe_url
 
 
 tz = timezone('US/Central')
@@ -237,7 +238,10 @@ def extract_resume(first_name, last_name, resume_required=True):
 
 
 def complete_user_sign_up():
-    current_user.status = status.WAITLISTED if settings.SENT_ACCEPTANCES else status.PENDING
+    if settings.REGISTRATION_CLOSED:
+        current_user.status = status.LATE
+    else:
+        current_user.status = status.WAITLISTED if settings.SENT_ACCEPTANCES else status.PENDING
     current_user.time_applied = datetime.utcnow()
     batch.keen_add_event(current_user.id, 'sign_ups', current_user.time_applied)
     try:
@@ -323,7 +327,7 @@ def dashboard():
         if current_user.type == 'local':
             return redirect(url_for('complete-registration'))
         return redirect(url_for('complete-mlh-registration'))
-    if current_user.status == status.PENDING:
+    if current_user.status == status.PENDING or current_user.status == status.LATE:
         return render_template('users/dashboard/pending.html', user=current_user)
     elif current_user.status == status.ACCEPTED:
         return redirect(url_for('accept-invite'))
@@ -504,8 +508,12 @@ def login():
         flash('Invalid password. Please try again.', 'warning')
         return redirect(url_for('login'))
     login_user(user, remember=True)
-    flash('Logged in successfully!', 'success')
-    return redirect(url_for(get_default_dashboard_for_role()))
+    target = request.args.get('next')
+    if (target and is_safe_url(target)):
+        return redirect(target)
+    else:
+        flash('Logged in successfully!', 'success')
+        return redirect(url_for(get_default_dashboard_for_role()))
 
 
 def logout():
