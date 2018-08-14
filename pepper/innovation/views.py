@@ -20,8 +20,8 @@ def auth():
         flash('You must finish registering before starting the puzzle challenge', 'warning')
         return redirect(url_for(get_default_dashboard_for_role()))
     else:
-        access_token = {'t': jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30), 
-            'id': current_user.id, 'fname': current_user.fname, 'lname': current_user.lname}, 'secRetkEy', algorithm='HS256')}
+        access_token = {'t': jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=120), 
+            'id': current_user.id, 'fname': current_user.fname, 'lname': current_user.lname}, os.getenv('TOKEN_SEED'), algorithm='HS256')}
         return redirect(callback + "?" + urllib.urlencode(access_token))
 
 # returns the current user's full name and database id 
@@ -31,7 +31,7 @@ def get_user_info():
     if app_id != os.getenv('INNOVATION_PORTAL_KEY'):
         return jsonify({'error': 'Invalid app_id provided'}), 422
     try:
-        decoded = jwt.decode(access_token, 'secRetkEy', algorithms=['HS256'])
+        decoded = jwt.decode(access_token, os.getenv('TOKEN_SEED'), algorithms=['HS256'])
         return jsonify({'fname': decoded['fname'], 'lname': decoded['lname'], 'id': decoded['id']})
     except jwt.ExpiredSignatureError:
         return jsonify({'error': 'Token expired'}), 422

@@ -28,10 +28,7 @@ def landing():
 
 @redirect_to_dashboard_if_authed
 def sign_up():
-    if not settings.REGISTRATION_OPENED:
-        flash('Registration is not open yet, check back soon! :)', 'error')
-        return redirect(url_for('landing'))
-    if settings.REGISTRATION_CLOSED:
+    if settings.REGISTRATION_CLOSED and not settings.PUZZLES_OPEN:
         flash('Registration has closed', 'error')
         return redirect(url_for('landing'))
     if request.method == 'GET':
@@ -112,7 +109,7 @@ def callback():
             g.log = g.log.bind(email=user_info['data']['email'])
             user = User.query.filter_by(email=user_info['data']['email']).first()
             if user is None:
-                if settings.REGISTRATION_CLOSED:
+                if settings.REGISTRATION_CLOSED and not settings.PUZZLES_OPEN:
                     flash('Registration has closed', 'error')
                     return redirect(url_for('login'))
                 if settings.REGISTRATION_OPENED:
@@ -500,13 +497,13 @@ def login():
     user = User.query.filter_by(email=email).first()
     if user is None:
         flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
-        return redirect(url_for('login'))
+        return redirect(request.url)
     elif not user.password:  # they signed up with MLH or are a corporate account and have no password
         flash('An error occurred. Please contact us for more information.', 'error')
-        return redirect(url_for('login'))
+        return redirect(request.url)
     elif not helpers.check_password(user.password, password):
         flash('Invalid password. Please try again.', 'warning')
-        return redirect(url_for('login'))
+        return redirect(request.url)
     login_user(user, remember=True)
     target = request.args.get('next')
     if (target and is_safe_url(target)):
