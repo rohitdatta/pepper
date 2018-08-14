@@ -16,6 +16,9 @@ services:
         command: bash -c "python manage.py runworker"
         depends_on:
             - redis
+            - web
+        volumes:
+            - .:/app
     
     redis:
         image: redis

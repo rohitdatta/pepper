@@ -3,10 +3,6 @@
 
 body {
   background: $dark;
-  //background: -webkit-linear-gradient(top left, $dark 0%, $light 100%);
-  //background: -moz-linear-gradient(top left, $dark 0%, $light 100%);
-  //background: -o-linear-gradient(top left, $dark 0%, $light 100%);
-  //background: linear-gradient(to bottom right, $dark 0%, $light 100%);
   color: $hacktx-light;
 
   .center {
@@ -224,7 +220,7 @@ button {
 }
 
 .error {
-  color: red;
+  color: $hacktx-red;
 }
 
 h1 {
@@ -425,7 +421,6 @@ form {
 	&.title {
 	  //font-weight:700;
 	  font-size: 24pt;
-	  //color: $freetail-tan;
 	  //text-shadow: 1.5px 1.5px 1.5px #CB0922;
 	}
   }
@@ -472,7 +467,7 @@ form {
 	  font-weight: 300;
 	  &::selection {
 		color: white;
-		background: rgba(mix($dark, $light), 0.75); /* WebKit/Blink Browsers */
+		background: rgba(mix($dark, $hacktx-light), 0.75); /* WebKit/Blink Browsers */
 	  }
 
 	  &:hover {
@@ -499,15 +494,39 @@ form {
   }
 
   textarea {
-	@extend input[type=text];
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	outline: 0;
+    margin: 0 auto 10px auto;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	background-color: rgba(255, 255, 255, 0.2);
+	border-radius: 3px;
+	padding: 10px 15px;
+        margin-bottom: 10px;
+	-webkit-transition-duration: 0.25s;
+	transition-duration: 0.25s;
+	font-weight: 300;
+	&::selection {
+	  color: white;
+      background: rgba(mix($dark, $hacktx-light), 0.75); /* WebKit/Blink Browsers */
+	}
+
+	&:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+	}
+
+	&:focus {
+      background-color: white;
+      color: $dark;
+	}
+        &:invalid {
+            box-shadow: none;
+        }
 	display: inline;
 	width: 100%;
 	text-align: left;
-        resize: none;
-	&:focus {
-	  width: 100%;
-	  height: 10em;
-	}
+    resize: none;
 	color: white;
   }
 
@@ -530,7 +549,6 @@ form {
 .header {
   padding: 10px 10px 0 10px;
   width: 100%;
-  background-color: $dark;
   position: fixed;
   min-height: 80px;
   z-index: 99;
