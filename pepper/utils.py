@@ -10,6 +10,7 @@ from sendgrid.helpers.mail import *
 from premailer import transform
 from datetime import date
 from urlparse import urlparse, urljoin
+import logging
 
 resume_hash = Hashids(min_length=8, salt=settings.RESUME_HASH_SALT)
 s3 = boto3.resource('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -141,7 +142,12 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
         mail.add_content(Content('text/plain', txt_content))
     if html_content:
         mail.add_content(Content('text/html', transform(html_content)))
-    response = sg.client.mail.send.post(request_body=mail.get())
+    try:
+        mail_body = mail.get()
+        response = sg.client.mail.send.post(request_body=mail_body)
+    except Exception as e:
+        logging.error("Error mailing using SendGrid, message: {}".format(e.message))
+        raise e
     if response.status_code != 202:
         raise RuntimeError  # TODO: Get a proper error on this
 
