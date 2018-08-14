@@ -129,24 +129,31 @@ def redirect_to_dashboard_if_authed(func):
 def send_email(from_email, subject, to_email, txt_content=None, html_content=None, from_name=None):
     if not from_name:
         from_name = settings.HACKATHON_NAME
-    mail = Mail()
-    mail.from_email = Email(from_email, from_name)
+
+    if not from_email:
+        logging.error("No from_email found while sending emails")
+        raise RuntimeError("No from_email")
+
+    sg_mail = Mail()
+    sg_mail.from_email = Email(from_email, from_name)
     personalization = Personalization()
     personalization.add_to(Email(to_email))
     personalization.subject = subject
-    mail.add_personalization(personalization)
+    sg_mail.add_personalization(personalization)
     transform(html_content)
     if txt_content is None and html_content is None:
         raise ValueError('Must send some type of content')
     if txt_content:
-        mail.add_content(Content('text/plain', txt_content))
+        sg_mail.add_content(Content('text/plain', txt_content))
     if html_content:
-        mail.add_content(Content('text/html', transform(html_content)))
-    mail_body = mail.get()
+        sg_mail.add_content(Content('text/html', transform(html_content)))
+    mail_body = sg_mail.get()
     try:
         response = sg.client.mail.send.post(request_body=mail_body)
     except Exception as e:
-        logging.error("Error mailing using SendGrid, message: {}".format(e.read()))
+        logging.error("Error mailing using SendGrid, message: {}".format(e.message))
+        logging.error("error body: {}".format(e.body))
+        logging.error("email: {}".format(mail_body))
         raise e
     if response.status_code != 202:
         raise RuntimeError  # TODO: Get a proper error on this

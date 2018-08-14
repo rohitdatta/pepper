@@ -96,7 +96,7 @@
         },
         "GENERAL_INFO_EMAIL": {
             "description": "The email address to send emails as.",
-            "required": false
+            "required": true
         },
         "SLACK_TOKEN": {
             "description": "The secret token for the Slack integration used to send out announcements.",
