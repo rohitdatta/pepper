@@ -28,6 +28,9 @@ def landing():
 
 @redirect_to_dashboard_if_authed
 def sign_up():
+    if not settings.REGISTRATION_OPENED:
+        flash('Registration is not open yet, check back soon! :)', 'error')
+        return redirect(url_for('landing'))
     if settings.REGISTRATION_CLOSED and not settings.PUZZLES_OPEN:
         flash('Registration has closed', 'error')
         return redirect(url_for('landing'))
