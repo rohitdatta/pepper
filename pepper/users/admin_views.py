@@ -62,7 +62,7 @@ def admin_dashboard():
 def create_corp_user():
     if request.method == 'GET':
         unverified_users = User.query.filter(and_(User.type == 'corporate',
-                                                  User.password is None)).all()
+                                                  User.password.is_(None))).all()
         return render_template('users/admin/create_corporate_user.html', unverified=unverified_users)
     else:
         # Build a user based on the request form
