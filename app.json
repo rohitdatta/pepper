@@ -58,6 +58,10 @@
             "value": "false",
             "required": false
         },
+        "HACKATHON_NAME": {
+            "description": "Name of the hackathon this instance is hosting.",
+            "required": true
+        },
         "SENT_ACCEPTANCES": {
             "description": "A flag to indicate that the first round of acceptance emails has been sent out",
             "value": "false",
@@ -72,6 +76,11 @@
             "description": "A flag to indicate that registration had opened but has now closed.",
             "value": "false",
             "required": true
+        },
+        "PUZZLES_OPEN": {
+            "description": "A flag to indicate that the puzzles challenge is currently open",
+            "value": "false",
+            "required": false
         },
         "CHECK_IN_ENABLED": {
             "description": "A flag to indicate that check-in is enabled.",
@@ -128,6 +137,14 @@
         },
         "KEEN_WRITE_KEY": {
             "description": "Write key for Keen IO, which is used to store events",
+            "required": false
+        }, 
+        "INNOVATION_PORTAL_KEY": {
+            "description": "App id for the innovation puzzle challenge",
+            "required": false
+        },
+        "TOKEN_SEED": {
+            "description": "random seed for generating login tokens associated with innovation puzzle challenge",
             "required": false
         }
     },
