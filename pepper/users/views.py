@@ -496,7 +496,7 @@ def login():
     password = request.form.get('password')
     if not email or not password:
         flash('Please fill out the required fields!', 'error')
-        return redirect(request.url)
+        return redirect(request.url) # redirect to original url to prevent loss of possible url parameters
     user = User.query.filter_by(email=email).first()
     if user is None:
         flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
