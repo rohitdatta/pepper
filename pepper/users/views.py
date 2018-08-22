@@ -27,7 +27,6 @@ def landing():
 
 
 @redirect_to_dashboard_if_authed
-@helpers.check_registration_opened
 def sign_up():
     if settings.REGISTRATION_CLOSED and not settings.PUZZLES_OPEN:
         flash('Registration has closed', 'error')
@@ -485,8 +484,6 @@ def accept_reimbursement():
         DB.session.commit()
     return redirect(url_for('additional-status'))
 
-
-@helpers.check_registration_opened
 @redirect_to_dashboard_if_authed
 def login():
     if request.method == 'GET':

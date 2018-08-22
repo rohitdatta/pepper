@@ -58,10 +58,6 @@
             "value": "false",
             "required": false
         },
-        "HACKATHON_NAME": {
-            "description": "Name of the hackathon this instance is hosting.",
-            "required": true
-        },
         "SENT_ACCEPTANCES": {
             "description": "A flag to indicate that the first round of acceptance emails has been sent out",
             "value": "false",
@@ -105,7 +101,7 @@
         },
         "GENERAL_INFO_EMAIL": {
             "description": "The email address to send emails as.",
-            "required": false
+            "required": true
         },
         "SLACK_TOKEN": {
             "description": "The secret token for the Slack integration used to send out announcements.",

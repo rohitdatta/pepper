@@ -4,6 +4,8 @@ venv/
 .env
 .DS_Store
 *.dump
+*.iml
+
 TODO's Pepper
 
 # sass watch artifacts
