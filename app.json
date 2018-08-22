@@ -77,6 +77,11 @@
             "value": "false",
             "required": true
         },
+        "PUZZLES_OPEN": {
+            "description": "A flag to indicate that the puzzles challenge is currently open",
+            "value": "false",
+            "required": false
+        },
         "CHECK_IN_ENABLED": {
             "description": "A flag to indicate that check-in is enabled.",
             "value": "true",

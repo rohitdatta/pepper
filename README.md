@@ -26,6 +26,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     CHECK_IN_SECRET='another secret here'
     REGISTRATION_OPENED=True
     REGISTRATION_CLOSED=True
+    PUZZLES_OPEN=True
     CHECK_IN_ENABLED=True
     SENDGRID_API_KEY=''
     HACKATHON_NAME='HackTX'
