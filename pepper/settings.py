@@ -23,7 +23,6 @@ MLH_SECRET = os.getenv('MLH_SECRET')
 BASE_URL = os.getenv('BASE_URL')
 GENERAL_INFO_EMAIL = os.getenv('GENERAL_INFO_EMAIL')
 SLACK_TOKEN = os.getenv('SLACK_TOKEN')
-MAILGUN_PUB_KEY = os.getenv('MAILGUN_PUB_KEY')
 S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
 AWS_ACCESS_KEY = os.getenv('AWS_ACCESS_KEY')
 AWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')
@@ -58,3 +57,7 @@ EVENT_LOCATION = "Austin, TX"
 EVENT_FACEBOOK_GROUP = "https://www.facebook.com/groups/1111939315556082/"
 
 # static assets in pepper/static
+
+
+# Unused config
+MAILGUN_PUB_KEY = os.getenv('MAILGUN_PUB_KEY')
