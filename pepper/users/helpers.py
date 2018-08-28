@@ -17,7 +17,7 @@ mlh_oauth_url = ('https://my.mlh.io/oauth/authorize?'
                  'redirect_uri={1}callback&'
                  'response_type=code&'
                  'scope=email+phone_number+demographics+birthday+education+event').format(
-    settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL, ':/'), url_for('callback'))
+    settings.MLH_APPLICATION_ID, urllib2.quote(settings.BASE_URL))
 
 
 def hash_pwd(password):
