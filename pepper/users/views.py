@@ -75,7 +75,7 @@ def callback():
         'client_secret': settings.MLH_SECRET,
         'code': request.args.get('code'),
         'grant_type': 'authorization_code',
-        'redirect_uri': settings.BASE_URL + "callback"
+        'redirect_uri': helpers.mlh_callback_url()
     }
     resp = requests.post(url, params=body)
     try:

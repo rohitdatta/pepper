@@ -13,6 +13,9 @@ from pepper import utils
 from pepper.app import DB
 
 
+def mlh_callback_url():
+    return url_for('callback', _external=True)
+
 def mlh_oauth_url():
      return ('https://my.mlh.io/oauth/authorize?'
                      'client_id={0}&'
@@ -20,7 +23,7 @@ def mlh_oauth_url():
                      'response_type=code&'
                      'scope=email+phone_number+demographics+birthday+education+event').format(
         settings.MLH_APPLICATION_ID,
-        urllib2.quote(url_for('callback', _external=True))
+        urllib2.quote(mlh_callback_url())
      )
 
 
