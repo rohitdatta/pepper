@@ -1,50 +1,64 @@
 @import "https://fonts.googleapis.com/css?family=Josefin+Sans:400,700";
 body {
-  background: #4A78BA;
-  color: #FFFFFF; }
-  body .center {
-    text-align: center; }
-  body ::-webkit-input-placeholder {
-    /* WebKit browsers */
-    font-family: Josefin Sans, sans-serif;
-    color: white;
-    font-weight: 300; }
-  body :-moz-placeholder {
-    /* Mozilla Firefox 4 to 18 */
-    font-family: Josefin Sans, sans-serif;
-    color: white;
-    opacity: 1;
-    font-weight: 300; }
-  body ::-moz-placeholder {
-    /* Mozilla Firefox 19+ */
-    font-family: Josefin Sans, sans-serif;
-    color: white;
-    opacity: 1;
-    font-weight: 300; }
-  body :-ms-input-placeholder {
-    /* Internet Explorer 10+ */
-    font-family: Josefin Sans, sans-serif;
-    color: white;
-    font-weight: 300; }
-  body .content {
-    padding-top: 150px; }
-  body a {
-    color: #e6e6e6;
-    font-weight: 700;
-    text-decoration: none; }
-    body a.decorate {
-      border-bottom: 1px dotted white; }
-    body a:hover {
-      color: white;
-      text-decoration: none; }
-    body a:active {
-      color: white; }
-    body a:visited {
-      color: #e6e6e6; }
-  body h1, body h2, body h3 {
-    color: #FFFFFF; }
-  body h4 {
-    font-weight: 300; }
+  background: #213e5b;
+  color: #FFFFFF;
+}
+body .center {
+  text-align: center;
+}
+body ::-webkit-input-placeholder {
+  /* WebKit browsers */
+  font-family: Josefin Sans, sans-serif;
+  color: white;
+  font-weight: 300;
+}
+body :-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  font-family: Josefin Sans, sans-serif;
+  color: white;
+  opacity: 1;
+  font-weight: 300;
+}
+body ::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  font-family: Josefin Sans, sans-serif;
+  color: white;
+  opacity: 1;
+  font-weight: 300;
+}
+body :-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  font-family: Josefin Sans, sans-serif;
+  color: white;
+  font-weight: 300;
+}
+body .content {
+  padding-top: 150px;
+}
+body a {
+  color: #e6e6e6;
+  font-weight: 700;
+  text-decoration: none;
+}
+body a.decorate {
+  border-bottom: 1px dotted white;
+}
+body a:hover {
+  color: white;
+  text-decoration: none;
+}
+body a:active {
+  color: white;
+}
+body a:visited {
+  color: #e6e6e6;
+}
+body h1, body h2, body h3 {
+  color: #FFFFFF;
+}
+body h4 {
+  font-weight: 300;
+}
 
 html {
   position: relative;
@@ -100,14 +114,18 @@ body {
   color: #FF4115; }
 
 .accept button {
-  background: #5983A0; }
-  .accept button.submit {
-    background-color: #FF4115; }
-    .accept button.submit:hover {
-      background-color: #dc0925; }
-  .accept button.selected {
-    background-color: #FF4115;
-    color: white; }
+  background: #7ba8f9;
+}
+.accept button.submit {
+  background-color: #FF4115;
+}
+.accept button.submit:hover {
+  background-color: #dc0925;
+}
+.accept button.selected {
+  background-color: #FF4115;
+  color: white;
+}
 
 * {
   font-family: Josefin Sans, sans-serif; }
@@ -320,18 +338,23 @@ form input[type=text], form input[type=number], form input[type=password], form 
   color: #FFF;
   -webkit-transition-duration: 0.25s;
   transition-duration: 0.25s;
-  font-weight: 300; }
-  form input[type=text]::selection, form input[type=number]::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection, form input[type=tel]::selection {
-    color: white;
-    background: rgba(165, 188, 221, 0.75);
-    /* WebKit/Blink Browsers */ }
-  form input[type=text]:hover, form input[type=number]:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover, form input[type=tel]:hover {
-    background-color: rgba(255, 255, 255, 0.4); }
-  form input[type=text]:focus, form input[type=number]:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus, form input[type=tel]:focus {
-    background-color: white;
-    color: #4A78BA; }
-  form input[type=text]:invalid, form input[type=number]:invalid, form input[type=password]:invalid, form input[type=date]:invalid, form input[type=email]:invalid, form input[type=tel]:invalid {
-    box-shadow: none; }
+  font-weight: 300;
+}
+form input[type=text]::selection, form input[type=number]::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection, form input[type=tel]::selection {
+  color: white;
+  background: rgba(144, 159, 173, 0.75);
+  /* WebKit/Blink Browsers */
+}
+form input[type=text]:hover, form input[type=number]:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover, form input[type=tel]:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+form input[type=text]:focus, form input[type=number]:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus, form input[type=tel]:focus {
+  background-color: white;
+  color: #213e5b;
+}
+form input[type=text]:invalid, form input[type=number]:invalid, form input[type=password]:invalid, form input[type=date]:invalid, form input[type=email]:invalid, form input[type=tel]:invalid {
+  box-shadow: none;
+}
 form input[type=number] {
   display: inline;
   width: 100px; }
@@ -355,18 +378,23 @@ form textarea {
   width: 100%;
   text-align: left;
   resize: none;
-  color: white; }
-  form textarea::selection {
-    color: white;
-    background: rgba(165, 188, 221, 0.75);
-    /* WebKit/Blink Browsers */ }
-  form textarea:hover {
-    background-color: rgba(255, 255, 255, 0.4); }
-  form textarea:focus {
-    background-color: white;
-    color: #4A78BA; }
-  form textarea:invalid {
-    box-shadow: none; }
+  color: white;
+}
+form textarea::selection {
+  color: white;
+  background: rgba(144, 159, 173, 0.75);
+  /* WebKit/Blink Browsers */
+}
+form textarea:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+form textarea:focus {
+  background-color: white;
+  color: #213e5b;
+}
+form textarea:invalid {
+  box-shadow: none;
+}
 form ::-webkit-input-placeholder {
   /* Chrome */
   color: #bfbfbf; }
@@ -469,5 +497,17 @@ input[type=text].fullwidth, form input.fullwidth[type=number] {
     .text-container input[type=text].corp-text-box:-ms-input-placeholder, .text-container form input.corp-text-box[type=number]:-ms-input-placeholder, form .text-container input.corp-text-box[type=number]:-ms-input-placeholder {
       font-family: sans-serif;
       color: #999; }
+
+.contact {
+  background: #7ba8f9;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
+  text-align: right;
+  position: fixed;
+  bottom: 3em;
+  right: 0;
+  max-width: 300px;
+  z-index: 100;
+  padding: 1em;
+}
 
 /*# sourceMappingURL=main.css.map */
