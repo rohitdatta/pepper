@@ -60,6 +60,7 @@ If you change requirements: `docker-compose build`
 
 ### Compile CSS:
 `sass --watch pepper/static/scss/:pepper/static/css`
+`sass --watch pepper/static/scss/_email.scss:pepper/templates/emails/style.css`
 
 ## Explanation of Services
 
