@@ -375,10 +375,10 @@ form {
 	cursor: pointer;
 	padding: 10px 15px;
 	outline: 0;
-	border: 0;
-	border-radius: 0;
-	background: #e6e6e6;
-	color: #7b7b7b;
+	border: 1px solid rgba(255, 255, 255, 0.4);
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 0.2);
+  color: $hacktx-gray;
 	appearance: none;
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -392,7 +392,7 @@ form {
 	background: #ccc;
   }
   .select select:disabled {
-	opacity: 0.5;
+  opacity: 0.5;
 	pointer-events: none;
   }
   .select__arrow {
@@ -411,8 +411,13 @@ form {
 	border-top-color: #000;
   }
   .select select:disabled ~ .select__arrow {
-	border-top-color: #ccc;
+  border-top-color: #ccc;
   }
+
+  .select .selected-option {
+    color: #fff;
+  }
+
 
   label {
 	display: block;
