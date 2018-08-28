@@ -595,4 +595,16 @@ input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus {
   color: #999;
 }
 
+.contact {
+  background: #5983A0;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
+  text-align: right;
+  position: fixed;
+  bottom: 3em;
+  right: 0;
+  max-width: 300px;
+  z-index: 100;
+  padding: 1em;
+}
+
 /*# sourceMappingURL=main.css.map */
