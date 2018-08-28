@@ -35,7 +35,7 @@ def sign_up():
         flash('Registration has closed', 'error')
         return redirect(url_for('landing'))
     if request.method == 'GET':
-        return render_template("users/sign_up.html", mlh_oauth_url=helpers.mlh_oauth_url)
+        return render_template("users/sign_up.html", mlh_oauth_url=helpers.mlh_oauth_url())
     email = request.form.get('email')
     password = request.form.get('password')
     confirm_password = request.form.get('password-check')
@@ -87,7 +87,7 @@ def callback():
         return redirect(url_for('sign-up'))
 
     if resp.status_code == 401:  # MLH sent expired token
-        redirect_url = helpers.mlh_oauth_url
+        redirect_url = helpers.mlh_oauth_url()
 
         g.log = g.log.bind(auth_code=request.args.get('code'), http_status=resp.status_code, resp=resp.text,
                            redirect_url=redirect_url, request_url=resp.url)
@@ -490,7 +490,7 @@ def accept_reimbursement():
 @redirect_to_dashboard_if_authed
 def login():
     if request.method == 'GET':
-        return render_template('users/login.html', mlh_oauth_url=helpers.mlh_oauth_url)
+        return render_template('users/login.html', mlh_oauth_url=helpers.mlh_oauth_url())
     # handle login POST logic
     email = request.form.get('email')
     password = request.form.get('password')
