@@ -222,11 +222,8 @@ def extract_resume(first_name, last_name, resume_required=True):
     g.log.info(current_user.hashid)
     if resume:
         if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
-            # TODO: get rid of DEBUG path
-            if settings.DEBUG:
-                g.log.info("Uploading resume...")
-            else:
-                s3.Object(settings.S3_BUCKET_NAME,
+            g.log.info("Uploading resume...")
+            s3.Object(settings.S3_BUCKET_NAME,
                           u'resumes/{0}, {1} ({2}).pdf'.format(last_name, first_name,
                                                                current_user.hashid)).put(Body=resume)
         else:
