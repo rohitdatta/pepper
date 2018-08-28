@@ -140,10 +140,11 @@ def create_app():
     setup_error_handlers(app)
     setup_env_filters(app)
 
+
     app.config['CDN_DOMAIN'] = settings.CDN_URL
     app.config['CDN_HTTPS'] = True
     cdn.init_app(app)
-
+    
     if settings.REQUIRE_SSL:
         SSLify(app)
     return app
