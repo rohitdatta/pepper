@@ -34,7 +34,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     MLH_SECRET=''
     REQUIRE_SSL=False
     BASE_URL='http://127.0.0.1:5000/'
-    GENERAL_INFO_EMAIL='hello@hacktx.com'
+    GENERAL_INFO_EMAIL='hello@freetailhackers.com'
     SLACK_TOKEN=''
     MAILGUN_PUB_KEY=''
     S3_BUCKET_NAME=''
