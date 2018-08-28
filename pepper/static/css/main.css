@@ -1,6 +1,6 @@
 @import 'https://fonts.googleapis.com/css?family=Josefin+Sans:400,700';
 body {
-  background: #4A78BA;
+  background: #213e5b;
   color: #FFFFFF;
 }
 body .center {
@@ -135,7 +135,7 @@ body {
 }
 
 .accept button {
-  background: #5983A0;
+  background: #7ba8f9;
 }
 .accept button.submit {
   background-color: #FF4115;
@@ -411,7 +411,7 @@ form input[type=text], form input[type=number], form input[type=password], form 
 }
 form input[type=text]::selection, form input[type=number]::selection, form input[type=password]::selection, form input[type=date]::selection, form input[type=email]::selection, form input[type=tel]::selection {
   color: white;
-  background: rgba(165, 188, 221, 0.75);
+  background: rgba(144, 159, 173, 0.75);
   /* WebKit/Blink Browsers */
 }
 form input[type=text]:hover, form input[type=number]:hover, form input[type=password]:hover, form input[type=date]:hover, form input[type=email]:hover, form input[type=tel]:hover {
@@ -419,7 +419,7 @@ form input[type=text]:hover, form input[type=number]:hover, form input[type=pass
 }
 form input[type=text]:focus, form input[type=number]:focus, form input[type=password]:focus, form input[type=date]:focus, form input[type=email]:focus, form input[type=tel]:focus {
   background-color: white;
-  color: #4A78BA;
+  color: #213e5b;
 }
 form input[type=text]:invalid, form input[type=number]:invalid, form input[type=password]:invalid, form input[type=date]:invalid, form input[type=email]:invalid, form input[type=tel]:invalid {
   box-shadow: none;
@@ -453,7 +453,7 @@ form textarea {
 }
 form textarea::selection {
   color: white;
-  background: rgba(165, 188, 221, 0.75);
+  background: rgba(144, 159, 173, 0.75);
   /* WebKit/Blink Browsers */
 }
 form textarea:hover {
@@ -461,7 +461,7 @@ form textarea:hover {
 }
 form textarea:focus {
   background-color: white;
-  color: #4A78BA;
+  color: #213e5b;
 }
 form textarea:invalid {
   box-shadow: none;
@@ -596,7 +596,7 @@ input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus {
 }
 
 .contact {
-  background: #5983A0;
+  background: #7ba8f9;
   box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.2);
   text-align: right;
   position: fixed;
