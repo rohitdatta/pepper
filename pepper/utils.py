@@ -119,8 +119,7 @@ def redirect_to_dashboard_if_authed(func):
     @functools.wraps(func)
     def decorated_view(*args, **kwargs):
         if g.user.is_authenticated:
-            if 'admin' not in get_current_user_roles():
-                return redirect(url_for(get_default_dashboard_for_role()))
+            return redirect(url_for(get_default_dashboard_for_role()))
         return func(*args, **kwargs)
 
     return decorated_view
