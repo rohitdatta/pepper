@@ -151,7 +151,8 @@ def keen_add_event(user_id, event_type, event_time):
     user = User.query.filter_by(id=user_id).first()
     fmt = '%Y-%m-%dT%H:%M:%S.%f'
     data = {
-        'date_of_birth': user.birthday,
+        # Birthday can be string from local signup or datetime.date from mlh signup
+        'date_of_birth': str(user.birthday),
         'dietary_restrictions': user.dietary_restrictions,
         'email': user.email,
         'first_name': user.fname,
