@@ -63,7 +63,7 @@ def sign_up():
     login_user(user, remember=True)
     flash(
         'You have created your {0} account. We sent you a verification email. You need to verify your email before we can accept you to {0}'.format(
-            settings.HACKATHON_NAME), 'success')
+            settings.HACKATHON_NAME), 'warning')
     return redirect(url_for('complete-registration'))
 
 
@@ -496,7 +496,7 @@ def login():
         return redirect(request.url) # redirect to original url to prevent loss of possible url parameters
     user = User.query.filter_by(email=email).first()
     if user is None:
-        flash("We couldn't find an account related with this email. Please verify the email entered.", 'warning')
+        flash("We couldn't find an account related with this email. Please verify the email entered.", 'error')
         return redirect(request.url)
     elif not user.password:  # they signed up with MLH or are a corporate account and have no password
         flash('An error occurred. Please contact us for more information.', 'error')
