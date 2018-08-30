@@ -1,4 +1,3 @@
-@import 'https://fonts.googleapis.com/css?family=Josefin+Sans:400,700';
 body {
   background: #213e5b;
   color: #FFFFFF;
@@ -8,27 +7,27 @@ body .center {
 }
 body ::-webkit-input-placeholder {
   /* WebKit browsers */
-  font-family: Josefin Sans, sans-serif;
+  font-family: futura-pt, sans-serif;
   color: white;
   font-weight: 300;
 }
 body :-moz-placeholder {
   /* Mozilla Firefox 4 to 18 */
-  font-family: Josefin Sans, sans-serif;
+  font-family: futura-pt, sans-serif;
   color: white;
   opacity: 1;
   font-weight: 300;
 }
 body ::-moz-placeholder {
   /* Mozilla Firefox 19+ */
-  font-family: Josefin Sans, sans-serif;
+  font-family: futura-pt, sans-serif;
   color: white;
   opacity: 1;
   font-weight: 300;
 }
 body :-ms-input-placeholder {
   /* Internet Explorer 10+ */
-  font-family: Josefin Sans, sans-serif;
+  font-family: futura-pt, sans-serif;
   color: white;
   font-weight: 300;
 }
@@ -149,7 +148,7 @@ body {
 }
 
 * {
-  font-family: Josefin Sans, sans-serif;
+  font-family: futura-pt, sans-serif;
 }
 
 button {
