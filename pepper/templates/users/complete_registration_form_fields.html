@@ -121,49 +121,49 @@
             <div class="control__indicator"></div>
         </label>
         <br>
-        <h4>We can offer a limited amount of travel reimbursement to hackers coming from out of Austin. Would you like
-            to receive travel reimbursement to attend HackTX?</h4>
-        <label class="control control--checkbox">I would be interested in receiving travel reimbursement!
-            <input type="checkbox" name="travel_reimbursement" value="TRUE" class="travel-reimbursement-checkbox"
-                   {% if not required and user.needs_travel_reimbursement %}checked{% endif %}>
-            <div class="control__indicator"></div>
-        </label>
-        <div class="travel-reimbursement-fields">
-            <h4 class="required">Why do you think you deserve travel reimbursement?</h4>
-            <textarea rows="5" name="why_travel_reimbursement"
-                      required>{% if not required and user.why_travel_reimbursement %}{{ user.why_travel_reimbursement }}{% endif %}</textarea>
-        </div>
+{#        <h4>We can offer a limited amount of travel reimbursement to hackers coming from out of Austin. Would you like#}
+{#            to receive travel reimbursement to attend HackTX?</h4>#}
+{#        <label class="control control--checkbox">I would be interested in receiving travel reimbursement!#}
+{#            <input type="checkbox" name="travel_reimbursement" value="TRUE" class="travel-reimbursement-checkbox"#}
+{#                   {% if not required and user.needs_travel_reimbursement %}checked{% endif %}>#}
+{#            <div class="control__indicator"></div>#}
+{#        </label>#}
+{#        <div class="travel-reimbursement-fields">#}
+{#            <h4 class="required">Why do you think you deserve travel reimbursement?</h4>#}
+{#            <textarea rows="5" name="why_travel_reimbursement"#}
+{#                      required>{% if not required and user.why_travel_reimbursement %}{{ user.why_travel_reimbursement }}{% endif %}</textarea>#}
+{#        </div>#}
         <h4>We will be hosting workshops both before and during HackTX. What kind of workshops would you want to
             see?</h4>
         <textarea rows="5" name="workshops">{% if not required and user.workshops %}{{ user.workshops }}{% endif %}</textarea>
         <br>
-        <h4>Want guaranteed travel reimbursement? Sign up to be a Campus Ambassador for HackTX. Campus Ambassadors will
-            help hype up HackTX at their respective campuses. In order to be eligible, you must have an active Facebook
-            account, be willing to help your local hackers get to HackTX, and overall be a friendly person who wants to
-            help support and grow the hacker community!</h4>
-        <label class="control control--checkbox">I want to be a Campus Ambassador!
-            <input type="checkbox" class="campus-ambassador-checkbox" name="campus_ambassador" value="TRUE"
-                   {% if not required and user.campus_ambassador %}checked{% endif %}>
-            <div class="control__indicator"></div>
-        </label>
-        <br>
-        <div class="campus-ambassador-fields">
-            <p>Thank you for applying to Campus Ambassadors! Please provide a link to your Facebook account and tell us
-                why you'd think you'd be a great campus ambassador.</p>
-            <h4 class="required">Facebook Account Link</h4>
-            <div class="input-group">
-                <span class="input-group-addon" id="facebook-addon">https://www.facebook.com/</span>
-                <input type="text" class="form-control fullwidth" name="facebook_account" placeholder="your_username"
-                       required
-                       {% if not required and user.facebook_account %}value="{{ user.facebook_account }}"{% endif %}
-                       aria-describedby="facebook-addon">
-            </div>
-            <br>
-            <h4 class="required">Why do you think you are qualified to be a Campus Ambassador?</h4>
-            <textarea rows="5" name="campus_ambassadors_application"
-                      required>{% if not required and user.campus_ambassadors_application %}{{ user.campus_ambassadors_application }}{% endif %}</textarea>
-        </div>
-        <br>
+{#        <h4>Want guaranteed travel reimbursement? Sign up to be a Campus Ambassador for HackTX. Campus Ambassadors will#}
+{#            help hype up HackTX at their respective campuses. In order to be eligible, you must have an active Facebook#}
+{#            account, be willing to help your local hackers get to HackTX, and overall be a friendly person who wants to#}
+{#            help support and grow the hacker community!</h4>#}
+{#        <label class="control control--checkbox">I want to be a Campus Ambassador!#}
+{#            <input type="checkbox" class="campus-ambassador-checkbox" name="campus_ambassador" value="TRUE"#}
+{#                   {% if not required and user.campus_ambassador %}checked{% endif %}>#}
+{#            <div class="control__indicator"></div>#}
+{#        </label>#}
+{#        <br>#}
+{#        <div class="campus-ambassador-fields">#}
+{#            <p>Thank you for applying to Campus Ambassadors! Please provide a link to your Facebook account and tell us#}
+{#                why you'd think you'd be a great campus ambassador.</p>#}
+{#            <h4 class="required">Facebook Account Link</h4>#}
+{#            <div class="input-group">#}
+{#                <span class="input-group-addon" id="facebook-addon">https://www.facebook.com/</span>#}
+{#                <input type="text" class="form-control fullwidth" name="facebook_account" placeholder="your_username"#}
+{#                       required#}
+{#                       {% if not required and user.facebook_account %}value="{{ user.facebook_account }}"{% endif %}#}
+{#                       aria-describedby="facebook-addon">#}
+{#            </div>#}
+{#            <br>#}
+{#            <h4 class="required">Why do you think you are qualified to be a Campus Ambassador?</h4>#}
+{#            <textarea rows="5" name="campus_ambassadors_application"#}
+{#                      required>{% if not required and user.campus_ambassadors_application %}{{ user.campus_ambassadors_application }}{% endif %}</textarea>#}
+{#        </div>#}
+{#        <br>#}
         {% if required %}
             <h4>We participate in Major League Hacking (MLH) as a MLH Member Event. You authorize us to share certain
                 application/registration information for event administration, ranking, MLH administration, pre and

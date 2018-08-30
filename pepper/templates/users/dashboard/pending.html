@@ -1,27 +1,22 @@
 {% extends 'layouts/user_base.html' %}
 {% block content %}
-    {% if not user.confirmed %}
-
-    {% endif %}
     <script src="{{ url_for('static', filename='js/pending.js') }}"></script>
     {% if user.confirmed %}
     <div class="text-center col-md-8 col-md-offset-2">
         <h1>Thanks for applying to {{ config.HACKATHON_NAME }}, {{ user.fname }}!</h1>
         <div class="large-text">
             {% if user.status == 'PENDING' %}
-                <p>We'll get back to you with more information about acceptance criteria and whether or not you've been selected.
-					In the mean time, join a team with friends in the <a href="{{ url_for('team') }}">Manage Team</a> tab.
-				</p>
-                <!-- {% if user.team_id is none %}
-                    <p>We see you aren't part of a team yet, do you want to join one? If you're not on a team before we
-                        decide to send acceptances, you will only be eligible to get in through the lottery!</p>
-                {% endif %} -->
-                <p>You should receive an email that confirms your registration. Email <a
-                        href="mailto:{{ config.GENERAL_INFO_EMAIL }}"
-                        class="decorate">{{ config.GENERAL_INFO_EMAIL }}</a> if you have any questions and here's a cute
+                <p>We'll get back to you with more information about your application in the coming weeks!</p>
+                {% if user.team_id is none %}
+                    <p>In the mean time, you can join your friends to be considered as a team in the
+                        <a href="{{ url_for('team') }}" class="decorate">Manage Team</a> tab.</p>
+                {% endif %}
+                <p>You should receive an email that confirms your registration. Email
+                    <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}" class="decorate">{{ config.GENERAL_INFO_EMAIL }}</a>
+                    if you have any questions and here's a cute
                     GIF just because.</p>
                 <img src="{{ url_for('static', filename='img/puppy.gif') }}" class="puppy">
-			<!-- Page only runs when status is pending or late, and so else is only hit if status is late -->
+{#			Page only runs when status is pending or late, and so else is only hit if status is late #}
             {% else %}
                 <p>Unfortunately, you have registered too late for regular acceptance into {{ config.HACKATHON_NAME }}. 
                     You can still be accepted if you complete our puzzle challenge over here.

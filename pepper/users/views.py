@@ -138,7 +138,7 @@ def callback():
             batch.send_confirmation_email(user)
             flash(
                 'You have created your {0} account. We sent you a verification email. You need to verify your email before we can accept you to {0}'.format(
-                    settings.HACKATHON_NAME), 'success')
+                    settings.HACKATHON_NAME), 'warning')
             g.log.info('Successfully created user')
             return redirect(url_for('complete-mlh-registration'))
         except IntegrityError:
@@ -262,7 +262,7 @@ def complete_user_sign_up():
         batch.send_confirmation_email(current_user)
     flash(
         'Congratulations! You have successfully applied for {0}! You must confirm your email before your application will be considered!'.format(
-            settings.HACKATHON_NAME), 'success')
+            settings.HACKATHON_NAME), 'warning')
     return redirect(url_for('dashboard'))
 
 
