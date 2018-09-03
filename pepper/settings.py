@@ -4,6 +4,10 @@ def _getbool(variable_name):
     return os.getenv(variable_name) in ['True', 'true', '1', 'yes']
 
 DEBUG = _getbool('DEBUG')
+
+# Don't do things like try uploading resumes when developing on a local machine
+LOCAL = _getbool('LOCAL')
+
 if DEBUG:
     SQLALCHEMY_ECHO = True
 

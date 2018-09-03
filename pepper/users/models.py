@@ -43,6 +43,7 @@ class User(DB.Model, UserMixin):
     race = DB.Column(DB.String(255))
     needs_travel_reimbursement = DB.Column(DB.Boolean)
     why_travel_reimbursement = DB.Column(DB.Text)
+    why_hackathon = DB.Column(DB.Text)
     has_travel_reimbursement = DB.Column(DB.Boolean)
     accepted_travel_reimbursement = DB.Column(DB.Boolean)
     workshops = DB.Column(DB.Text)

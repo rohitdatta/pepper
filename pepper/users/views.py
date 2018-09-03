@@ -199,6 +199,7 @@ def extract_mlh_info():
         'class_standing': request.form.get('class_standing'),
         'needs_travel_reimbursement': request.form.get('travel_reimbursement') == 'TRUE',
         'campus_ambassador': request.form.get('campus_ambassador') == 'TRUE',
+        'why_hackathon': request.form.get('why_hackathon'),
     }
     if user_info['needs_travel_reimbursement']:
         user_info['why_travel_reimbursement'] = request.form.get('why_travel_reimbursement')
@@ -211,6 +212,15 @@ def extract_mlh_info():
         missing_fields = (helpers.display_field_name(key) for key, value in user_info.iteritems() if value is None)
         message = 'You must fill out the required fields:\n' + 's, '.join(missing_fields)
         return {'error': message}
+
+    if len(user_info['why_hackathon']) > 280:
+        return {
+            'error':
+                'Your question response must be less than 280 characters:\nWhat makes you excited about {}?'.format(
+                    settings.HACKATHON_NAME
+                )
+        }
+
     workshops = request.form.get('workshops')
     if workshops:
         user_info['workshops'] = workshops
@@ -223,7 +233,9 @@ def extract_resume(first_name, last_name, resume_required=True):
     if resume:
         if helpers.is_pdf(resume.filename):  # if pdf upload to AWS
             g.log.info("Uploading resume...")
-            s3.Object(settings.S3_BUCKET_NAME,
+            # Don't upload resume if developing on a local machine
+            if not settings.LOCAL:
+                s3.Object(settings.S3_BUCKET_NAME,
                           u'resumes/{0}, {1} ({2}).pdf'.format(last_name, first_name,
                                                                current_user.hashid)).put(Body=resume)
         else:

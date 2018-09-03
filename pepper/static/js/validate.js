@@ -72,6 +72,11 @@ $(function () {
             campus_ambassadors_application: {
                 required: ".campus-ambassador-checkbox:checked"
             },
+            why_hackathon: {
+                required: true,
+                minlength: 0,
+                maxlength: 280
+            },
             mlh: "required"
         },
         // Specify validation error messages
@@ -98,7 +103,8 @@ $(function () {
             why_travel_reimbursement: "Please tell us why you deserve travel reimbursement",
             facebook_account: "Please enter your Facebook username",
             campus_ambassadors_application: "Please enter your campus ambassador application",
-            mlh: "Please agree to the MLH Code of Conduct"
+            why_hackathon: "Please enter a response which is less than 280 characters",
+            mlh: "Please agree to the MLH Code of Conduct",
         },
         errorPlacement: function (error, element) {
             if (element.hasClass("form-control")) {

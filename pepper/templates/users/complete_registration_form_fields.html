@@ -133,10 +133,13 @@
 {#            <textarea rows="5" name="why_travel_reimbursement"#}
 {#                      required>{% if not required and user.why_travel_reimbursement %}{{ user.why_travel_reimbursement }}{% endif %}</textarea>#}
 {#        </div>#}
-        <h4>We will be hosting workshops both before and during HackTX. What kind of workshops would you want to
-            see?</h4>
+        <h4>Got any cool project ideas for HackTX? What kind of workshops would you like to see before or during the event?</h4>
         <textarea rows="5" name="workshops">{% if not required and user.workshops %}{{ user.workshops }}{% endif %}</textarea>
         <br>
+        <div class="control-group">
+            <h4 class="required">What makes you excited about {{ config.HACKATHON_NAME }}? (280 characters)</h4>
+            <textarea rows="5" name="why_hackathon">{% if not required and user.why_hackathon %}{{ user.why_hackathon }}{% endif %}</textarea>
+        </div>
 {#        <h4>Want guaranteed travel reimbursement? Sign up to be a Campus Ambassador for HackTX. Campus Ambassadors will#}
 {#            help hype up HackTX at their respective campuses. In order to be eligible, you must have an active Facebook#}
 {#            account, be willing to help your local hackers get to HackTX, and overall be a friendly person who wants to#}

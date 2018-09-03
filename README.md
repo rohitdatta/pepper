@@ -20,6 +20,7 @@ It is highly recommended to use a virtualenv to manage dependencies.
     LOG_LEVEL=debug
     SERVICE_NAME=Pepper
     DEBUG=True
+    LOCAL=True
     DATABASE_URL='postgresql://Rohit@127.0.0.1:5432/pepper'
     RESUME_HASH_SALT='ur salt here'
     SECRET_KEY='a0th3rS3cr3tH3r3'
