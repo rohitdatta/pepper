@@ -609,4 +609,8 @@ input[type=text].fullwidth:focus, form input.fullwidth[type=number]:focus {
   padding: 1em;
 }
 
+#registration_closed_message {
+  display: inline-block;
+}
+
 /*# sourceMappingURL=main.css.map */

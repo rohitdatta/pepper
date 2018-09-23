@@ -59,6 +59,7 @@ EVENT_COMPLETE_DURATION = "October 20-21, 2018"
 MEDICAL_AUTHORIZATION_END = "October 31, 2018"
 EVENT_LOCATION = "Austin, TX"
 EVENT_FACEBOOK_GROUP = "https://www.facebook.com/groups/1111939315556082/"
+REGISTRATION_CLOSED_MESSAGE = "Unfortunately registration for this year has closed. Check back with us next year for our spring hackathon!"
 
 # static assets in pepper/static
 
