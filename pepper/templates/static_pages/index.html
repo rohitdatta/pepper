@@ -6,14 +6,15 @@
         <div class="spacing"></div>
         <div class="center">
           <h2>{{ config.EVENT_LOCATION }} | {{ config.EVENT_COMPLETE_DURATION }}</h2>
-          <div class="spacing"></div>
-          {% if config.REGISTRATION_CLOSED %}
-              <div class="alert alert-info" id="registration_closed_message" role="alert">
-                {{ config.REGISTRATION_CLOSED_MESSAGE }}
-              </div>
-          {% endif %}
         </div>
         <div class="spacing"></div>
+        {% if config.REGISTRATION_CLOSED %}
+            <div class="center">
+              <div class="alert alert-danger" id="registration_closed_message" role="alert">
+                {{ config.REGISTRATION_CLOSED_MESSAGE }}
+              </div>
+            </div>
+        {% endif %}
         <div class="container">
           {% if not config.REGISTRATION_OPENED %}
           <a href="{{ url_for('sign-up') }}">
