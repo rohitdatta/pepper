@@ -16,13 +16,13 @@ class AcceptUserByID(Command):
     def run(self, user_id):
         user = User.query.filter(User.id==user_id).first()
         if user is None:
-            print 'There is no user with user_id={}'.format(user.id)
+            print 'There is no user with user_id={}'.format(user_id)
         else:
             user.status = status.ACCEPTED
             html = render_template('emails/application_decisions/accepted.html', user=user)
             DB.session.add(user)
             DB.session.commit()
-            # send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
-                    #    user.email, html_content=html)
+            send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.EVENT_NAME),
+                       user.email, html_content=html)
             print 'Accepting user_id={}'.format(user.id)
 
