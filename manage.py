@@ -16,7 +16,7 @@ from scripts.rename_schools import FixUsersSchoolNames
 from scripts.rename_majors import FixUsersMajors
 from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
 from scripts.strip_whitespace_from_special_needs import StripWhitespaceFromSpecialNeedsCommand
-from scripts.accept_user_by_id import AcceptUserByID
+from scripts.change_user_status_by_id import ChangeUserStatusByID
 
 manager = Manager(hackathon_identity_app)
 
@@ -31,7 +31,7 @@ manager.add_command('fixschools', FixUsersSchoolNames)
 manager.add_command('fixmajors', FixUsersMajors)
 manager.add_command('print_confirm_email_token', PrintConfirmEmailTokenCommand)
 manager.add_command('strip_whitespace_from_special_needs', StripWhitespaceFromSpecialNeedsCommand)
-manager.add_command('accept_user_by_id', AcceptUserByID)
+manager.add_command('change_user_status_by_id', ChangeUserStatusByID)
 
 
 @manager.command
