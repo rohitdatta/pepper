@@ -7,7 +7,7 @@ from pepper.app import DB
 from pepper.utils import send_email
 from pepper import status, settings
 
-class AcceptUserByID(Command):
+class ChangeUserStatusByID(Command):
 
     option_list = (
         Option('--new_status', dest='new_status'),
@@ -16,11 +16,13 @@ class AcceptUserByID(Command):
     )
 
     def run(self, user_id, new_status):
+        if user_id is None or new_status is None:
+            print "Please specify user_id and new_status"
+            return
+
         user = User.query.filter(User.id==user_id).first()
         if user is None:
             print 'There is no user with user_id={}'.format(user_id)
-        elif new_status is None:
-            print 'Please provide a user status'
         else:
             new_status = new_status.lower()
             changed_status = False
