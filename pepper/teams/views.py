@@ -1,14 +1,18 @@
 from flask_login import login_required, current_user
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, flash
 
 from helpers import join_team, create_team, rename_team, leave_team, remove_team
 from pepper.utils import user_status_blacklist
-from pepper import status
+from pepper import status, settings
 
 
 @login_required
 @user_status_blacklist(status.NEW, status.LATE)
 def team():
+    if settings.REGISTRATION_CLOSED:
+        flash('Unfortunately registration has closed, and teams have been locked', 'error')
+        return redirect(url_for('dashboard'))
+
     if request.method == 'GET':
         if current_user.team_id is None:
             return render_template('teams/manage_team.html')
