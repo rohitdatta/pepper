@@ -4,11 +4,15 @@
         <h1>Your {{ config.HACKATHON_NAME }} Decision</h1>
         <div class="large-text">
             {% block decision %}
-                <p>Thanks for applying to {{ config.HACKATHON_NAME }}. Unfortunately, this year we had many more
-                    applicants than we had space for and won't be able to accept you.</p>
-                <p>While we wish we could accept everyone who applies for {{ config.HACKATHON_NAME }}, there's a limited
-                    amount of space and it wouldn't be fun for anyone if it got too crowded. We'd still be delighted for
-                    you to join us as a <a href="https://goo.gl/forms/mx5fnYjohpI3AI4Y2" class="decorate">volunteer</a> or a <a href="https://goo.gl/forms/wi8cZ6dglqKvfdsC2" class="decorate">mentor</a>!</p>
+                <p>Thank you for taking the time to apply to {{ config.EVENT_NAME }}. Unfortunately, we are unable to offer you 
+                    a spot this year. This decision is not a reflection of your resume or your experience level. While wish we could accept 
+                    everyone who applied, there's a limited amount of space and it wouldn't be fun for anyone if it got too crowded.</p>
+                <p>If you are local to Austin, TX, we are still looking for volunteers and mentors to help us out. If you are interested in
+                    serving in either capacity, please fill out <a href="https://goo.gl/forms/4enbcuIAD8MTOkpn2">this form</a> and we'll get
+                    back to you soon.</p>
+                <p>Thanks again for your interest! We would love to see you apply again next year, but in the meantime, we highly encourage 
+                    you to continue learning and creating amazing things.</p>
+                <br/><p>♥ Freetail Hackers</p>
             {% endblock %}
         </div>
     </div>

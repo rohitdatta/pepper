@@ -2,30 +2,38 @@
 {% block message %}
     <tr>
         <td class="content-block">
-            Hey {{ user.fname }}!
+            Hey {{ user.fname }},
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            We've got great news! You're invited to join us for {{ config.HACKATHON_NAME }}! We'll need you to accept
-            your invitation within 7 days of this email, otherwise we'll release your invitation to another student.
+            We've got great news! You're invited to join us for {{ config.EVENT_NAME }}! <strong> We need you to take action to
+            confirm your attendance: </strong>
+            <ul>
+                <li> If you are local to Austin, TX or do not require travel reimbursement, please log onto 
+                    <a href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }} </a> and accept your invitation. You are <strong>
+                    NOT </strong> confirmed until your dashboard says that you are.
+                </li>
+                <li> If you wish to apply for travel reimbursement, please <a href="https://goo.gl/forms/hrmMQYnTS62Ic4Pj2">fill out 
+                    the following form</a> and someone from our team will get back to you regarding your reimbursement request. We will
+                    distributing these based on availability and plan to cap the amount per individual/car at $50.
+                </li>
+            </ul>
+            You <strong> MUST take action by 11:59pm on Friday, October 12</strong> to confirm your attendance. If you have not taken
+            action by then, your invitation will be released to another student. Please note that no exceptions will be made if you 
+            fail to confirm within the deadline.
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            Your attendance is <strong>NOT</strong> confirmed until you log onto <a
-                href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
-            confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline.
+            We will be sending another email closer to the hackathon with more details, but for now feel free to email
+            <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }} </a> if you have any questions. We can't 
+            wait to see you!
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            Thanks, we can't wait to see you!
-        </td>
-    </tr>
-    <tr>
-        <td class="content-block">
-            Team {{ config.HACKATHON_NAME }}
+            ♥ Freetail Hackers
         </td>
     </tr>
 {% endblock %}
