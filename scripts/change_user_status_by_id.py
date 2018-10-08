@@ -32,7 +32,7 @@ class ChangeUserStatusByID(Command):
                 changed_status = True
             elif (new_status == 'waitlisted'):
                 user.status = status.WAITLISTED
-                html = render_template('emails/application_decisions/waitlisted.html', user=user)
+                html = render_template('emails/application_decisions/waitlisted-initial.html', user=user)
                 changed_status = True
             elif (new_status == 'rejected'):
                 user.status = status.REJECTED

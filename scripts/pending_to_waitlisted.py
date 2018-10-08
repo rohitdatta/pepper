@@ -15,7 +15,7 @@ class PendingToWaitlistedCommand(Command):
         users = User.query.filter(and_(User.status == status.PENDING, User.confirmed.is_(True))).all()
         for user in users:
             user.status = status.WAITLISTED
-            html = render_template('emails/application_decisions/waitlisted.html', user=user)
+            html = render_template('emails/application_decisions/waitlisted-initial.html', user=user)
             DB.session.add(user)
             DB.session.commit()
             send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
