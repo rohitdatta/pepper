@@ -43,7 +43,7 @@ class ChangeUserStatusByID(Command):
             html = render_template('emails/application_decisions/rejected.html', user=user)
             changed_status = True
         else:
-            print('{} is not a valid status'.format(new_status))
+            raise Exception('{} is not a valid status'.format(new_status))
         if (changed_status):
             DB.session.add(user)
             DB.session.commit()
