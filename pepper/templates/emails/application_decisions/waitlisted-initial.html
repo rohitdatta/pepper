@@ -1,0 +1,28 @@
+{% extends 'emails/base.html' %}
+{% block message %}
+    <tr>
+      <td class="content-block">
+        Hey {{ user.fname }},
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        Thank you for taking the time to apply to {{ config.EVENT_NAME }}. Unfortunately, we had many more applicants
+        than we have space for and we are unable to offer you a spot at this moment. However, there is a good chance 
+        we can still find a space for you. Acceptances are released in waves, so we will let you know in a few days 
+        if a spot opens up!
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        If you are local to Austin, TX or in a nearby city, we would also be delighted to have you join us as a volunteer or mentor. If you are interested in
+        serving in either capacity, please fill out <a href="https://goo.gl/forms/4enbcuIAD8MTOkpn2">this form</a> and we'll get
+        back to you soon.
+      </td>
+    </tr>
+    <tr>
+      <td class="content-block">
+        ♥ Freetail Hackers
+      </td>
+    </tr>
+{% endblock %}
