@@ -47,5 +47,6 @@ class ChangeUserStatusByID(Command):
         if (changed_status):
             DB.session.add(user)
             DB.session.commit()
+            print(html)
             send_email(settings.GENERAL_INFO_EMAIL, 'Your {} Application Status'.format(settings.EVENT_NAME), user.email, html_content=html)
             print('{} user_id={}'.format(new_status, user.id))
