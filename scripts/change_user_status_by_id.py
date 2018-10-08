@@ -36,7 +36,7 @@ class ChangeUserStatusByID(Command):
             changed_status = True
         elif (new_status == 'waitlisted'):
             user.status = status.WAITLISTED
-            html = render_template('emails/application_decisions/waitlisted.html', user=user)
+            html = render_template('emails/application_decisions/waitlisted-initial.html', user=user)
             changed_status = True
         elif (new_status == 'rejected'):
             user.status = status.REJECTED
@@ -49,4 +49,3 @@ class ChangeUserStatusByID(Command):
             DB.session.commit()
             send_email(settings.GENERAL_INFO_EMAIL, 'Your {} Application Status'.format(settings.EVENT_NAME), user.email, html_content=html)
             print('{} user_id={}'.format(new_status, user.id))
-
