@@ -10,7 +10,8 @@ from pepper import status, settings
 @user_status_blacklist(status.NEW, status.LATE)
 def team():
     if settings.REGISTRATION_CLOSED:
-        flash('Unfortunately registration has closed, and teams have been locked', 'error')
+        flash('You can no longer apply as a team since registration is closed, but feel free to '
+              'create and change teams before/at the event: we will have a teammatching session!' , 'error')
         return redirect(url_for('dashboard'))
 
     if request.method == 'GET':
