@@ -1,52 +1,36 @@
-{% extends 'emails/base.html' %}
+{% extends 'emails/application_decisions/base.html' %}
 {% block message %}
     <tr>
         <td class="content-block">
-            Hey {{ user.fname }}!
+            Hey {{ user.fname }},
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            We've got great news! A spot opened up at {{ config.HACKATHON_NAME }} and we'd love to have you join us!
-            Since we're so close to the event, we'll need you to accept your invitation by 11:59 PM CDT on Friday,
-            October 21.
+            We've got great news! A spot opened up at {{ config.EVENT_NAME }} and we'd love to have you join us!
+            Since we're so close to the event,
+            <strong> we need you to take action to confirm your attendance: </strong>
+            <ul>
+                <li> Please log onto
+                    <a href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }} </a> and accept your invitation. You are <strong>
+                    NOT </strong> confirmed until your dashboard says that you are.
+                </li>
+            </ul>
+            You <strong> MUST take action by 11:59PM CT on Thursday, October 18</strong> to confirm your attendance. If you have not taken
+            action by then, your invitation will be released to another student. Please note that no exceptions will be made if you
+            fail to confirm within the deadline.
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            Your attendance is <strong>NOT</strong> confirmed until you log onto <a
-                href="{{ config.BASE_URL }}">my{{ config.HACKATHON_NAME }}</a> and your dashboard says that you are
-            confirmed. Please note that no exceptions will be made if you fail to confirm within the deadline. Once you
-            confirm, also check out our <a href="{{ config.EVENT_FACEBOOK_GROUP }}">Facebook group</a>
-            for attendees.
-        </td>
-    </tr>
-    {% if user.school_id != 23 %}
-        <tr>
-            <td class="content-block">
-                Freetail Hackers is proud to host {{ config.EVENT_NAME }} this year at the Omni Hotel in Downtown Austin. For those
-                of you not based in Austin and requiring transportation to {{ config.HACKATHON_NAME }}, we're providing buses for certain
-                cities. Buses will leave early morning on October 22nd for Austin and arrive in time for Registration
-                around 10:00am. They will head back for their respective cities Sunday October 23rd after the closing
-                ceremony around 4:00pm.
-            </td>
-        </tr>
-        <tr>
-            <td class="content-block">
-                If you would like to ride on these buses, please fill our <a
-                    href="https://goo.gl/forms/QSlXZfBkHnKdWUg33">bus form</a>. Keep in mind seating is limited so buses
-                will be first come, first serve.
-            </td>
-        </tr>
-    {% endif %}
-    <tr>
-        <td class="content-block">
-            Thanks, we can't wait to see you!
+            We will be sending another email closer to the hackathon with more details, but for now, feel free to email
+            <a href="mailto:{{ config.GENERAL_INFO_EMAIL }}">{{ config.GENERAL_INFO_EMAIL }} </a> if you have any questions. We can't
+            wait to see you!
         </td>
     </tr>
     <tr>
         <td class="content-block">
-            Team {{ config.HACKATHON_NAME }}
+            ♥ Freetail Hackers
         </td>
     </tr>
 {% endblock %}
