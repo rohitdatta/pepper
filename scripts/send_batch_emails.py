@@ -11,7 +11,7 @@ from pepper import status, settings
 
 import qrcode
 
-class PendingToWaitlistedCommand(Command):
+class SendPreeventEmailCommand(Command):
     def run(self):
         users = User.query.filter(and_(User.status == status.CONFIRMED, User.confirmed.is_(True))).all()
         for user in users:
