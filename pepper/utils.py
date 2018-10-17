@@ -125,7 +125,7 @@ def redirect_to_dashboard_if_authed(func):
     return decorated_view
 
 
-def send_email(from_email, subject, to_email, txt_content=None, html_content=None, from_name=None):
+def send_email(from_email, subject, to_email, txt_content=None, html_content=None, attachments=None, from_name=None):
     if not from_name:
         from_name = settings.HACKATHON_NAME
 
@@ -146,6 +146,17 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
         sg_mail.add_content(Content('text/plain', txt_content))
     if html_content:
         sg_mail.add_content(Content('text/html', transform(html_content)))
+
+    if attachments:
+        for attachment in attachments:
+            sg_attachment = Attachment()
+            sg_attachment.content = attachment.encoded
+            sg_attachment.filename = attachment.filename
+            sg_attachment.type = attachment.file_type
+            sg_attachment.disposition = 'attachment'
+            sg_attachment.content_id = attachment.encoded
+            sg_mail.add_attachment(sg_attachment)
+        
     mail_body = sg_mail.get()
     try:
         response = sg.client.mail.send.post(request_body=mail_body)

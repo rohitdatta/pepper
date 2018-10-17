@@ -1,0 +1,63 @@
+{% extends 'emails/application_decisions/base.html' %}
+{% block message %}
+    <tr>
+        <td class="content-block">
+            <p>Hey {{ user.fname }},</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <p>Congratulations on being accepted to HackTX18! With HackTX only being days away, please take a minute to review the information in this email to get you ready:</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <strong>Check-in</strong>
+            <p>Check-in begins at 10:00 AM on Saturday, October 20.</p>
+            <ul>
+                <li>Please, <strong>do not forget</strong> to bring two kinds of IDs with you:
+                    <ul>
+                        <li>A valid university ID <strong>AND</strong></li>
+                        <li>A government issued ID proving that you are 18+.</li>
+                    </ul>
+                </li>
+                <li>While checking in, please hand your identification to our volunteers along with the QR code attached to this email to make the process quicker for you and everyone else.</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <strong>What should I bring?</strong>
+            <p>The venue may get cold so bring jackets, sweaters, blankets, etc. if you think you may need any of these items. We want you guys to be comfortable during the event. Dress code must be within <a href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">MLH Code of Conduct.</a></p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <strong>Schedule</strong>
+            <p>For a full rundown of our schedule, check out the <a href="https://hacktx.com/">HackTX</a> website and the <a href="https://go.hacktx.com">itinerary</a>.</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <strong>Communication</strong>
+            <p>Please join the <a href="http://bit.ly/2RS6roZ">attendee slack</a>. We'll be sending out announcements day-of on this and you can also use this to find teams and/or carpools before the event.</p>
+            <p>If you do not have a team and are seeking one, please utilize our social media pages to find other team members. If not, you will also have the opportunity to find a team at the event.</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <strong>Pre-HackTX Workshop</strong>
+            <p>If you’re around in Austin, we encourage you to drop by the “Crash Course: Build a Single-Page-App” workshop hosted by Freetail Hackers and MAD. The workshop will be held on Thursday, October 18 from 6:00 PM - 7:00 PM in GDC 2.502.</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            <p>Let us know if you have any further questions. We can’t wait to see you guys at HackTX!</p>
+        </td>
+    </tr>
+    <tr>
+        <td class="content-block">
+            ♥ Freetail Hackers
+        </td>
+    </tr>
+{% endblock %}
