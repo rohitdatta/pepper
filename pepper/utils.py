@@ -151,11 +151,11 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
         for attachment in attachments:
             print(str(attachment))
             sg_attachment = Attachment()
-            sg_attachment['content'] = attachment.encoded
-            sg_attachment['filename'] = attachment.filename
-            sg_attachment['type'] = attachment.file_type
+            sg_attachment['content'] = attachment['encoded']
+            sg_attachment['filename'] = attachment['filename']
+            sg_attachment['type'] = attachment['file_type']
             sg_attachment['disposition'] = 'attachment'
-            sg_attachment['content_id'] = attachment.encoded
+            sg_attachment['content_id'] = attachment['encoded']
             sg_mail.add_attachment(sg_attachment)
         
     mail_body = sg_mail.get()
