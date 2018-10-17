@@ -148,8 +148,8 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
         sg_mail.add_content(Content('text/html', transform(html_content)))
 
     if attachments:
-        print(str(attachments))
         for attachment in attachments:
+            print(str(attachment))
             sg_attachment = Attachment()
             sg_attachment['content'] = attachment.encoded
             sg_attachment['filename'] = attachment.filename
