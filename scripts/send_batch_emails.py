@@ -17,8 +17,11 @@ class SendPreeventEmailCommand(Command):
         users = User.query.filter(and_(User.status == status.CONFIRMED, User.confirmed.is_(True))).all()
         for user in users:
             user_email = user.email
+            buffered = cStringIO.StringIO()
             qr_code = qrcode.make(user_email)
-            encoded = base64.b64encode(qr_code.getvalue()).decode()
+            qr_code.save(buffered, 'png')
+            encoded = base64.b64encode(buffered.getvalue()).decode()
+
             attachments = [{'encoded': encoded, 'file_type': 'image/png', 'filename': 'qrcode.png'}]
             html = render_template('emails/application_decisions/preevent.html', user=user)
             send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
