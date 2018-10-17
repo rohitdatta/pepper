@@ -18,7 +18,7 @@ class SendPreeventEmailCommand(Command):
         for user in users:
             user_email = user.email
             qr_code = qrcode.make(user_email)
-            encoded = base64.b64encode(qrcode).decode()
+            encoded = base64.b64encode(qr_code).decode()
             attachments = [{'encoded': encoded, 'file_type': 'image/png', 'filename': 'qrcode.png'}]
             html = render_template('emails/application_decisions/preevent.html', user=user)
             send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
