@@ -9,6 +9,7 @@ from pepper.app import DB
 from pepper.utils import send_email
 from pepper import status, settings
 
+import base64
 import qrcode
 
 class SendPreeventEmailCommand(Command):
