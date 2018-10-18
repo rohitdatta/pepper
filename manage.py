@@ -17,6 +17,7 @@ from scripts.rename_majors import FixUsersMajors
 from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
 from scripts.strip_whitespace_from_special_needs import StripWhitespaceFromSpecialNeedsCommand
 from scripts.change_user_status_by_id import ChangeUserStatusByID
+from scripts.send_batch_emails import SendPreeventEmailCommand
 
 manager = Manager(hackathon_identity_app)
 
@@ -32,6 +33,7 @@ manager.add_command('fixmajors', FixUsersMajors)
 manager.add_command('print_confirm_email_token', PrintConfirmEmailTokenCommand)
 manager.add_command('strip_whitespace_from_special_needs', StripWhitespaceFromSpecialNeedsCommand)
 manager.add_command('change_user_status_by_id', ChangeUserStatusByID)
+manager.add_command('send_preevent_emails', SendPreeventEmailCommand)
 
 
 @manager.command

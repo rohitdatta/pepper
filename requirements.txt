@@ -35,6 +35,7 @@ lxml==4.0.0
 Mako==1.0.7
 MarkupSafe==1.0
 passlib==1.7.1
+Pillow==5.1.0
 premailer==3.1.1
 psycopg2==2.7.3.1
 pycparser==2.18
@@ -45,6 +46,7 @@ python-dotenv==0.7.1
 python-editor==1.0.3
 python-http-client==3.0.0
 pytz==2017.2
+qrcode==6.0
 redis==2.10.6
 requests==2.18.4
 rq==0.8.2
