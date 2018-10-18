@@ -125,7 +125,7 @@ def redirect_to_dashboard_if_authed(func):
     return decorated_view
 
 
-def send_email(from_email, subject, to_email, txt_content=None, html_content=None, attachments=None, from_name=None):
+def send_email(from_email, subject, to_email, txt_content=None, html_content=None, from_name=None, attachments=None):
     if not from_name:
         from_name = settings.HACKATHON_NAME
 
@@ -149,7 +149,6 @@ def send_email(from_email, subject, to_email, txt_content=None, html_content=Non
 
     if attachments:
         for attachment in attachments:
-            print(str(attachment))
             sg_attachment = Attachment()
             sg_attachment.content = attachment['encoded']
             sg_attachment.filename = attachment['filename']

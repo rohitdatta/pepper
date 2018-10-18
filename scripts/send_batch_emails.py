@@ -25,6 +25,6 @@ class SendPreeventEmailCommand(Command):
 
             attachments = [{'encoded': encoded, 'file_type': 'image/png', 'filename': 'qrcode.png'}]
             html = render_template('emails/application_decisions/preevent.html', user=user)
-            send_email(settings.GENERAL_INFO_EMAIL, "Your {} Application Status".format(settings.HACKATHON_NAME),
+            send_email(settings.GENERAL_INFO_EMAIL, "Important {} Pre-Event Information".format(settings.HACKATHON_NAME),
                        user.email, html_content=html, attachments=attachments)
             print ('Sent event day email to user_id={}'.format(user.id))
