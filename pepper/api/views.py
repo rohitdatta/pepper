@@ -59,12 +59,13 @@ def check_in():
     # Check if secret token matches
     if request.method == 'GET':
         email = urllib.unquote(request.args.get('email')).lower()
-        volunteer_email = urllib.unquote(request.args.get('volunteer_email'))
+        #volunteer_email = urllib.unquote(request.args.get('volunteer_email'))
         secret = urllib.unquote(request.args.get('secret'))
     else:
         data = request.json
+        print(data)
         email = data['email'].lower()
-        volunteer_email = data['volunteer_email']
+        #volunteer_email = data['volunteer_email']
         secret = data['secret']
         eid = data.get('eid')
 
