@@ -13,14 +13,14 @@ class SendRecruitmentEmailCommand(Command):
         users = []
 
         query_result = User.query.filter(
-            User.school_name.ilike('[uU][nN][iI]%'),
-            User.school_name.ilike('%[tT][eE][xX][aA][sS]%'),
-            User.school_name.ilike('%[aA][uU][sS]%')
+            User.school_name.like('[uU][nN][iI]%'),
+            User.school_name.like('%[tT][eE][xX][aA][sS]%'),
+            User.school_name.like('%[aA][uU][sS]%')
         ).all()
         users += query_result
 
         query_result = User.query.filter(
-            User.school_name.ilike('%[uU][tT] [aA][uU]%')
+            User.school_name.like('%[uU][tT] [aA][uU]%')
         ).all()
         users += query_result
 
