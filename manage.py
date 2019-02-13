@@ -35,8 +35,7 @@ manager.add_command('print_confirm_email_token', PrintConfirmEmailTokenCommand)
 manager.add_command('strip_whitespace_from_special_needs', StripWhitespaceFromSpecialNeedsCommand)
 manager.add_command('change_user_status_by_id', ChangeUserStatusByID)
 manager.add_command('send_preevent_emails', SendPreeventEmailCommand)
-manager.add_commanD('send_recruitment_emails',
-        SendRecruitmentEmailCommand)
+manager.add_command('send_recruitment_emails', SendRecruitmentEmailCommand)
 
 
 @manager.command
