@@ -2,18 +2,13 @@
 
 from flask import render_template
 from flask_script import Command
-from sqlalchemy import and_
 
 from pepper.users.models import User
 from pepper.app import DB
 from pepper.utils import send_email
 from pepper import status, settings
 
-import cStringIO
-import base64
-import qrcode
-
-class SendPreeventEmailCommand(Command):
+class SendRecruitmentEmailCommand(Command):
     def run(self):
         users = []
 
