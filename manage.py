@@ -18,8 +18,7 @@ from scripts.print_confirm_email_token import PrintConfirmEmailTokenCommand
 from scripts.strip_whitespace_from_special_needs import StripWhitespaceFromSpecialNeedsCommand
 from scripts.change_user_status_by_id import ChangeUserStatusByID
 from scripts.send_batch_emails import SendPreeventEmailCommand
-from scripts.send_recruitment_emails import
-SendRecruitmentEmailCommand
+from scripts.send_recruitment_emails import SendRecruitmentEmailCommand
 
 manager = Manager(hackathon_identity_app)
 
