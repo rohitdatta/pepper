@@ -32,9 +32,12 @@ class SendPreeventEmailCommand(Command):
         for user in users:
             user_email = user.email
 
-            html =
-                render_template('emails/application_decisions/freetail_recruitment.html', user=user)
-            send_email(settings.GENERAL_INFO_EMAIL, "Join Freetail
-                    Hackers -- the organizers of {}!".format(settings.HACKATHON_NAME),
-                       user.email, html_content=html, attachments=None)
+            html = render_template('emails/application_decisions/freetail_recruitment.html', user=user)
+            send_email(
+                settings.GENERAL_INFO_EMAIL,
+                "Join Freetail Hackers -- the organizers of {}!".format(settings.HACKATHON_NAME),
+                user.email,
+                html_content=html,
+                attachments=None
+            )
             print ('Sent freetail recruitment email to user_id={}'.format(user.id))
