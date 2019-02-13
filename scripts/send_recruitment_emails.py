@@ -13,14 +13,14 @@ class SendRecruitmentEmailCommand(Command):
         users = []
 
         query_result = User.query.filter(
-            User.school_name.op('~')('[uU][nN][iI]%'),
-            User.school_name.op('~')('%[tT][eE][xX][aA][sS]%'),
-            User.school_name.op('~')('%[aA][uU][sS]%')
+            User.school_name.op('~')('[uU][nN][iI].*'),
+            User.school_name.op('~')('.*[tT][eE][xX][aA][sS].*'),
+            User.school_name.op('~')('.*[aA][uU][sS].*')
         ).all()
         users += query_result
 
         query_result = User.query.filter(
-            User.school_name.op('~')('%[uU][tT] [aA][uU]%')
+            User.school_name.op('~')('.*[uU][tT] [aA][uU].*')
         ).all()
         users += query_result
 
