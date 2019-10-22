@@ -35,7 +35,7 @@ lxml==4.0.0
 Mako==1.0.7
 MarkupSafe==1.0
 passlib==1.7.1
-Pillow==5.1.0
+Pillow==6.2.0
 premailer==3.1.1
 psycopg2==2.7.3.1
 pycparser==2.18
