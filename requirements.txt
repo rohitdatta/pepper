@@ -28,7 +28,7 @@ hashids==1.2.0
 hellosign-python-sdk==3.8.5
 idna==2.6
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 jmespath==0.9.3
 keen==0.4.0
 lxml==4.0.0
