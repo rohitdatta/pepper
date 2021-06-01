@@ -55,7 +55,7 @@ sendgrid==5.2.0
 six==1.10.0
 SQLAlchemy==1.0.8
 structlog==17.2.0
-urllib3==1.22
+urllib3==1.26.5
 validators==0.12.2
 Werkzeug==0.10.4
 WTForms==2.1
