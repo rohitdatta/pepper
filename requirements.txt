@@ -31,7 +31,7 @@ itsdangerous==0.24
 Jinja2==2.8
 jmespath==0.9.3
 keen==0.4.0
-lxml==4.0.0
+lxml==4.9.1
 Mako==1.0.7
 MarkupSafe==1.0
 passlib==1.7.1
